@@ -2,6 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static',filename='dist/css/output.css')}}"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
@@ -11,14 +15,19 @@
       method="POST"
       enctype="multipart/form-data"
     >
-      <div>
-        <input type="file" name="file" accept="image/*" />
-      </div>
-<!-- 
-      <img src="{{url_for('static', filename='uploads/output.png')}}" alt="" />
-      <p>ini image</p> -->
+      <p class="bg-blue-200">haii</p>
+      {{ form.csrf_token }} {{ form.file.label(class="bg-blue-400 text-red-500")
+      }}<br />
+      {{ form.file(class="bg-blue-700") }}<br /><br />
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
 
-      <button type="submit">pencet selesai</button>
+      <button type="submit" name="submit">pencet selesai</button>
     </form>
   </body>
 </html>
