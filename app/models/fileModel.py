@@ -1,7 +1,7 @@
 from app.config.database import db
 
 
-class filesmodel(db.Model):
+class filesModel(db.Model):
     __tablename__ = 'file'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

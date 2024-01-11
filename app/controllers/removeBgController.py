@@ -1,8 +1,8 @@
 from flask import Blueprint, request, render_template, url_for, redirect, flash
-from app.models.validate.fileValidate import RemoveBgForm
-
+from app.models.validate.imageValidation import imageForm
+from app.config.database import db
 from werkzeug.utils import secure_filename 
-
+from app.models.fileModel import filesModel
 from rembg import remove 
 from PIL import Image 
 
@@ -13,9 +13,9 @@ from PIL import Image
 
 
 def removeBg():
-    form = RemoveBgForm()
+    form = imageForm()
     if request.method == "GET":
-        return render_template("removeBackground/form.html" , form = form)
+        return render_template("removeBackground/removeBgForm.html" , form = form)
     elif request.method == "POST":
         if form.validate_on_submit():
             try:
@@ -27,9 +27,11 @@ def removeBg():
                 output = remove(input) 
                 output.save(output_path) 
                 file = secure_filename(file.filename)+".png"
+                db.session.add(filesModel(file))
+                db.session.commit()
                 print("file succes created")
                 
-                return render_template("removeBackground/download.html", file = file)
+                return render_template("removeBackground/removeBgDownload.html", file = file)
             except Exception as e:
                 print(e)
                 return "Error"

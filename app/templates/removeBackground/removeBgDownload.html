@@ -1,0 +1,14 @@
+
+
+{% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
+block head %} {{ super() }} {% endblock %} {% block content %}
+
+<a
+  download="custom-filename.jpg"
+  href="{{url_for('static', filename='Removebg/'+file)}}"
+  title="ImageName"
+>
+  Download
+</a>
+
+{% endblock %}

@@ -2,8 +2,8 @@ from flask import Flask
 from .database import db
 from app import app
 from flask_migrate import Migrate
-from app.models.carModel import CarsModel
-from app.models.fileModel import filesmodel
+
+
 
 
 
