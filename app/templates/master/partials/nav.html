@@ -1,0 +1,228 @@
+<!-- NAVBAR START-->
+
+<!-- batas -->
+<nav
+  class="mb-4 bg-blue-800 border-gray-200 shadow-xl dark:bg-gray-900 rounded-b-xl"
+>
+  <div
+    class="flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto"
+  >
+    <!-- LOGO START -->
+    <a href="{{url_for('home')}}" class="flex items-center">
+      <img
+        src="{{url_for('static', filename='image/logo.png')}}"
+        class="h-8 mr-3"
+        alt="Compactify Logo"
+      />
+      <span
+        class="self-center text-2xl font-semibold text-white whitespace-nowrap dark:text-white"
+        >Compactify</span
+      >
+    </a>
+    <!-- LOGO END -->
+    <div>
+      <div class="max-w-screen-xl px-4 mx-auto">
+        <div class="flex items-center">
+          <ul class="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium">
+            <!-- Button Home -->
+            <li>
+              <a
+                href="{{url_for('home')}}"
+                class="text-white hover:text-sky-300 dark:text-white"
+                aria-current="page"
+                >Home</a
+              >
+            </li>
+            <!-- Button To Compress Page -->
+            <li
+              x-data="{
+                open: false,
+                toggle() {
+                    if (this.open) {
+                        return this.close()
+                    }
+     
+                    this.$refs.button.focus()
+     
+                    this.open = true
+                },
+                close(focusAfter) {
+                    if (! this.open) return
+     
+                    this.open = false
+     
+                    focusAfter && focusAfter.focus()
+                }
+            }"
+              x-on:keydown.escape.prevent.stop="close($refs.button)"
+              x-on:focusin.window="! $refs.panel.contains($event.target) && close()"
+              x-id="['dropdown-button']"
+            >
+              <button
+                x-ref="button"
+                x-on:click="toggle()"
+                :aria-expanded="open"
+                :aria-controls="$id('dropdown-button')"
+                type="button"
+                class="text-white hover:text-sky-300 dark:text-white"
+              >
+                Compress
+              </button>
+
+              <div
+                x-ref="panel"
+                x-show="open"
+                x-transition.origin.top.left
+                x-on:click.outside="close($refs.button)"
+                :id="$id('dropdown-button')"
+                style="display: none"
+                class="absolute left-0 w-screen mt-2 bg-white rounded-md shadow-md h-1/4 w"
+              >
+                <div class="flex items-center justify-center h-full mx-auto">
+                  <a
+                    href="{{url_for('compressImg')}}"
+                    class="flex justify-center items-center gap-2 w-full first-of-type:rounded-t-md last-of-type:rounded-b-md px-4 py-2.5 text-left text-sm hover:bg-gray-50 disabled:text-gray-500"
+                  >
+                    Compress Image
+                  </a>
+                  <a
+                    href="{{url_for('compressPdf')}}"
+                    class="flex justify-center items-center gap-2 w-full first-of-type:rounded-t-md last-of-type:rounded-b-md px-4 py-2.5 text-left text-sm hover:bg-gray-50 disabled:text-gray-500"
+                  >
+                    Compress PDF
+                  </a>
+                </div>
+              </div>
+            </li>
+            <!-- Button to Convert Page -->
+            <li
+              x-data="{
+                open: false,
+                toggle() {
+                    if (this.open) {
+                        return this.close()
+                    }
+     
+                    this.$refs.button.focus()
+     
+                    this.open = true
+                },
+                close(focusAfter) {
+                    if (! this.open) return
+     
+                    this.open = false
+     
+                    focusAfter && focusAfter.focus()
+                }
+            }"
+              x-on:keydown.escape.prevent.stop="close($refs.button)"
+              x-on:focusin.window="! $refs.panel.contains($event.target) && close()"
+              x-id="['dropdown-button']"
+            >
+              <button
+                x-ref="button"
+                x-on:click="toggle()"
+                :aria-expanded="open"
+                :aria-controls="$id('dropdown-button')"
+                type="button"
+                class="text-white hover:text-sky-300 dark:text-white"
+              >
+                Convert
+              </button>
+
+              <div
+                x-ref="panel"
+                x-show="open"
+                x-transition.origin.top.left
+                x-on:click.outside="close($refs.button)"
+                :id="$id('dropdown-button')"
+                style="display: none"
+                class="absolute left-0 w-screen mt-2 bg-white rounded-md shadow-md h-1/4 w"
+              >
+                <div class="flex items-center justify-center h-full mx-auto">
+                  <a
+                    href="{{url_for('wordToPDF')}}"
+                    class="flex justify-center items-center gap-2 w-full first-of-type:rounded-t-md last-of-type:rounded-b-md px-4 py-2.5 text-left text-sm hover:bg-gray-50 disabled:text-gray-500"
+                  >
+                    Word To Pdf
+                  </a>
+                </div>
+              </div>
+            </li>
+            <!-- Button to Edit Image -->
+            <li
+              x-data="{
+                open: false,
+                toggle() {
+                    if (this.open) {
+                        return this.close()
+                    }
+     
+                    this.$refs.button.focus()
+     
+                    this.open = true
+                },
+                close(focusAfter) {
+                    if (! this.open) return
+     
+                    this.open = false
+     
+                    focusAfter && focusAfter.focus()
+                }
+            }"
+              x-on:keydown.escape.prevent.stop="close($refs.button)"
+              x-on:focusin.window="! $refs.panel.contains($event.target) && close()"
+              x-id="['dropdown-button']"
+            >
+              <button
+                x-ref="button"
+                x-on:click="toggle()"
+                :aria-expanded="open"
+                :aria-controls="$id('dropdown-button')"
+                type="button"
+                class="text-white hover:text-sky-300 dark:text-white"
+              >
+                Edit Image
+              </button>
+
+              <div
+                x-ref="panel"
+                x-show="open"
+                x-transition.origin.top.left
+                x-on:click.outside="close($refs.button)"
+                :id="$id('dropdown-button')"
+                style="display: none"
+                class="absolute left-0 w-screen mt-2 bg-white rounded-md shadow-md h-1/4 w"
+              >
+                <div class="flex items-center justify-center h-full mx-auto">
+                  <a
+                    href="{{url_for('removebg')}}"
+                    class="flex justify-center items-center gap-2 w-full first-of-type:rounded-t-md last-of-type:rounded-b-md px-4 py-2.5 text-left text-sm hover:bg-gray-50 disabled:text-gray-500"
+                  >
+                    Remove Background
+                  </a>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="flex items-center">
+      <button>
+        <a
+          href="#"
+          class="px-3 py-1 mr-6 text-sm text-white border border-white rounded-md dark:text-blue-500 border-radius hover:bg-white hover:text-blue-800"
+          >Login</a
+        >
+      </button>
+      <button>
+        <a
+          href="#"
+          class="px-3 py-1 mr-2 text-sm text-white border border-white rounded-md dark:text-blue-500 border-radius hover:bg-white hover:text-blue-800"
+          >Register</a
+        >
+      </button>
+    </div> -->
+  </div>
+</nav>

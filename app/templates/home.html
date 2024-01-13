@@ -1,6 +1,54 @@
 {% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
 block head %} {{ super() }} {% endblock %} {% block content %}
 
-<div><h1 class="text-4xl bg-green-500">Ini adalah halaman Home</h1></div>
+
+
+<!-- NAVBAR END -->
+{% include "./master/partials/nav.html" %}
+
+
+<!-- CONTENT START -->
+<main>
+    
+    <!-- batas -->
+  <h1 class="mb-8 text-3xl font-bold text-center">
+    Transformasikan Data Anda dengan Mudah dan Aman
+  </h1>
+  <figure class="mb-20">
+    <img
+      src="{{url_for('static', filename='image/gambar 1.png')}}"
+      alt="Gambar 1"
+      class="flex items-center max-w-screen-md mx-auto"
+    />
+  </figure>
+  <section class="mb-20 about">
+    <h2 class="mb-4 text-xl font-bold text-center">Tentang</h2>
+    <section class="flex">
+      <p class="block w-1/2 px-10 my-auto font-semibold text-justify text-md">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet dolorum
+        nihil officia et distinctio placeat officiis consequatur. Cum excepturi
+        perspiciatis, repudiandae nisi quasi odio consequuntur ullam pariatur
+        impedit libero modi!
+      </p>
+      <img
+        src="{{url_for('static', filename='image/gambar 2.png')}}"
+        alt="Gambar 2"
+        class="block max-w-xs mx-auto"
+      />
+    </section>
+  </section>
+</main>
+<!-- CONTENT END -->
+
+<!-- FOOTER START -->
+<footer class="bg-blue-800 border-gray-200 dark:bg-gray-900 rounded-t-xl">
+  <section
+    class="flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto"
+  ></section>
+</footer>
+<!-- FOOTER END -->
+
+
+
 
 {% endblock %}

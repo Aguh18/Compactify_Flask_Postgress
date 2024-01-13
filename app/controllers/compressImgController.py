@@ -100,3 +100,4 @@ def compress_img(filename,image_name, new_size_ratio=0.9, quality=50, width=None
         img.save( "app/static/CompressImg/" +secure_filename(new_filename), quality=quality, optimize=True)
    
     return secure_filename(new_filename)
+9

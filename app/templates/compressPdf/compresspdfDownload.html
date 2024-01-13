@@ -1,0 +1,40 @@
+{% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
+block head %} {{ super() }} {% endblock %} {% block content %} {% include
+"./master/partials/nav.html" %}
+<div class="w-screen">
+  <div
+    class="w-full h-28 text-center mt-[116px] text-zinc-700 text-5xl font-semibold font-['Poppins'] underline leading-10"
+  >
+    File Anda Telah Selesai di Proses
+  </div>
+</div>
+
+<a
+  download="custom-filename.jpg"
+  href="{{url_for('static', filename='compresspdf/'+file)}}"
+  class="flex items-center justify-center mt-10"
+>
+  <div
+    class="w-2/6 h-20 rounded-full bg-gradient-to-b from-blue-600 to-sky-900"
+  >
+    <div
+      class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+    >
+      Download File
+    </div>
+  </div>
+</a>
+
+<div class="flex items-center justify-center w-full">
+  <a href="{{url_for('compressPdf')}}"
+    class="flex items-center justify-center w-3/5 mt-32 h-28 bg-gradient-to-b from-blue-600 to-sky-900 rounded-3xl"
+  >
+    <div
+      class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+    >
+      Unggah File Lainnya +
+    </div>
+  </a>
+</div>
+
+{% endblock %}
