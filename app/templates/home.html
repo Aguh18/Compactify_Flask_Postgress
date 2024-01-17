@@ -1,16 +1,12 @@
 {% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
 block head %} {{ super() }} {% endblock %} {% block content %}
 
-
-
 <!-- NAVBAR END -->
 {% include "./master/partials/nav.html" %}
 
-
 <!-- CONTENT START -->
 <main>
-    
-    <!-- batas -->
+  <!-- batas -->
   <h1 class="mb-8 text-3xl font-bold text-center">
     Transformasikan Data Anda dengan Mudah dan Aman
   </h1>
@@ -25,10 +21,15 @@ block head %} {{ super() }} {% endblock %} {% block content %}
     <h2 class="mb-4 text-xl font-bold text-center">Tentang</h2>
     <section class="flex">
       <p class="block w-1/2 px-10 my-auto font-semibold text-justify text-md">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Amet dolorum
-        nihil officia et distinctio placeat officiis consequatur. Cum excepturi
-        perspiciatis, repudiandae nisi quasi odio consequuntur ullam pariatur
-        impedit libero modi!
+        Compactify adalah sebuah aplikasi berbasis web yang menghadirkan
+        sejumlah layanan yang sangat berguna dalam mengelola berbagai jenis file
+        dan gambar. Dengan Compactify, Anda dapat dengan mudah mengkonversi
+        berbagai jenis file, menjadikan gambar lebih ringan dengan kompresi
+        gambar yang canggih, serta melakukan berbagai jenis penyuntingan gambar
+        untuk memastikan hasil yang sesuai dengan kebutuhan Anda. Dengan
+        fitur-fitur yang canggih dan mudah digunakan, Compactify merupakan alat
+        yang sangat efektif untuk membantu Anda dalam berbagai tugas yang
+        berhubungan dengan file dan gambar dalam lingkup web.
       </p>
       <img
         src="{{url_for('static', filename='image/gambar 2.png')}}"
@@ -47,8 +48,5 @@ block head %} {{ super() }} {% endblock %} {% block content %}
   ></section>
 </footer>
 <!-- FOOTER END -->
-
-
-
 
 {% endblock %}

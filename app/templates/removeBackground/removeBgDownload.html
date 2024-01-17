@@ -26,7 +26,8 @@ block head %} {{ super() }} {% endblock %} {% block content %} {% include
 </a>
 
 <div class="flex items-center justify-center w-full">
-  <a href="{{url_for('removeBg')}}"
+  <a
+    href="{{url_for('removebg')}}"
     class="flex items-center justify-center w-3/5 mt-32 h-28 bg-gradient-to-b from-blue-600 to-sky-900 rounded-3xl"
   >
     <div
@@ -34,7 +35,7 @@ block head %} {{ super() }} {% endblock %} {% block content %} {% include
     >
       Unggah File Lainnya +
     </div>
-  </>
+  </a>
 </div>
 
 {% endblock %}

@@ -4,6 +4,8 @@ from app.controllers import removeBgController
 from app.controllers import compressImgController
 from app.controllers import wordToPDFController
 from app.controllers import compressPdfController
+from app.controllers import imageToPdfController
+from app.controllers import zipController
 
 @app.route("/", methods=["GET"], endpoint="home")
 def index_route():
@@ -27,7 +29,17 @@ def compressImg_route():
 def wordToPDF_route():
     return wordToPDFController.wordToPDF()
 
+# Image to pdf
+@app.route("/imagetopdf", methods=["GET", "POST"], endpoint="imageToPdf")
+def compressPdf_route():
+    return imageToPdfController.imageTopdf()
+
 # Compress PDF
 @app.route("/compresspdf", methods=["GET", "POST"], endpoint="compressPdf")
 def compressPdf_route():
     return compressPdfController.compressPdf()
+
+#  Zip
+@app.route("/zip", methods=["GET", "POST"], endpoint="zip")
+def zip_route():
+    return  zipController.zip()

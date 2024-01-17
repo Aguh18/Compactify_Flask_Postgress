@@ -3,12 +3,65 @@ from app.models.validate.pdfValidation import pdfForm
 from app.config.database import db
 from werkzeug.utils import secure_filename 
 from app.models.fileModel import filesModel
-import os
+import argparse
+import os.path
+import shutil
+import subprocess
 import sys
-from PDFNetPython3.PDFNetPython import PDFDoc, Optimizer, SDFDoc, PDFNet
 
 
+def compress(input_file_path, output_file_path, power=0):
+    """Function to compress PDF via Ghostscript command line interface"""
+    quality = {
+        0: "/default",
+        1: "/prepress",
+        2: "/printer",
+        3: "/ebook",
+        4: "/screen"
+    }
 
+    # Basic controls
+    # Check if valid path
+    if not os.path.isfile(input_file_path):
+        print("Error: invalid path for input PDF file.", input_file_path)
+        sys.exit(1)
+
+    # Check compression level
+    if power < 0 or power > len(quality) - 1:
+        print("Error: invalid compression level, run pdfc -h for options.", power)
+        sys.exit(1)
+
+    # Check if file is a PDF by extension
+    if input_file_path.split('.')[-1].lower() != 'pdf':
+        print(f"Error: input file is not a PDF.", input_file_path)
+        sys.exit(1)
+
+    gs = get_ghostscript_path()
+    print("Compress PDF...")
+    initial_size = os.path.getsize(input_file_path)
+    subprocess.call(
+        [
+            gs,
+            "-sDEVICE=pdfwrite",
+            "-dCompatibilityLevel=1.4",
+            "-dPDFSETTINGS={}".format(quality[power]),
+            "-dNOPAUSE",
+            "-dQUIET",
+            "-dBATCH",
+            "-sOutputFile={}".format(output_file_path),
+            input_file_path,
+        ]
+    )
+
+
+def get_ghostscript_path():
+    gs_names = ["gs", "gswin32", "gswin64"]
+    for name in gs_names:
+        if shutil.which(name):
+            return shutil.which(name)
+    raise FileNotFoundError(
+        f"No GhostScript executable was found on path ({'/'.join(gs_names)})"
+    )
 
 
 
@@ -26,10 +79,10 @@ def compressPdf():
             try:
                 file = request.files["file"]
                 file.save("app/static/uploads/" + secure_filename(file.filename) )
-                input_path = "app/static/uploads/" + secure_filename(file.filename)
-                output_path = "app/static/compresspdf/" + secure_filename(file.filename)
+                input_path = "/home/guhh/Documents/All project/mvc-flask-master/app/static/uploads/" + secure_filename(file.filename)
+                output_path = "/home/guhh/Documents/All project/mvc-flask-master/app/static/pdfcompressed/" + secure_filename(file.filename)
                 
-                compressPdf(input_path, output_path)
+                compress(input_path, output_path, power=3)
                
                 file = secure_filename(file.filename)
                 
@@ -37,10 +90,10 @@ def compressPdf():
                 db.session.commit()
                 print("file succes created")
                 
-                return render_template("compressPdf/compressPdfDownload.html", file = file)
+                return render_template("compressPdf/compresspdfDownload.html", file = file)
             except Exception as e:
                 print(e)
-                return "Still Under Dveloptment"
+                return str(e)
         else:
             flash("File tidak valid")
             return redirect(request.url)
@@ -50,23 +103,5 @@ def compressPdf():
         
 
 
-def compress_file(input_file, output_file):
-    """Compress PDF file"""
-    if not output_file:
-        output_file = input_file
-    
-    try:
-        # Initialize the library
-        PDFNet.Initialize()
-        doc = PDFDoc(input_file)
-        # Optimize PDF with the default settings
-        doc.InitSecurityHandler()
-        # Reduce PDF size by removing redundant information and compressing data streams
-        Optimizer.Optimize(doc)
-        doc.Save(output_file, SDFDoc.e_linearized)
-        doc.Close()
-    except Exception as e:
-        print("Error compress_file=", e)
-        doc.Close()
-      
+
     

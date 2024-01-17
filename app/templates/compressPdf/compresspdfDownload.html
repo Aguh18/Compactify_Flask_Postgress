@@ -11,7 +11,7 @@ block head %} {{ super() }} {% endblock %} {% block content %} {% include
 
 <a
   download="custom-filename.jpg"
-  href="{{url_for('static', filename='compresspdf/'+file)}}"
+  href="{{url_for('static', filename='pdfcompressed/'+file)}}"
   class="flex items-center justify-center mt-10"
 >
   <div
@@ -26,7 +26,8 @@ block head %} {{ super() }} {% endblock %} {% block content %} {% include
 </a>
 
 <div class="flex items-center justify-center w-full">
-  <a href="{{url_for('compressPdf')}}"
+  <a
+    href="{{url_for('compressPdf')}}"
     class="flex items-center justify-center w-3/5 mt-32 h-28 bg-gradient-to-b from-blue-600 to-sky-900 rounded-3xl"
   >
     <div

@@ -30,10 +30,8 @@ def removeBg():
                 db.session.add(filesModel(file))
                 db.session.commit()
                 print("file succes created")
-                
                 return render_template("removeBackground/removeBgDownload.html", file = file)
             except Exception as e:
-                print(e)
                 return "Error"
         else:
             flash("File tidak valid")
