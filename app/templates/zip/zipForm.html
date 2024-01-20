@@ -1,49 +1,76 @@
 {% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
 block head %} {{ super() }} {% endblock %} {% block content %}
-<!-- NAVBAR END -->
-{% include "./master/partials/nav.html" %}
+<div class="w-screen h-screen">
+  <!-- NAVBAR END -->
+  {% include "./master/partials/nav.html" %}
 
-<!-- Content Section Start -->
-<main class="box-border flex items-center justify-center mt-40">
-  <section
-    class="box-border flex flex-col items-center justify-center shadow-2xl w-96 h-96 rounded-2xl"
+  <!-- Content Section Start -->
+  <main
+    class="box-border flex items-center justify-center w-full h-full"
+    style="height: calc(100% - 80px)"
   >
-    <form
-      x-data="{ clicks: [] }"
-      action="{{url_for('zip')}}"
-      method="POST"
-      enctype="multipart/form-data"
+    <section
+      class="box-border flex flex-col items-center justify-center h-auto shadow-2xl w-96 min-h-96 rounded-2xl"
     >
-      <div class="mb-10">
-        <p>Pilih File yang akan di kompress</p>
-      </div>
-      <div class="mb-10">
-        <img
-          src="{{url_for('static', filename='image/logo.png')}}"
-          class="h-20 opacity-50"
-          alt="Compactify Logo"
-        />
-      </div>
-      <div>
-        <button type="button" @click="clicks.push(clicks.length + 1)">
-          Tambah File
-        </button>
-        <template x-for="(click, index) in clicks" :key="index">
-          <input type="file" :name="'file[' + index + ']'" />
-          <p x-text="index"></p>
-        </template>
-      </div>
-
-      <input type="hidden" name="length" x-bind:value="clicks.length" />
-      <button
-        type="submit"
-        name="submit"
-        class="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+      <form
+        x-data="{ clicks: [] }"
+        action="{{url_for('zip')}}"
+        method="POST"
+        enctype="multipart/form-data"
       >
-        Edit
-      </button>
-    </form>
-  </section>
-</main>
+        <div class="mb-10">
+          <p>Pilih File yang akan di Compress</p>
+        </div>
+        <div class="flex justify-center mb-5">
+          <img
+            src="{{url_for('static', filename='image/logo.png')}}"
+            class="h-20 opacity-50"
+            alt="Compactify Logo"
+          />
+        </div>
+        <div>
+          <button
+            class="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            type="button"
+            @click="clicks.push(clicks.length + 1)"
+          >
+            Tambah File
+          </button>
+          <template x-for="(click, index) in clicks" :key="index">
+            <div class="items-center mb-1">
+              <input
+                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 max-w-64"
+                type="file"
+                :name="'file[' + index + ']'"
+              />
+            </div>
+          </template>
+        </div>
+
+        <input type="hidden" name="length" x-bind:value="clicks.length" />
+        {% with messages = get_flashed_messages() %} {% if messages %}
+        <ul class="flex justify-center w-full messages">
+          {% for message in messages %}
+
+          <li
+            class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50"
+            role="alert"
+          >
+            <span class="font-medium">alert!</span> {{ message }}
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %} {% endwith %}
+        <button
+          type="submit"
+          name="submit"
+          class="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        >
+          Compress
+        </button>
+      </form>
+    </section>
+  </main>
+</div>
 
 {% endblock %}

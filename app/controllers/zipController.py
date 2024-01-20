@@ -51,6 +51,7 @@ def zip():
             return render_template("zip/zipDownload.html", file = file)
         except Exception as e:
            
-            return str(e)
+            flash("File tidak valid")
+            return redirect(request.url)
     
    

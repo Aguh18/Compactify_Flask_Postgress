@@ -6,6 +6,7 @@ from app.controllers import wordToPDFController
 from app.controllers import compressPdfController
 from app.controllers import imageToPdfController
 from app.controllers import zipController
+from app.controllers import imageToGrayscaleController
 
 @app.route("/", methods=["GET"], endpoint="home")
 def index_route():
@@ -43,3 +44,7 @@ def compressPdf_route():
 @app.route("/zip", methods=["GET", "POST"], endpoint="zip")
 def zip_route():
     return  zipController.zip()
+
+@app.route("/imgtogray", methods=["GET", "POST"], endpoint="imgtogray")
+def imgtogray_route():
+    return  imageToGrayscaleController.imgtogray()

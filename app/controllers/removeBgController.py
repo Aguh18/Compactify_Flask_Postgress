@@ -32,7 +32,7 @@ def removeBg():
                 print("file succes created")
                 return render_template("removeBackground/removeBgDownload.html", file = file)
             except Exception as e:
-                return "Error"
+                return str(e)
         else:
             flash("File tidak valid")
             return redirect(request.url)
