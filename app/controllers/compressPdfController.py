@@ -8,7 +8,7 @@ import os.path
 import shutil
 import subprocess
 import sys
-
+from dotenv import dotenv_values
 
 def compress(input_file_path, output_file_path, power=0):
     """Function to compress PDF via Ghostscript command line interface"""
@@ -77,10 +77,13 @@ def compressPdf():
     elif request.method == "POST":
         if form.validate_on_submit():
             try:
+                
+                env_values = dotenv_values(".env")
+                project_Path = env_values["PATH"]
                 file = request.files["file"]
                 file.save("app/static/uploads/" + secure_filename(file.filename) )
-                input_path = "/home/guhh/Documents/All project/mvc-flask-master/app/static/uploads/" + secure_filename(file.filename)
-                output_path = "/home/guhh/Documents/All project/mvc-flask-master/app/static/pdfcompressed/" + secure_filename(file.filename)
+                input_path = project_Path+"app/static/uploads/" + secure_filename(file.filename)
+                output_path = project_Path+"app/static/pdfcompressed/" + secure_filename(file.filename)
                 
                 compress(input_path, output_path, power=3)
                

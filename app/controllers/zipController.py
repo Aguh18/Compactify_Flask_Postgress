@@ -6,6 +6,12 @@ from app.models.fileModel import filesModel
 import os
 import zipfile
 from datetime import datetime, timedelta
+from dotenv import dotenv_values
+
+
+
+
+
 
 
 
@@ -33,13 +39,15 @@ def zip():
         return render_template("zip/zipForm.html" )
     elif request.method == "POST":
         try:
+            env_values = dotenv_values(".env")
+            project_Path = env_values["PATH"]
             # Mengambil waktu saat ini
             now = datetime.now()
   
             pathfile = request.files["file[0]"]
-            input_path = "/home/guhh/Documents/All project/mvc-flask-master/app/static/uploads/zip/"+secure_filename(pathfile.filename)+str(now)
+            input_path = project_Path+"app/static/uploads/zip/"+secure_filename(pathfile.filename)+str(now)
             os.mkdir(input_path)
-            output_path = "/home/guhh/Documents/All project/mvc-flask-master/app/static/zip/"+secure_filename(pathfile.filename)+".zip"
+            output_path = project_Path+"app/static/zip/"+secure_filename(pathfile.filename)+".zip"
             
             for i in range(0, int(request.form["length"])):
                 file = request.files["file["+ str(i) +"]"]
@@ -51,7 +59,6 @@ def zip():
             return render_template("zip/zipDownload.html", file = file)
         except Exception as e:
            
-            flash("File tidak valid")
-            return redirect(request.url)
+            return str(project_Path)
     
    

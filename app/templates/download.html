@@ -8,18 +8,28 @@ block head %} {{ super() }} {% endblock %} {% block content %} {% include
     File Anda Telah Selesai di Proses
   </div>
 </div>
-
-<a href="" class="flex items-center justify-center mt-10">
-  <div
-    class="w-2/6 h-20 rounded-full bg-gradient-to-b from-blue-600 to-sky-900"
-  >
-    <div
-      class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
-    >
-      Download File
-    </div>
+<!-- download section -->
+<section class="flex">
+  <div class="flex items-center justify-end w-1/2">
+    <img
+      src="{{url_for('static', filename='image/download.svg')}}"
+      alt="Gambar
+    1"
+      class="flex items-center max-w-screen-md"
+    />
   </div>
-</a>
+  <a href="" class="flex items-center w-1/2 mt-10">
+    <div
+      class="w-2/6 h-20 rounded-full bg-gradient-to-b from-blue-600 to-sky-900"
+    >
+      <div
+        class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+      >
+        Download File
+      </div>
+    </div>
+  </a>
+</section>
 
 <div class="flex items-center justify-center w-full">
   <div

@@ -1,4 +1,5 @@
 from app import app
+from flask import render_template
 from app.controllers import indexcontroller
 from app.controllers import removeBgController
 from app.controllers import compressImgController
@@ -11,6 +12,10 @@ from app.controllers import imageToGrayscaleController
 @app.route("/", methods=["GET"], endpoint="home")
 def index_route():
     return indexcontroller.user_list()
+
+@app.route("/coba", methods=["GET"], endpoint="coba")
+def index_route():
+    return render_template("download.html")
 
 
 
