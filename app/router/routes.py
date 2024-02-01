@@ -8,6 +8,7 @@ from app.controllers import compressPdfController
 from app.controllers import imageToPdfController
 from app.controllers import zipController
 from app.controllers import imageToGrayscaleController
+from app.controllers import audiocompressController
 
 @app.route("/", methods=["GET"], endpoint="home")
 def index_route():
@@ -53,3 +54,8 @@ def zip_route():
 @app.route("/imgtogray", methods=["GET", "POST"], endpoint="imgtogray")
 def imgtogray_route():
     return  imageToGrayscaleController.imgtogray()
+
+# compress Audio
+@app.route("/audiocompress", methods=["GET", "POST"], endpoint="audio compress")
+def imgtogray_route():
+    return  audiocompressController.CompressAudio()
