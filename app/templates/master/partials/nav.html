@@ -2,10 +2,10 @@
 
 <!-- batas -->
 <nav
-  class="h-20 bg-gray-900 border-gray-200 shadow-xl m dark:bg-gray-900 rounded-b-xl"
+  class="fixed top-0 w-screen h-20 bg-gray-900 border-gray-200 shadow-xl m dark:bg-gray-900 rounded-b-xl"
 >
   <div
-    class="flex flex-wrap items-center justify-between max-w-screen-xl p-4 mx-auto"
+    class="flex flex-wrap items-center justify-between h-full max-w-screen-xl p-4 mx-auto"
   >
     <!-- LOGO START -->
     <a href="{{url_for('home')}}" class="flex items-center">
@@ -20,10 +20,107 @@
       >
     </a>
     <!-- LOGO END -->
-    <div>
+    <!-- Responsive nav -->
+
+    <div x-data="{ hamburger: false }" class="block sm:hidden">
+      <button
+        class="relative w-10 h-10 text-gray-500 focus:outline-none"
+        @click="hamburger = !hamburger"
+      >
+        <div
+          class="absolute block w-5 transform -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2"
+        >
+          <span
+            aria-hidden="true"
+            class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out"
+            :class="{'rotate-45': hamburger,' -translate-y-1.5': !hamburger }"
+          ></span>
+          <span
+            aria-hidden="true"
+            class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out"
+            :class="{'opacity-0': hamburger } "
+          ></span>
+          <span
+            aria-hidden="true"
+            class="block absolute h-0.5 w-5 bg-current transform transition duration-500 ease-in-out"
+            :class="{'-rotate-45': hamburger, ' translate-y-1.5': !hamburger}"
+          ></span>
+        </div>
+      </button>
+      <div
+        x-transition.origin.top.left
+        x-show="hamburger"
+        x-on:click.outside="hamburger = false"
+        class="fixed flex justify-end right-[0%] w-auto rounded-sm h-auto"
+        :class="hamburger ? 'block' : 'hidden'"
+      >
+        <div
+          class="flex flex-row w-auto h-auto p-2 bg-opacity-75 rounded-lg bg-slate-200"
+        >
+          <ul class="flex flex-col w-full h-auto">
+            <li
+              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
+            >
+              <a href="{{url_for('home')}}" class="w-full h-full">Home</a>
+            </li>
+            <li
+              class="flex items-center justify-center w-full text-black hover:text-sky-300"
+            >
+              <a href="{{url_for('compressImg')}}" class="w-full h-full"
+                >Compress Image</a
+              >
+            </li>
+            <li
+              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
+            >
+              <a href="{{url_for('compressPdf')}}" class="w-full h-full"
+                >Compress PDF</a
+              >
+            </li>
+            <li
+              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
+            >
+              <a href="{{url_for('zip')}}" class="w-full h-full"
+                >Compress to Zip</a
+              >
+            </li>
+            <li
+              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
+            >
+              <a href="{{url_for('wordToPDF')}}" class="w-full h-full"
+                >Word To Pdf</a
+              >
+            </li>
+            <li
+              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
+            >
+              <a href="{{url_for('imageToPdf')}}" class="w-full h-full"
+                >Image To Pdf</a
+              >
+            </li>
+            <li
+              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
+            >
+              <a href="{{url_for('removebg')}}" class="w-full h-full"
+                >Remove Background</a
+              >
+            </li>
+            <li
+              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
+            >
+              <a href="{{url_for('imgtogray')}}" class="w-full h-full"
+                >Rgb To Grayscale</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- navbar -->
+    <div class="hidden sm:block">
       <div class="max-w-screen-xl px-4 mx-auto">
         <div class="flex items-center">
-          <ul class="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium">
+          <ul class="flex flex-row mt-0 mr-6 space-x-8 text-sm font-medium h">
             <!-- Button Home -->
             <li>
               <a
@@ -75,8 +172,8 @@
                 x-transition.origin.top.left
                 x-on:click.outside="close($refs.button)"
                 :id="$id('dropdown-button')"
-                style="display: none"
-                class="absolute left-0 w-screen mt-2 bg-white rounded-md shadow-md h-1/4 w"
+                style="display: none;"
+                class="absolute left-0 w-screen p-4 bg-white rounded-md shadow-md top-20"
               >
                 <div class="flex items-center justify-center h-full mx-auto">
                   <a
@@ -142,8 +239,8 @@
                 x-transition.origin.top.left
                 x-on:click.outside="close($refs.button)"
                 :id="$id('dropdown-button')"
-                style="display: none"
-                class="absolute left-0 w-screen mt-2 bg-white rounded-md shadow-md h-1/4 w"
+                style="display: none;"
+                class="absolute left-0 w-screen p-4 bg-white rounded-md shadow-md top-20"
               >
                 <div class="flex items-center justify-center h-full mx-auto">
                   <a
@@ -204,8 +301,8 @@
                 x-transition.origin.top.left
                 x-on:click.outside="close($refs.button)"
                 :id="$id('dropdown-button')"
-                style="display: none"
-                class="absolute left-0 w-screen mt-2 bg-white rounded-md shadow-md h-1/4 w"
+                style="display: none;"
+                class="absolute left-0 w-screen p-4 bg-white rounded-md shadow-md top-20"
               >
                 <div class="flex items-center justify-center h-full mx-auto">
                   <a
@@ -227,21 +324,5 @@
         </div>
       </div>
     </div>
-    <!-- <div class="flex items-center">
-      <button>
-        <a
-          href="#"
-          class="px-3 py-1 mr-6 text-sm text-white border border-white rounded-md dark:text-blue-500 border-radius hover:bg-white hover:text-blue-800"
-          >Login</a
-        >
-      </button>
-      <button>
-        <a
-          href="#"
-          class="px-3 py-1 mr-2 text-sm text-white border border-white rounded-md dark:text-blue-500 border-radius hover:bg-white hover:text-blue-800"
-          >Register</a
-        >
-      </button>
-    </div> -->
   </div>
 </nav>

@@ -10,12 +10,12 @@
       rel="stylesheet"
       href="{{url_for('static',filename='dist/css/output.css')}}"
     />
-    <script src="{{url_for('static',filename='dist/output.js')}}" defer></script>
-
+    <script
+      src="{{url_for('static',filename='dist/output.js')}}"
+      defer
+    ></script>
   </head>
-  <body>
-    
-  
-    {% block content %}{% endblock %}
+  <body class="max-h-screen">
+    {% include "./master/partials/nav.html" %} {% block content %}{% endblock %}
   </body>
 </html>
