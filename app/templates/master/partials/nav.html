@@ -55,64 +55,12 @@
         :class="hamburger ? 'block' : 'hidden'"
       >
         <div
-          class="flex flex-row w-auto h-auto p-2 bg-opacity-75 rounded-lg bg-slate-200"
+          class="flex flex-col justify-start items-start w-[200px] h-auto gap-2 p-2 rounded-lg bg-opacity-85 bg-slate-200"
         >
-          <ul class="flex flex-col w-full h-auto">
-            <li
-              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
-            >
-              <a href="{{url_for('home')}}" class="w-full h-full">Home</a>
-            </li>
-            <li
-              class="flex items-center justify-center w-full text-black hover:text-sky-300"
-            >
-              <a href="{{url_for('compressImg')}}" class="w-full h-full"
-                >Compress Image</a
-              >
-            </li>
-            <li
-              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
-            >
-              <a href="{{url_for('compressPdf')}}" class="w-full h-full"
-                >Compress PDF</a
-              >
-            </li>
-            <li
-              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
-            >
-              <a href="{{url_for('zip')}}" class="w-full h-full"
-                >Compress to Zip</a
-              >
-            </li>
-            <li
-              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
-            >
-              <a href="{{url_for('wordToPDF')}}" class="w-full h-full"
-                >Word To Pdf</a
-              >
-            </li>
-            <li
-              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
-            >
-              <a href="{{url_for('imageToPdf')}}" class="w-full h-full"
-                >Image To Pdf</a
-              >
-            </li>
-            <li
-              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
-            >
-              <a href="{{url_for('removebg')}}" class="w-full h-full"
-                >Remove Background</a
-              >
-            </li>
-            <li
-              class="flex items-center justify-center w-full h-10 text-black hover:text-sky-300"
-            >
-              <a href="{{url_for('imgtogray')}}" class="w-full h-full"
-                >Rgb To Grayscale</a
-              >
-            </li>
-          </ul>
+          <button>Home</button>
+          <button>Compress</button>
+          <button>Convert</button>
+          <button>Edit Image</button>
         </div>
       </div>
     </div>

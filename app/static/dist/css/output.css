@@ -814,6 +814,10 @@ video {
   width: 100vw;
 }
 
+.w-\[200px\] {
+  width: 200px;
+}
+
 .max-w-64 {
   max-width: 16rem;
 }
@@ -894,8 +898,16 @@ video {
   flex-wrap: wrap;
 }
 
+.items-start {
+  align-items: flex-start;
+}
+
 .items-center {
   align-items: center;
+}
+
+.justify-start {
+  justify-content: flex-start;
 }
 
 .justify-end {
@@ -1027,6 +1039,10 @@ video {
 
 .bg-opacity-75 {
   --tw-bg-opacity: 0.75;
+}
+
+.bg-opacity-85 {
+  --tw-bg-opacity: 0.85;
 }
 
 .bg-gradient-to-b {

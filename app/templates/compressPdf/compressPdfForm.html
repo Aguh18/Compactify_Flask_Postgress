@@ -1,14 +1,13 @@
 {% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
 block head %} {{ super() }} {% endblock %} {% block content %}
-<div class="w-screen h-screen">
+<div
+  class="flex items-center justify-center w-screen mt-20"
+  style="height: calc(100vh - 80px);"
+>
   <!-- NAVBAR END -->
-  {% include "./master/partials/nav.html" %}
 
   <!-- Content Section Start -->
-  <main
-    class="box-border flex items-center justify-center w-full h-full"
-    style="height: calc(100% - 80px)"
-  >
+  <main class="box-border flex items-center justify-center w-full h-full">
     <section
       class="box-border flex flex-col items-center justify-center h-auto shadow-2xl w-96 min-h-96 rounded-2xl"
     >
@@ -35,10 +34,7 @@ block head %} {{ super() }} {% endblock %} {% block content %}
             >Upload file</label
           >
 
-          {{ form.file( class="block w-full text-sm text-gray-900 border
-          border-gray-300 rounded-lg cursor-pointer max-w-64 bg-gray-50
-          dark:text-gray-400 focus:outline-none dark:bg-gray-700
-          dark:border-gray-600 dark:placeholder-gray-400" ) }} {% with messages
+          {{ form.file( class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer max-w-64 bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" ) }} {% with messages
           = get_flashed_messages() %} {% if messages %}
           <ul class="flex justify-center w-full messages">
             {% for message in messages %}

@@ -1,14 +1,13 @@
 {% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
 block head %} {{ super() }} {% endblock %} {% block content %}
-<div class="w-screen h-screen">
+<div
+  class="flex items-center justify-center w-screen mt-20"
+  style="height: calc(100vh - 80px);"
+>
   <!-- NAVBAR END -->
-  {% include "./master/partials/nav.html" %}
 
   <!-- Content Section Start -->
-  <main
-    class="box-border flex items-center justify-center w-full h-full"
-    style="height: calc(100% - 80px)"
-  >
+  <main class="box-border flex items-center justify-center w-full h-full">
     <section
       class="box-border flex flex-col items-center justify-center h-auto shadow-2xl w-96 min-h-96 rounded-2xl"
     >
