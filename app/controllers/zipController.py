@@ -59,6 +59,6 @@ def zip():
             return render_template("zip/zipDownload.html", file = file)
         except Exception as e:
            
-            return str(project_Path)
+            return str(e)
     
    
