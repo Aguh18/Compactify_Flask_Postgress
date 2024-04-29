@@ -2,7 +2,7 @@
 
 <!-- batas -->
 <nav
-  class="sticky top-0 w-screen h-20 bg-gray-900 border-gray-200 shadow-xl m dark:bg-gray-900 rounded-b-xl"
+  class="sticky top-0 w-full h-20 bg-gray-900 border-gray-200 shadow-xl dark:bg-gray-900 rounded-b-xl"
 >
   <div
     class="flex flex-wrap items-center justify-between h-full max-w-screen-xl p-4 mx-auto"
@@ -81,16 +81,7 @@
             x-on:keydown.escape.prevent.stop="close($refs.button)"
             x-id="['dropdown-button']"
           >
-            <div
-              x-show="open === 'compress'"
-              x-transition.origin.top.left
-              x-on:click.outside="close($refs.button)"
-              :id="$id('dropdown-button')"
-              class="fixed right-[37%] rounded-md h-10 bg-slate-200 w-40"
-              style="display: none;"
-            >
-              ini ada
-            </div>
+           
             <div
               x-show="open === 'convert'"
               x-transition.origin.top.left
