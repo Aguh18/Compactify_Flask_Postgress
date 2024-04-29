@@ -2,7 +2,7 @@
 
 <!-- batas -->
 <nav
-  class="fixed top-0 w-screen h-20 bg-gray-900 border-gray-200 shadow-xl m dark:bg-gray-900 rounded-b-xl"
+  class="sticky top-0 w-screen h-20 bg-gray-900 border-gray-200 shadow-xl m dark:bg-gray-900 rounded-b-xl"
 >
   <div
     class="flex flex-wrap items-center justify-between h-full max-w-screen-xl p-4 mx-auto"
@@ -51,16 +51,99 @@
         x-transition.origin.top.left
         x-show="hamburger"
         x-on:click.outside="hamburger = false"
-        class="fixed flex justify-end right-[0%] w-auto rounded-sm h-auto"
-        :class="hamburger ? 'block' : 'hidden'"
+        :class="{'block': hamburger, 'hidden': !hamburger}"
+        class="fixed justify-end right-[0%] hidden w-auto rounded-sm h-auto"
       >
         <div
+          x-data="{ open: '' }"
           class="flex flex-col justify-start items-start w-[200px] h-auto gap-2 p-2 rounded-lg bg-opacity-85 bg-slate-200"
         >
-          <button>Home</button>
-          <button>Compress</button>
-          <button>Convert</button>
-          <button>Edit Image</button>
+          <div
+            x-data="{
+         
+            toggle(value) {
+                if (this.open === value) {
+                    return this.close()
+                }
+ 
+                this.$refs.button.focus()
+ 
+                this.open = value;
+            },
+            close(focusAfter, value) {
+                if (! this.open === value) return
+ 
+                this.open = ''
+ 
+                focusAfter && focusAfter.focus()
+            }
+        }"
+            x-on:keydown.escape.prevent.stop="close($refs.button)"
+            x-id="['dropdown-button']"
+          >
+            <div
+              x-show="open === 'compress'"
+              x-transition.origin.top.left
+              x-on:click.outside="close($refs.button)"
+              :id="$id('dropdown-button')"
+              class="fixed right-[37%] rounded-md h-10 bg-slate-200 w-40"
+              style="display: none;"
+            >
+              ini ada
+            </div>
+            <div
+              x-show="open === 'convert'"
+              x-transition.origin.top.left
+              x-on:click.outside="close($refs.button)"
+              :id="$id('dropdown-button')"
+              class="fixed right-[37%] rounded-md h-10 bg-slate-200 w-40"
+              style="display: none;"
+            >
+              ini ada beda
+            </div>
+            <button
+              x-ref="button"
+              x-on:click="toggle('compress')"
+              :aria-expanded="open"
+              :aria-controls="$id('dropdown-button')"
+              type="button"
+            >
+              Compress
+            </button>
+          </div>
+          <div
+            x-data="{
+         
+            toggle(value) {
+                if (this.open === value) {
+                    return this.close()
+                }
+ 
+                this.$refs.button.focus()
+ 
+                this.open = value;
+            },
+            close(focusAfter, value) {
+                if (! this.open === value) return
+ 
+                this.open = ''
+ 
+                focusAfter && focusAfter.focus()
+            }
+        }"
+            x-on:keydown.escape.prevent.stop="close($refs.button)"
+            x-id="['dropdown-button']"
+          >
+            <button
+              x-ref="button"
+              x-on:click="toggle('convert')"
+              :aria-expanded="open"
+              :aria-controls="$id('dropdown-button')"
+              type="button"
+            >
+              Convert
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
 block head %} {{ super() }} {% endblock %} {% block content %}
 <!-- NAVBAR END -->
 <div
-  class="flex items-center justify-center w-screen mt-20"
+  class="flex items-center justify-center w-screen"
   style="height: calc(100vh - 80px);"
 >
   <!-- Content Section Start -->
@@ -36,7 +36,10 @@ block head %} {{ super() }} {% endblock %} {% block content %}
             >Upload file</label
           >
 
-          {{ form.file( class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer max-w-64 bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" ) }} {% with messages
+          {{ form.file( class="block w-full text-sm text-gray-900 border
+          border-gray-300 rounded-lg cursor-pointer max-w-64 bg-gray-50
+          dark:text-gray-400 focus:outline-none dark:bg-gray-700
+          dark:border-gray-600 dark:placeholder-gray-400" ) }} {% with messages
           = get_flashed_messages() %} {% if messages %}
           <ul class="flex justify-center w-full messages">
             {% for message in messages %}
