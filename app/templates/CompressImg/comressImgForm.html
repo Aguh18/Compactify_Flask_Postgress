@@ -19,7 +19,7 @@ block head %} {{ super() }} {% endblock %} {% block content %}
         enctype="multipart/form-data"
       >
         {{ form.csrf_token }}
-        <div class="mb-10">
+        <div class="flex justify-center mb-10">
           <p>Pilih File yang akan di kompress</p>
         </div>
         <div class="flex justify-center mb-10">
@@ -36,10 +36,7 @@ block head %} {{ super() }} {% endblock %} {% block content %}
             >Upload file</label
           >
 
-          {{ form.file( class="block w-full text-sm text-gray-900 border
-          border-gray-300 rounded-lg cursor-pointer max-w-64 bg-gray-50
-          dark:text-gray-400 focus:outline-none dark:bg-gray-700
-          dark:border-gray-600 dark:placeholder-gray-400" ) }} {% with messages
+          {{ form.file( class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer max-w-64 bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" ) }} {% with messages
           = get_flashed_messages() %} {% if messages %}
           <ul class="flex justify-center w-full messages">
             {% for message in messages %}
