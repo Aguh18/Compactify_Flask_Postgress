@@ -55,8 +55,27 @@
         class="fixed justify-end right-[0%] hidden w-auto rounded-sm h-auto"
       >
         <div
-          x-data="{ open: '' }"
-          class="flex flex-col justify-start items-start w-[200px] h-auto gap-2 p-2 rounded-lg bg-opacity-85 bg-slate-200"
+          x-data="{ open: '',
+          toggle(value) {
+            if (this.open === value) {
+                return this.close()
+            }
+
+            this.$refs.button.focus()
+
+            this.open = value;
+        },
+        close(focusAfter, value) {
+          if (! this.open === value) return
+
+          this.open = ''
+
+          focusAfter && focusAfter.focus()
+      }
+       }"
+       x-on:keydown.escape.prevent.stop="close($refs.button)"
+       x-id="['dropdown-button']"
+          class=" justify-start items-start w-[200px] h-auto gap-4 p-2 rounded-lg bg-opacity-85 bg-slate-200"
         >
           <div
             x-data="{
@@ -78,63 +97,119 @@
                 focusAfter && focusAfter.focus()
             }
         }"
-            x-on:keydown.escape.prevent.stop="close($refs.button)"
-            x-id="['dropdown-button']"
-          >
            
-            <div
-              x-show="open === 'convert'"
-              x-transition.origin.top.left
-              x-on:click.outside="close($refs.button)"
-              :id="$id('dropdown-button')"
-              class="fixed right-[37%] rounded-md h-10 bg-slate-200 w-40"
-              style="display: none;"
-            >
-              ini ada beda
-            </div>
-            <button
-              x-ref="button"
-              x-on:click="toggle('compress')"
-              :aria-expanded="open"
-              :aria-controls="$id('dropdown-button')"
-              type="button"
-            >
-              Compress
-            </button>
-          </div>
-          <div
-            x-data="{
-         
-            toggle(value) {
-                if (this.open === value) {
-                    return this.close()
-                }
- 
-                this.$refs.button.focus()
- 
-                this.open = value;
-            },
-            close(focusAfter, value) {
-                if (! this.open === value) return
- 
-                this.open = ''
- 
-                focusAfter && focusAfter.focus()
-            }
-        }"
-            x-on:keydown.escape.prevent.stop="close($refs.button)"
-            x-id="['dropdown-button']"
+           
+            class="flex flex-col items-start justify-start gap-4"
           >
-            <button
-              x-ref="button"
-              x-on:click="toggle('convert')"
-              :aria-expanded="open"
-              :aria-controls="$id('dropdown-button')"
-              type="button"
-            >
-              Convert
-            </button>
-          </div>
+
+          <a
+          href="{{url_for('home')}}"
+          class=""]
+          aria-current="page"
+          >Home</a>
+
+                
+          <button
+          x-ref="button"
+          x-on:click="toggle('compress')"
+          :aria-expanded="open"
+          :aria-controls="$id('dropdown-button')"
+          type="button"
+        >
+          Compress
+        </button>
+        <div
+        x-show="open === 'compress'"
+        x-transition.origin.top.left
+        x-on:click.outside="close($refs.button)"
+        :id="$id('dropdown-button')"
+        class="fixed right-[45%] flex justify-center p-2 items-start flex-col rounded-md h-auto gap-4 bg-slate-200 w-40"
+        style="display: none;"
+      >
+      <a
+      href="{{url_for('compressImg')}}"
+      class=""
+    >
+      Compress Image
+    </a>
+    <a
+      href="{{url_for('compressPdf')}}"
+      class=""
+    >
+      Compress PDF
+    </a>
+    <a
+      href="{{url_for('zip')}}"
+      class=""
+    >
+      Compress to Zip
+    </a>
+      </div>
+            
+      <button
+      x-ref="button"
+      x-on:click="toggle('convert')"
+      :aria-expanded="open"
+      :aria-controls="$id('dropdown-button')"
+      type="button"
+    >
+      convert
+    </button>
+    <div
+    x-show="open === 'convert'"
+    x-transition.origin.top.left
+    x-on:click.outside="close($refs.button)"
+    :id="$id('dropdown-button')"
+    class="fixed right-[45%] flex justify-center p-2 items-start flex-col rounded-md h-auto gap-4 bg-slate-200 w-40"
+    style="display: none;"
+  >
+  
+  <a
+    href="{{url_for('wordToPDF')}}"
+    class=""
+  >
+    Word To Pdf
+  </a>
+
+  <a
+    href="{{url_for('imageToPdf')}}"
+    class=""
+  >
+    Image To Pdf
+  </a>
+  </div>
+        
+  <button
+  x-ref="button"
+  x-on:click="toggle('edit Image')"
+  :aria-expanded="open"
+  :aria-controls="$id('dropdown-button')"
+  type="button"
+>
+  edit Image
+</button>
+<div
+x-show="open === 'edit Image'"
+x-transition.origin.top.left
+x-on:click.outside="close($refs.button)"
+:id="$id('dropdown-button')"
+class="fixed right-[45%] flex justify-center p-2 items-start flex-col rounded-md h-auto gap-4 bg-slate-200 w-40"
+style="display: none;"
+>
+<a
+href="{{url_for('removebg')}}"
+class=""
+>
+Remove Background
+</a>
+<a
+href="{{url_for('imgtogray')}}"
+class=""
+>
+Rgb To Grayscale
+</a>
+</div>
+
         </div>
       </div>
     </div>
