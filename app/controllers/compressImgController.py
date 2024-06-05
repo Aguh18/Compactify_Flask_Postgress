@@ -109,7 +109,7 @@ def compress_img(filename,input_path,output_path,uid, new_size_ratio=0.9, qualit
         new_filename = f"{filename}_compressed{ext}"
     try:
         # save the image with the corresponding quality and optimize set to True
-        img.save(output_path+secure_filename(new_filename)
+        img.save(output_path+uid+secure_filename(new_filename)
                 , quality=quality, optimize=True)
     except OSError:
         # convert the image to RGB mode first

@@ -1,40 +1,51 @@
 {% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
-block head %} {{ super() }} {% endblock %} {% block content %} 
-<div class="w-screen">
-  <div
-    class="w-full h-28 text-center mt-[116px] text-zinc-700 text-5xl font-semibold font-['Poppins'] underline leading-10"
-  >
-    File Anda Telah Selesai di Proses
-  </div>
-</div>
-
-<a
-  download="custom-filename.jpg"
-  href="{{url_for('static', filename='imagetopdf/'+file)}}"
-  class="flex items-center justify-center mt-10"
->
-  <div
-    class="w-2/6 h-20 rounded-full bg-gradient-to-b from-blue-600 to-sky-900"
-  >
+  block head %} {{ super() }} {% endblock %} {% block content %} 
+  <div class="w-screen">
     <div
-      class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+      class="w-full text-center mt-14 mb-5 text-zinc-700 text-5xl font-semibold font-['Poppins'] underline leading-10"
     >
-      Download File
+      File Anda Telah Selesai di Proses
     </div>
   </div>
-</a>
-
-<div class="flex items-center justify-center w-full">
-  <a
-    href="{{url_for('imageToPdf')}}"
-    class="flex items-center justify-center w-3/5 mt-32 h-28 bg-gradient-to-b from-blue-600 to-sky-900 rounded-3xl"
-  >
-    <div
-      class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
-    >
-      Unggah File Lainnya +
+  <!-- download section -->
+  <section class="flex">
+    <div class="flex items-center justify-end w-1/2">
+      <img
+        src="{{url_for('static', filename='image/download.svg')}}"
+        alt="Gambar
+        1"
+        class="flex items-center w-auto max-w-screen-md h-72"
+      />
     </div>
-  </a>
-</div>
-
-{% endblock %}
+    <a
+      download="custom-filename.jpg"
+      href="{{url_for('static', filename=file)}}"
+      class="flex items-center w-1/2 mt-10"
+    >
+      <div
+        class="w-[400px] h-[70px] rounded-full bg-gradient-to-b from-blue-600 to-sky-900"
+      >
+        <div
+          class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+        >
+          Download File
+        </div>
+      </div>
+    </a>
+  </section>
+  
+  <div class="flex items-center justify-center w-full mt-5">
+    <a
+      href="{{url_for('imageToPdf')}}"
+      class="flex items-center justify-center w-3/5 h-[75px] bg-gradient-to-b from-blue-600 to-sky-900 rounded-3xl"
+    >
+      <div
+        class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+      >
+        Unggah File Lainnya +
+      </div>
+    </a>
+  </div>
+  
+  {% endblock %}
+  

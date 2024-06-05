@@ -588,8 +588,8 @@ video {
   right: 0%;
 }
 
-.right-\[37\%\] {
-  right: 37%;
+.right-\[45\%\] {
+  right: 45%;
 }
 
 .top-0 {
@@ -602,18 +602,6 @@ video {
 
 .top-20 {
   top: 5rem;
-}
-
-.right-\[40\%\%\] {
-  right: 40%%;
-}
-
-.right-\[40\%\] {
-  right: 40%;
-}
-
-.right-\[45\%\] {
-  right: 45%;
 }
 
 .mx-auto {
@@ -936,14 +924,6 @@ video {
 
 .gap-4 {
   gap: 1rem;
-}
-
-.gap-10 {
-  gap: 2.5rem;
-}
-
-.gap-6 {
-  gap: 1.5rem;
 }
 
 .space-x-6 > :not([hidden]) ~ :not([hidden]) {

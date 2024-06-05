@@ -4,6 +4,9 @@ from app.config.database import db
 from werkzeug.utils import secure_filename 
 from app.models.fileModel import filesModel
 from PIL import Image
+from dotenv import dotenv_values
+import uuid
+import os
 
 
 def imgtogray():
@@ -13,13 +16,28 @@ def imgtogray():
     elif request.method == "POST":
         if form.validate_on_submit():
             try:
+                
+                
+                env_values = dotenv_values(".env")
+                project_Path = env_values["PATH"]+"app/static/imgToGray/"
+                
+                uid = str(uuid.uuid4())
+                
+                if not os.path.exists(project_Path):
+                    os.makedirs(project_Path)
+                if not os.path.exists(project_Path+"uploads/"):
+                    os.makedirs(project_Path+"uploads/")
+                if not os.path.exists(project_Path+"downloads/"):
+                    os.makedirs(project_Path+"downloads/")
+                
                 file = request.files["file"]
-                file.save("app/static/uploads/" + secure_filename(file.filename) )
-                input_path = "app/static/uploads/" + secure_filename(file.filename)
-                output_path = "app/static/imgtograyscale/" + secure_filename(file.filename)
+                input_path = project_Path+"uploads/" +uid+ secure_filename(file.filename)
+                file.save(input_path )
+                output_path = project_Path+"downloads/"+uid + secure_filename(file.filename)
+                
                 img = Image.open(input_path).convert('L')
                 img.save(output_path)
-                file = secure_filename(file.filename)
+                file = "imgToGray/downloads/"+uid + secure_filename(file.filename)
                 db.session.add(filesModel(file))
                 db.session.commit()
                 print("file succes created")
