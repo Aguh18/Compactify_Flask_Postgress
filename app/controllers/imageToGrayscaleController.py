@@ -6,11 +6,6 @@ from app.models.fileModel import filesModel
 from PIL import Image
 
 
-
-
-
-
-
 def imgtogray():
     form = imageForm()
     if request.method == "GET":

@@ -31,21 +31,29 @@ def zip():
     elif request.method == "POST":
         try:
             env_values = dotenv_values(".env")
-            project_Path = env_values["PATH"]
-            # Mengambil waktu saat ini
-            now = datetime.now()
+            project_Path = env_values["PATH"]+"app/static/compressZip/"
+            uid = str(uuid.uuid4())
+            
+            if not os.path.exists(project_Path):
+                os.makedirs(project_Path)
+            if not os.path.exists(project_Path+"uploads/"):
+                os.makedirs(project_Path+"uploads/")
+            if not os.path.exists(project_Path+"downloads/"):
+                os.makedirs(project_Path+"downloads/")
   
             pathfile = request.files["file[0]"]
-            input_path = project_Path+"app/static/uploads/zip/"+secure_filename(pathfile.filename)+str(now)
+            input_path = project_Path+"uploads/"+uid+secure_filename(pathfile.filename)
             os.mkdir(input_path)
-            output_path = project_Path+"app/static/zip/"+secure_filename(pathfile.filename)+".zip"
+            output_path = project_Path+"downloads/"+uid+secure_filename(pathfile.filename)+".zip"
             
             for i in range(0, int(request.form["length"])):
                 file = request.files["file["+ str(i) +"]"]
                 file.save(input_path+"/" + secure_filename(file.filename))
                 
                 
-            file = secure_filename(pathfile.filename)+".zip"
+            file = "compressZip/downloads/"+uid+secure_filename(pathfile.filename)+".zip"
+            db.session.add(filesModel(file))
+            db.session.commit()
             create_zip(input_path, output_path)
             return render_template("zip/zipDownload.html", file = file)
         except Exception as e:
