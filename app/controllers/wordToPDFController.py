@@ -5,15 +5,9 @@ from werkzeug.utils import secure_filename
 from app.models.fileModel import filesModel
 from spire.doc import *
 from spire.doc.common import *
-
-
-
-
-
-
-
-
-
+import os
+import uuid
+from dotenv import dotenv_values
 
 
 def wordToPDF():
@@ -23,10 +17,26 @@ def wordToPDF():
     elif request.method == "POST":
         if form.validate_on_submit():
             try:
+                
+                
+                env_values = dotenv_values(".env")
+                project_Path = env_values["PATH"]+"app/static/wortToPdf/"
+                
+                uid = str(uuid.uuid4())
+                
+                if not os.path.exists(project_Path):
+                    os.makedirs(project_Path)
+                if not os.path.exists(project_Path+"uploads/"):
+                    os.makedirs(project_Path+"uploads/")
+                if not os.path.exists(project_Path+"downloads/"):
+                    os.makedirs(project_Path+"downloads/")
+                    
                 file = request.files["file"]
-                file.save("app/static/uploads/" + secure_filename(file.filename) )
-                input_path = "app/static/uploads/" + secure_filename(file.filename)
-                output_path = "app/static/wordtopdf/" + secure_filename(file.filename)+".pdf"
+                input_path = project_Path+"uploads/" +uid+ secure_filename(file.filename)
+                file.save(input_path )
+                output_path = project_Path+"downloads/"+uid + secure_filename(file.filename)+".pdf"
+                file = request.files["file"]
+              
                 document = Document()
                 document.LoadFromFile(input_path)
                 # Or load a Word DOC file
@@ -35,7 +45,7 @@ def wordToPDF():
                 # Save the file to a PDF file
                 document.SaveToFile(output_path, FileFormat.PDF)
                 document.Close()
-                file = secure_filename(file.filename)+".pdf"
+                file = "wortToPdf/downloads/"+uid+secure_filename(file.filename)+".pdf"
                 
                 db.session.add(filesModel(file))
                 db.session.commit()
