@@ -7,16 +7,7 @@ import os
 import zipfile
 from datetime import datetime, timedelta
 from dotenv import dotenv_values
-
-
-
-
-
-
-
-
-
-
+import uuid
 
 def create_zip(directory, zip_filename):
                 # Membuka file ZIP dalam mode write
