@@ -19,7 +19,7 @@ block head %} {{ super() }} {% endblock %} {% block content %}
   </div>
   <a
     download="custom-filename.jpg"
-    href="{{url_for('static', filename='CompressImg/'+file)}}"
+    href="{{url_for('static', filename=file)}}"
     class="flex items-center w-1/2 mt-10"
   >
     <div
