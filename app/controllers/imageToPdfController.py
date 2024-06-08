@@ -18,17 +18,14 @@ import uuid
 
 
 def imageTopdf():
-    form = imageForm()
     if request.method == "GET":
-        return render_template("imagetopdf/imageToPdfForm.html" , form = form)
+        return render_template("imagetopdf/imageToPdfForm.html" )
     elif request.method == "POST":
-        if form.validate_on_submit():
+
             try:
                 
                 env_values = dotenv_values(".env")
                 project_Path = env_values["PATH"]+"app/static/imageToPdf/"
-                
-               
                 
                 if not os.path.exists(project_Path):
                     os.makedirs(project_Path)
@@ -71,9 +68,6 @@ def imageTopdf():
             except Exception as e:
                 print(e)
                 return "Error"
-        else:
-            flash("File tidak valid")
-            return redirect(request.url)
         
         
         

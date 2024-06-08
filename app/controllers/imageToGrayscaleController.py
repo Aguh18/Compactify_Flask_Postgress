@@ -10,11 +10,10 @@ import os
 
 
 def imgtogray():
-    form = imageForm()
     if request.method == "GET":
-        return render_template("imgtogray/imgtograyform.html" , form = form)
+        return render_template("imgtogray/imgtograyform.html" )
     elif request.method == "POST":
-        if form.validate_on_submit():
+
             try:
                 
                 
@@ -44,6 +43,4 @@ def imgtogray():
                 return render_template("imgtogray/imgtograydownload.html", file = file)
             except Exception as e:
                 return str(e)
-        else:
-            flash("File tidak valid")
-            return redirect(request.url)
+

@@ -11,11 +11,11 @@ from dotenv import dotenv_values
 
 
 def wordToPDF():
-    form = docForm()
+  
     if request.method == "GET":
-        return render_template("docToPdf/docToPdfForm.html" , form = form)
+        return render_template("docToPdf/docToPdfForm.html" )
     elif request.method == "POST":
-        if form.validate_on_submit():
+       
             try:
                 
                 
@@ -55,9 +55,7 @@ def wordToPDF():
             except Exception as e:
                 print(e)
                 return "Error"
-        else:
-            flash("File tidak valid")
-            return redirect(request.url)
+
         
         
         

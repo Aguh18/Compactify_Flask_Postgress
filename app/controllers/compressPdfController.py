@@ -66,11 +66,10 @@ def get_ghostscript_path():
 
 
 def compressPdf():
-    form = pdfForm()
     if request.method == "GET":
-        return render_template("compressPdf/compressPdfForm.html" , form = form)
+        return render_template("compressPdf/compressPdfForm.html")
     elif request.method == "POST":
-        if form.validate_on_submit():
+        
             try:
                 
                 env_values = dotenv_values(".env")
@@ -102,9 +101,7 @@ def compressPdf():
             except Exception as e:
                 print(e)
                 return str(e)
-        else:
-            flash("File tidak valid")
-            return redirect(request.url)
+
         
         
         

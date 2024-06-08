@@ -16,11 +16,11 @@ from dotenv import dotenv_values
 
 
 def removeBg():
-    form = imageForm()
+   
     if request.method == "GET":
-        return render_template("removeBackground/removeBgForm.html" , form = form)
+        return render_template("removeBackground/removeBgForm.html" )
     elif request.method == "POST":
-        if form.validate_on_submit():
+
             try:
                 env_values = dotenv_values(".env")
                 project_Path = env_values["PATH"]+"app/static/removeBackground/"
@@ -48,6 +48,3 @@ def removeBg():
                 return render_template("removeBackground/removeBgDownload.html", file = file)
             except Exception as e:
                 return str(e)
-        else:
-            flash("File tidak valid")
-            return redirect(request.url)
