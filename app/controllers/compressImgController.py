@@ -24,7 +24,7 @@ def imageCompress():
     if request.method == "GET":
         return render_template("CompressImg/comressImgForm.html" , form = form)
     elif request.method == "POST":
-        if form.validate_on_submit():
+        
             try:
                 env_values = dotenv_values(".env")
                 project_Path = env_values["PATH"]+"app/static/compressImg/"
@@ -60,9 +60,7 @@ def imageCompress():
                 print("Ini ada eror")
                 print(e)
                 return str(e)
-        else:
-            flash("File tidak valid")
-            return redirect(request.url)
+       
         
 
 
