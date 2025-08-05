@@ -5,7 +5,7 @@ block head %} {{ super() }} {% endblock %} {% block content %} {% include
   <div
     class="w-full text-center mt-14 mb-5 text-zinc-700 text-5xl font-semibold font-['Poppins'] underline leading-10"
   >
-    File Anda Telah Selesai di Proses
+    Your File has been Successfully Processed
   </div>
 </div>
 <!-- download section -->
@@ -13,8 +13,8 @@ block head %} {{ super() }} {% endblock %} {% block content %} {% include
   <div class="flex items-center justify-end w-1/2">
     <img
       src="{{url_for('static', filename='image/download.svg')}}"
-      alt="Gambar
-    1"
+      alt="Download
+    Image"
       class="flex h-72 w-auto items-center max-w-screen-md"
     />
   </div>
@@ -42,7 +42,7 @@ block head %} {{ super() }} {% endblock %} {% block content %} {% include
     <div
       class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
     >
-      Unggah File Lainnya +
+      Upload Another File +
     </div>
   </a>
 </div>

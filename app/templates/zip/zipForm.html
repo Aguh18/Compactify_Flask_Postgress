@@ -1,89 +1,232 @@
-{% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
-block head %} {{ super() }} {% endblock %} {% block content %}
-<div
-  class="flex items-center justify-center w-screen"
-  style="height: calc(100vh - 80px);"
->
-  <!-- NAVBAR END -->
+{% extends "./master/layout.html" %}
 
-  <!-- Content Section Start -->
-  <main class="box-border flex items-center justify-center w-full h-full">
-    <section
-      class="box-border flex flex-col items-center justify-center h-auto shadow-2xl w-96 min-h-96 rounded-2xl"
-    >
-      <form
-        x-data="{ clicks: [], onSubmit: false  }"
-        action="{{url_for('zip')}}"
-        method="POST"
-        enctype="multipart/form-data"
-      >
-        <div class="mb-10">
-          <p>Pilih File yang akan di Compress</p>
-        </div>
-        <div class="flex justify-center mb-5">
-          <img
-            src="{{url_for('static', filename='image/logo.png')}}"
-            class="h-20 opacity-50"
-            alt="Compactify Logo"
-          />
-        </div>
-        <div>
-          <button
-            class="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            type="button"
-            @click="clicks.push(clicks.length + 1)"
-          >
-            Tambah File
-          </button>
-          <template x-for="(click, index) in clicks" :key="index">
-            <div class="items-center mb-1">
-              <input
-              required
-                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 max-w-64"
-                type="file"
-                :name="'file[' + index + ']'"
-              />
+{% block title %}
+  Create ZIP Archive - Compactify
+{% endblock %}
+
+{% block head %}
+  {{ super() }}
+{% endblock %}
+
+{% block content %}
+<script>
+function zipFileManager() {
+  return {
+    files: [],
+    isDragOver: false,
+    isProcessing: false,
+    errorMessage: '',
+
+    addFile() {
+      this.files.push({
+        id: Date.now() + Math.random(),
+        file: null,
+        name: '',
+        size: 0
+      });
+    },
+
+    removeFile(index) {
+      this.files.splice(index, 1);
+    },
+
+    handleFileSelect(event, index) {
+      const file = event.target.files[0];
+      if (file) {
+        this.files[index].file = file;
+        this.files[index].name = file.name;
+        this.files[index].size = file.size;
+      }
+    },
+
+    handleDrop(event) {
+      this.isDragOver = false;
+      const droppedFiles = Array.from(event.dataTransfer.files);
+      
+      droppedFiles.forEach(file => {
+        this.files.push({
+          id: Date.now() + Math.random(),
+          file: file,
+          name: file.name,
+          size: file.size
+        });
+      });
+    },
+
+    formatFileSize(bytes) {
+      if (!bytes) return '';
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(1024));
+      return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    },
+
+    handleSubmit(event) {
+      const validFiles = this.files.filter(item => item.file !== null);
+      if (validFiles.length === 0) {
+        event.preventDefault();
+        this.errorMessage = 'Please select at least one file to create ZIP archive';
+        return;
+      }
+      this.isProcessing = true;
+    },
+
+    getTotalSize() {
+      return this.files.reduce((total, item) => total + (item.size || 0), 0);
+    },
+
+    getValidFileCount() {
+      return this.files.filter(item => item.file !== null).length;
+    }
+  }
+}
+</script>
+
+<!-- Background with gradient -->
+<div class="min-h-screen py-8 bg-gradient-to-br from-yellow-50 via-white to-orange-50">
+  <div class="container px-4 mx-auto">
+    <!-- Main Card -->
+    <div class="max-w-4xl mx-auto">
+      <div class="overflow-hidden bg-white border border-gray-100 shadow-2xl rounded-3xl">
+        <!-- Header Section -->
+        <div class="px-8 py-12 text-center bg-gradient-to-r from-yellow-500 to-orange-600">
+          <div class="flex justify-center mb-6">
+            <div class="p-4 rounded-full bg-white/20 backdrop-blur-sm">
+              <img src="{{ url_for('static', filename='image/logo.png') }}" class="w-auto h-16" alt="Compactify Logo" />
             </div>
-            <p x-text="index"></p>
-          </template>
-        </div>
-
-        <input type="hidden" name="length" x-bind:value="clicks.length" />
-        {% with messages = get_flashed_messages() %} {% if messages %}
-        <ul class="flex justify-center w-full messages">
-          {% for message in messages %}
-
-          <li
-            class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50"
-            role="alert"
-          >
-            <span class="font-medium">alert!</span> {{ message }}
-          </li>
-          {% endfor %}
-        </ul>
-        {% endif %} {% endwith %}
-        <button
-        x-bind:disabled="clicks.length < 1 ? true : false"
-          x-on:click="onSubmit = true"
-          type="submit"
-          name="submit"
-          class="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-         :class="clicks.length < 1  ? 'cursor-not-allowed bg-white': ''"
-        >
-          Compress
-        </button>
-        <template x-if="onSubmit">
-            
-          <div class="fixed top-0 left-0 z-50 flex flex-col items-center justify-center w-screen h-screen bg-gray-800 bg-opacity-75 overlay">
-       
-              <svg aria-hidden="true" class="w-[17%] h-[17%] text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
-              <span class="sr-only">Loading...</span>
-     
           </div>
-        </template>
-      </form>
-    </section>
-  </main>
+          <h1 class="mb-2 text-3xl font-bold text-white">Create ZIP Archive</h1>
+          <p class="text-yellow-100">Compress multiple files into a single ZIP archive</p>
+        </div>
+        
+        <!-- Form Section -->
+        <div class="p-8">
+          <form x-data="zipFileManager()" @submit="handleSubmit($event)" action="{{ url_for('zip') }}" method="POST" enctype="multipart/form-data">
+            
+            <!-- Drop Zone -->
+            <div class="mb-8">
+              <div 
+                class="relative p-8 text-center transition-all duration-200 border-2 border-yellow-300 border-dashed rounded-2xl hover:border-yellow-400 hover:bg-yellow-50/50"
+                :class="{ 'border-yellow-500 bg-yellow-50': isDragOver }"
+                @dragover.prevent="isDragOver = true"
+                @dragleave.prevent="isDragOver = false"
+                @drop.prevent="handleDrop($event)"
+              >
+                <div class="space-y-4">
+                  <div class="flex items-center justify-center w-20 h-20 mx-auto bg-yellow-100 rounded-full">
+                    <i class="text-3xl text-yellow-600 fas fa-file-archive"></i>
+                  </div>
+                  <div>
+                    <h3 class="mb-2 text-xl font-semibold text-gray-800">Drop files here or add them manually</h3>
+                    <p class="mb-4 text-gray-500">You can drag and drop multiple files at once</p>
+                    <button 
+                      type="button" 
+                      @click="addFile()"
+                      class="inline-flex items-center px-6 py-3 font-semibold text-yellow-700 transition-all duration-200 border-2 border-yellow-500 rounded-xl hover:bg-yellow-50"
+                    >
+                      <i class="mr-2 fas fa-plus"></i>Add File
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- File List -->
+            <div x-show="files.length > 0" class="mb-8">
+              <h3 class="mb-4 text-lg font-semibold text-gray-800">
+                Selected Files (<span x-text="getValidFileCount()"></span>)
+                <span x-show="getTotalSize() > 0" class="text-sm font-normal text-gray-500">
+                  - Total: <span x-text="formatFileSize(getTotalSize())"></span>
+                </span>
+              </h3>
+              
+              <div class="space-y-3">
+                <template x-for="(fileItem, index) in files" :key="fileItem.id">
+                  <div class="p-4 border border-gray-200 rounded-xl bg-gray-50">
+                    <div class="flex items-center justify-between">
+                      <div class="flex-1 mr-4">
+                        <input 
+                          type="file" 
+                          :name="'file[' + index + ']'"
+                          @change="handleFileSelect($event, index)"
+                          class="w-full text-sm text-gray-900 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none"
+                        />
+                        <div x-show="fileItem.file" class="mt-2 text-sm text-gray-600">
+                          <span x-text="fileItem.name"></span>
+                          <span class="ml-2 text-gray-400">(<span x-text="formatFileSize(fileItem.size)"></span>)</span>
+                        </div>
+                      </div>
+                      <button 
+                        type="button" 
+                        @click="removeFile(index)"
+                        class="p-2 text-red-500 transition-colors duration-200 rounded-lg hover:text-red-700 hover:bg-red-50"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- Hidden input for file count -->
+            <input type="hidden" name="length" x-bind:value="files.length" />
+
+            <!-- Error Messages -->
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <div class="mb-6">
+                  {% for message in messages %}
+                    <div class="p-4 text-red-700 bg-red-100 border border-red-300 rounded-lg">
+                      <p><i class="mr-2 fas fa-exclamation-triangle"></i>{{ message }}</p>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            <!-- Dynamic Error Message -->
+            <div x-show="errorMessage" class="p-4 mb-6 text-red-700 bg-red-100 border border-red-300 rounded-lg">
+              <p x-text="errorMessage"></p>
+            </div>
+
+            <!-- Create ZIP Button -->
+            <div class="flex flex-col items-center space-y-4">
+              <button 
+                type="submit" 
+                :disabled="getValidFileCount() === 0 || isProcessing"
+                :class="getValidFileCount() > 0 && !isProcessing ? 'bg-gradient-to-r from-yellow-500 to-orange-600 hover:from-yellow-600 hover:to-orange-700 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'"
+                class="w-full px-8 py-4 text-lg font-semibold text-white transition-all duration-200 rounded-xl"
+              >
+                <span x-show="!isProcessing" class="flex items-center justify-center">
+                  <i class="mr-2 fas fa-file-archive"></i>
+                  Create ZIP Archive
+                </span>
+                <span x-show="isProcessing" class="flex items-center justify-center">
+                  <i class="mr-2 fas fa-spinner fa-spin"></i>
+                  Creating Archive...
+                </span>
+              </button>
+              
+              <p class="text-sm text-center text-gray-500">
+                All selected files will be compressed into a single ZIP archive
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div x-show="isProcessing" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style="display: none;">
+  <div class="max-w-sm p-8 mx-4 text-center bg-white rounded-2xl">
+    <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full">
+      <i class="text-2xl text-yellow-600 fas fa-spinner fa-spin"></i>
+    </div>
+    <h3 class="mb-2 text-lg font-semibold text-gray-800">Creating ZIP Archive</h3>
+    <p class="text-gray-600">Please wait while we compress your files...</p>
+  </div>
 </div>
 
 {% endblock %}

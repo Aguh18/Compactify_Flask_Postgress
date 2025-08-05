@@ -1,51 +1,161 @@
-{% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
-  block head %} {{ super() }} {% endblock %} {% block content %} 
-  <div class="w-screen">
-    <div
-      class="w-full text-center mt-14 mb-5 text-zinc-700 text-5xl font-semibold font-['Poppins'] underline leading-10"
-    >
-      File Anda Telah Selesai di Proses
-    </div>
-  </div>
-  <!-- download section -->
-  <section class="flex">
-    <div class="flex items-center justify-end w-1/2">
-      <img
-        src="{{url_for('static', filename='image/download.svg')}}"
-        alt="Gambar
-        1"
-        class="flex items-center w-auto max-w-screen-md h-72"
-      />
-    </div>
-    <a
-      download="custom-filename.jpg"
-      href="{{url_for('static', filename=file)}}"
-      class="flex items-center w-1/2 mt-10"
-    >
-      <div
-        class="w-[400px] h-[70px] rounded-full bg-gradient-to-b from-blue-600 to-sky-900"
-      >
-        <div
-          class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
-        >
-          Download File
+{% extends "./master/layout.html" %}
+{% block title %}Download ZIP Archive - Compactify{% endblock %}
+{% block head %} {{ super() }} {% endblock %}
+{% block content %}
+
+<script>
+  function downloadPage() {
+    return {
+      showSuccessAnimation: true,
+      
+      init() {
+        // Hide success animation after 3 seconds
+        setTimeout(() => {
+          this.showSuccessAnimation = false;
+        }, 3000);
+      },
+      
+      downloadFile() {
+        // Add download analytics or tracking here if needed
+        console.log('ZIP file downloaded');
+      },
+      
+      uploadAnother() {
+        // Add navigation analytics if needed
+        window.location.href = "{{ url_for('zip') }}";
+      }
+    }
+  }
+</script>
+
+<!-- Background with gradient -->
+<div class="min-h-screen py-8 bg-gradient-to-br from-yellow-50 via-white to-orange-50">
+  <div class="container px-4 mx-auto">
+    <div class="max-w-4xl mx-auto">
+      
+      <!-- Success Animation -->
+      <div x-data="downloadPage()" x-show="showSuccessAnimation" x-transition class="mb-8 text-center">
+        <div class="flex items-center justify-center w-24 h-24 mx-auto mb-6 bg-yellow-100 rounded-full animate-bounce">
+          <i class="text-4xl text-yellow-600 fas fa-check"></i>
+        </div>
+        <h1 class="mb-2 text-4xl font-bold text-gray-800">Archive Created Successfully!</h1>
+        <p class="text-gray-600">Your files have been compressed into a ZIP archive</p>
+      </div>
+
+      <!-- Main Download Card -->
+      <div class="overflow-hidden bg-white border border-gray-100 shadow-2xl rounded-3xl">
+        
+        <!-- Header Section -->
+        <div class="px-8 py-12 text-center bg-gradient-to-r from-yellow-500 to-orange-600">
+          <div class="flex justify-center mb-6">
+            <div class="p-4 rounded-full bg-white/20 backdrop-blur-sm">
+              <img src="{{ url_for('static', filename='image/logo.png') }}" class="w-auto h-16" alt="Compactify Logo" />
+            </div>
+          </div>
+          <h1 class="mb-2 text-3xl font-bold text-white">Download Your ZIP Archive</h1>
+          <p class="text-yellow-100">Your compressed archive is ready for download</p>
+        </div>
+        
+        <!-- Download Section -->
+        <div class="p-8">
+          <div class="text-center">
+            
+            <!-- Archive Icon -->
+            <div class="mb-8">
+              <div class="flex items-center justify-center w-32 h-32 mx-auto bg-yellow-100 rounded-full">
+                <i class="text-6xl text-yellow-600 fas fa-file-archive"></i>
+              </div>
+            </div>
+            
+            <!-- Download Button -->
+            <div class="mb-8">
+              <a 
+                href="{{ url_for('static', filename=file) }}" 
+                download 
+                @click="downloadFile()"
+                class="inline-flex items-center px-8 py-4 text-lg font-semibold text-white transition-all duration-200 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-xl hover:from-yellow-600 hover:to-orange-700 hover:scale-105"
+              >
+                <i class="mr-3 fas fa-download"></i>
+                Download ZIP Archive
+              </a>
+            </div>
+            
+            <!-- File Info -->
+            <div class="mb-8 p-6 bg-yellow-50 rounded-xl border border-yellow-200">
+              <h3 class="mb-3 text-lg font-semibold text-gray-800">Archive Information</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                <div class="flex items-center">
+                  <i class="mr-2 fas fa-file-archive text-yellow-600"></i>
+                  <span>Format: ZIP Archive</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="mr-2 fas fa-shield-alt text-yellow-600"></i>
+                  <span>Compression: Optimized</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="mr-2 fas fa-clock text-yellow-600"></i>
+                  <span>Created: Just now</span>
+                </div>
+                <div class="flex items-center">
+                  <i class="mr-2 fas fa-check-circle text-yellow-600"></i>
+                  <span>Status: Ready</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex flex-col items-center space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
+              <button 
+                @click="uploadAnother()"
+                class="flex items-center px-6 py-3 font-medium text-yellow-700 transition-colors duration-200 bg-yellow-100 rounded-xl hover:bg-yellow-200"
+              >
+                <i class="mr-2 fas fa-file-archive"></i>
+                Create Another Archive
+              </button>
+              
+              <a 
+                href="{{ url_for('home') }}" 
+                class="flex items-center px-6 py-3 font-medium text-gray-700 transition-colors duration-200 bg-gray-100 rounded-xl hover:bg-gray-200"
+              >
+                <i class="mr-2 fas fa-home"></i>
+                Back to Home
+              </a>
+            </div>
+            
+          </div>
         </div>
       </div>
-    </a>
-  </section>
-  
-  <div class="flex items-center justify-center w-full mt-5">
-    <a
-      href="{{url_for('zip')}}"
-      class="flex items-center justify-center w-3/5 h-[75px] bg-gradient-to-b from-blue-600 to-sky-900 rounded-3xl"
-    >
-      <div
-        class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
-      >
-        Unggah File Lainnya +
+      
+      <!-- Features Section -->
+      <div class="grid gap-6 mt-8 md:grid-cols-3">
+        <div class="p-6 text-center bg-white shadow-lg rounded-2xl">
+          <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full">
+            <i class="text-2xl text-yellow-600 fas fa-compress"></i>
+          </div>
+          <h3 class="mb-2 text-lg font-semibold text-gray-800">Optimized Compression</h3>
+          <p class="text-gray-600">Maximum compression ratio while preserving file integrity</p>
+        </div>
+        
+        <div class="p-6 text-center bg-white shadow-lg rounded-2xl">
+          <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full">
+            <i class="text-2xl text-yellow-600 fas fa-shield-alt"></i>
+          </div>
+          <h3 class="mb-2 text-lg font-semibold text-gray-800">Secure Processing</h3>
+          <p class="text-gray-600">Your files are processed securely and automatically deleted from our servers</p>
+        </div>
+        
+        <div class="p-6 text-center bg-white shadow-lg rounded-2xl">
+          <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-yellow-100 rounded-full">
+            <i class="text-2xl text-yellow-600 fas fa-bolt"></i>
+          </div>
+          <h3 class="mb-2 text-lg font-semibold text-gray-800">Lightning Fast</h3>
+          <p class="text-gray-600">Create ZIP archives in seconds with our optimized processing</p>
+        </div>
       </div>
-    </a>
+      
+    </div>
   </div>
-  
-  {% endblock %}
+</div>
+
+{% endblock %}
   
