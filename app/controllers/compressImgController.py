@@ -10,6 +10,14 @@ import os
 import uuid
 from dotenv import dotenv_values
 
+# Handle PIL version compatibility
+try:
+    # For Pillow >= 10.0.0
+    RESAMPLING_FILTER = Image.LANCZOS
+except AttributeError:
+    # For older Pillow versions
+    RESAMPLING_FILTER = Image.ANTIALIAS
+
 
 
 
@@ -47,7 +55,21 @@ def imageCompress():
                
                 filename = secure_filename(file.filename)
                 
-                file = compress_img(filename,input_path, output_Path,uid, new_size_ratio=0.5, quality=50, width=None, height=None, to_jpg=True)
+                # Get quality parameter from form
+                quality_level = request.form.get('quality', 'medium')
+                
+                # Set compression parameters based on quality level
+                if quality_level == 'high':
+                    quality = 85
+                    new_size_ratio = 0.9
+                elif quality_level == 'low':
+                    quality = 30
+                    new_size_ratio = 0.7
+                else:  # medium/balanced
+                    quality = 60
+                    new_size_ratio = 0.8
+                
+                file = compress_img(filename,input_path, output_Path,uid, new_size_ratio=new_size_ratio, quality=quality, width=None, height=None, to_jpg=True)
                 file = "compressImg/downloads/"+file
                 print("nama file adalah", file)
                 
@@ -88,12 +110,12 @@ def compress_img(filename,input_path,output_path,uid, new_size_ratio=0.9, qualit
     print("[*] Size before compression:", get_size_format(image_size))
     if new_size_ratio < 1.0:
         # if resizing ratio is below 1.0, then multiply width & height with this ratio to reduce image size
-        img = img.resize((int(img.size[0] * new_size_ratio), int(img.size[1] * new_size_ratio)), Image.ANTIALIAS)
+        img = img.resize((int(img.size[0] * new_size_ratio), int(img.size[1] * new_size_ratio)), RESAMPLING_FILTER)
         # print new image shape
         print("[+] New Image shape:", img.size)
     elif width and height:
         # if width and height are set, resize with them instead
-        img = img.resize((width, height), Image.ANTIALIAS)
+        img = img.resize((width, height), RESAMPLING_FILTER)
         # print new image shape
         print("[+] New Image shape:", img.size)
     # split the filename and extension
@@ -107,12 +129,21 @@ def compress_img(filename,input_path,output_path,uid, new_size_ratio=0.9, qualit
         new_filename = f"{filename}_compressed{ext}"
     try:
         # save the image with the corresponding quality and optimize set to True
-        img.save(output_path+uid+secure_filename(new_filename)
-                , quality=quality, optimize=True)
+        output_file_path = output_path+uid+secure_filename(new_filename)
+        img.save(output_file_path, quality=quality, optimize=True)
     except OSError:
         # convert the image to RGB mode first
         img = img.convert("RGB")
         # save the image with the corresponding quality and optimize set to True
-        img.save( output_path+uid+secure_filename(new_filename), quality=quality, optimize=True)
+        output_file_path = output_path+uid+secure_filename(new_filename)
+        img.save(output_file_path, quality=quality, optimize=True)
+    
+    # get the size after compression
+    new_image_size = os.path.getsize(output_file_path)
+    print("[*] Size after compression:", get_size_format(new_image_size))
+    
+    # calculate compression ratio
+    compression_ratio = (1 - new_image_size / image_size) * 100
+    print(f"[*] Compression ratio: {compression_ratio:.2f}%")
    
     return uid+secure_filename(new_filename)

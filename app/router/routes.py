@@ -56,6 +56,6 @@ def imgtogray_route():
     return  imageToGrayscaleController.imgtogray()
 
 # compress Audio
-@app.route("/audiocompress", methods=["GET", "POST"], endpoint="audio compress")
-def imgtogray_route():
+@app.route("/audiocompress", methods=["GET", "POST"], endpoint="compressAudio")
+def compressAudio_route():
     return  audiocompressController.CompressAudio()
