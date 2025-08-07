@@ -1,114 +1,222 @@
-{% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
-  block head %} {{ super() }} {% endblock %} {% block content %}
-  <!-- NAVBAR END -->
-  <script>
-    function validateFile() {
-  
-      const allowedExtensions = ['jpg', 'jpeg', 'png'];
-      const filename = this.file.name.toLowerCase();
-      const fileExtension = filename.substring(filename.lastIndexOf('.') + 1);
-      console.log('Ekstensi file:', fileExtension);
-  
-      if (!allowedExtensions.includes(fileExtension)) {
-        this.errorMessage = 'Ekstensi file tidak valid.';
-        return false;
+{% extends "./master/layout.html" %}
+
+{% block title %}
+  Remove Background - Compactify
+{% endblock %}
+
+{% block head %}
+  {{ super() }}
+{% endblock %}
+
+{% block content %}
+<script>
+function backgroundRemover() {
+  return {
+    selectedFile: null,
+    isDragOver: false,
+    isProcessing: false,
+    errorMessage: '',
+
+    handleFileSelect(event) {
+      const file = event.target.files[0];
+      this.validateAndSetFile(file);
+    },
+
+    handleDrop(event) {
+      this.isDragOver = false;
+      const file = event.dataTransfer.files[0];
+      this.validateAndSetFile(file);
+    },
+
+    validateAndSetFile(file) {
+      this.errorMessage = '';
+      
+      if (!file) return;
+
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+      const maxSize = 10 * 1024 * 1024;
+
+      if (!allowedTypes.includes(file.type)) {
+        this.errorMessage = 'Please select a valid image file (JPG, JPEG, or PNG only)';
+        return;
       }
-  
-      // Jika file valid, lakukan tindakan yang diinginkan
-     
-      this.errorMessage = ''; 
-      return true;
+
+      if (file.size > maxSize) {
+        this.errorMessage = 'File size must be less than 10MB';
+        return;
+      }
+
+      this.selectedFile = file;
+      this.errorMessage = '';
+    },
+
+    clearFile() {
+      this.selectedFile = null;
+      this.errorMessage = '';
+      document.querySelector('input[type="file"]').value = '';
+    },
+
+    formatFileSize(bytes) {
+      if (!bytes) return '';
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(1024));
+      return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
+    },
+
+    handleSubmit(event) {
+      if (!this.selectedFile) {
+        event.preventDefault();
+        this.errorMessage = 'Please select an image file first';
+        return;
+      }
+      this.isProcessing = true;
     }
-  
-    function handleFileChange(event) {
-      // Memperbarui nilai file
-      file = event.target.files[0];
-  
-      // Melakukan validasi
-      const isFile = validateFile(file);
-  
-      return isFile;
-    }
-  
-    
-  </script>
-  
-  
-  <div
-    class="flex items-center justify-center w-screen"
-    style="height: calc(100vh - 80px);"
-  >
-  
-    <!-- Content Section Start -->
-    <main
-      class="box-border flex items-center justify-center w-full h-full"
-      style="height: calc(100% - 80px);"
-    >
-      <section
-        class="box-border flex flex-col items-center justify-center h-auto shadow-2xl w-96 min-h-96 rounded-2xl"
-      >
-        <form
-        x-data="{ isFile: null, onSubmit: false }"
-          action="{{url_for('removebg')}}"
-          method="POST"
-          enctype="multipart/form-data"
-        >
-          
-          <div class="flex justify-center mb-10">
-            <p>Choose Image to Remove Backgroud</p>
+  }
+}
+</script>
+
+<!-- Background with gradient -->
+<div class="min-h-screen py-8 bg-gradient-to-br from-pink-50 via-white to-rose-50">
+  <div class="container px-4 mx-auto">
+    <!-- Main Card -->
+    <div class="max-w-2xl mx-auto">
+      <div class="overflow-hidden bg-white border border-gray-100 shadow-2xl rounded-3xl">
+        <!-- Header Section -->
+        <div class="px-8 py-12 text-center bg-gradient-to-r from-pink-500 to-pink-700">
+          <div class="flex justify-center mb-6">
+            <div class="p-4 rounded-full bg-white/20 backdrop-blur-sm">
+              <img src="{{ url_for('static', filename='image/logo.png') }}" class="w-auto h-16" alt="Compactify Logo" />
+            </div>
           </div>
-          <div class="flex justify-center mb-10">
-            <img
-              src="{{url_for('static', filename='image/logo.png')}}"
-              class="h-20 opacity-50"
-              alt="Compactify Logo"
-            />
-          </div>
-          <div class="items-center mb-10">
-            <label
-              class="block mb-2 text-sm font-medium text-gray-900"
-              for="file_input"
-              >Upload file</label
-            >
-            <div >
+          <h1 class="mb-2 text-3xl font-bold text-white">Remove Background</h1>
+          <p class="text-pink-100">Automatically remove backgrounds from your images using AI</p>
+        </div>
+        
+        <!-- Form Section -->
+        <div class="p-8">
+          <form x-data="backgroundRemover()" @submit="handleSubmit($event)" action="{{ url_for('removebg') }}" method="POST" enctype="multipart/form-data">
             
-            <input  x-on:change="isFile = handleFileChange($event)"    type="file" name="file" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer max-w-64 bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"  >
-          </div> 
-          <template x-if="isFile == false">
-            <p class="text-[12px] mt-1 text-center text-red-700 bg-red-100 rounded-lg" >Your  Extension File Not Correct</p>
-          </template>
-          
-            <p class="mt-1 text-sm text-gray-500" id="file_input_help">
-              SVG, PNG, JPG, JPEG(max 10Mb).
-            </p>
-          </div>
-  
-          <button
-          x-bind:disabled="isFile ? false : true"
-            type="submit"
-            name="submit"
-            x-on:click="onSubmit = true"
-            class="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            :class="isFile ? '' : 'cursor-not-allowed bg-white'"
-          >
-            Edit
-          </button>
-          <!-- On Submit Animation -->
-           <template x-if="onSubmit">
-            
-           
-  
-          <div class="fixed top-0 left-0 z-50 flex flex-col items-center justify-center w-screen h-screen bg-gray-800 bg-opacity-75 overlay">
-       
-              <svg aria-hidden="true" class="w-[17%] h-[17%] text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
-              <span class="sr-only">Loading...</span>
-     
-          </div>
-        </template>
-        </form>
-      </section>
-    </main>
+            <!-- File Upload Area -->
+            <div class="mb-8">
+              <div 
+                class="relative p-8 text-center transition-all duration-200 border-2 border-pink-300 border-dashed rounded-2xl hover:border-pink-400 hover:bg-pink-50/50"
+                :class="{ 'border-pink-500 bg-pink-50': isDragOver, 'border-green-500 bg-green-50': selectedFile }"
+                @dragover.prevent="isDragOver = true"
+                @dragleave.prevent="isDragOver = false"
+                @drop.prevent="handleDrop($event)"
+              >
+
+                <input 
+                  type="file" 
+                  name="file" 
+                  accept=".jpg,.jpeg,.png"
+                  @change="handleFileSelect($event)"
+                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+                
+                <!-- Default State -->
+                <div x-show="!selectedFile" class="space-y-4">
+                  <div class="flex items-center justify-center w-20 h-20 mx-auto bg-pink-100 rounded-full">
+                    <i class="text-3xl text-pink-600 fas fa-cut"></i>
+                  </div>
+                  <div>
+                    <h3 class="mb-2 text-xl font-semibold text-gray-800">Drop your image here</h3>
+                    <p class="mb-4 text-gray-500">or click to browse files</p>
+                    <p class="text-sm text-gray-400">Supports: JPG, JPEG, PNG (Max: 10MB)</p>
+                  </div>
+                </div>
+                
+                <!-- Selected File Preview -->
+                <div x-show="selectedFile" class="space-y-4">
+                  <div class="flex items-center justify-center w-16 h-16 mx-auto bg-green-100 rounded-full">
+                    <i class="text-2xl text-green-600 fas fa-check"></i>
+                  </div>
+                  <div>
+                    <p class="text-lg font-semibold text-gray-800" x-text="selectedFile?.name"></p>
+                    <p class="text-gray-500" x-text="formatFileSize(selectedFile?.size)"></p>
+                  </div>
+                  <button 
+                    type="button" 
+                    @click="clearFile()"
+                    class="font-medium text-red-600 transition-colors duration-200 hover:text-red-700"
+                  >
+                    <i class="mr-1 fas fa-times"></i>Remove file
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Error Message -->
+              <div x-show="errorMessage" class="p-4 mt-4 text-red-700 bg-red-100 border border-red-300 rounded-lg">
+                <p x-text="errorMessage"></p>
+              </div>
+            </div>
+
+            <!-- Remove Background Button -->
+            <div class="flex flex-col items-center space-y-4">
+              <button 
+                type="submit" 
+                :disabled="!selectedFile || isProcessing"
+                :class="selectedFile && !isProcessing ? 'bg-gradient-to-r from-pink-500 to-pink-700 hover:from-pink-600 hover:to-pink-800 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'"
+                class="w-full px-8 py-4 text-lg font-semibold text-white transition-all duration-200 rounded-xl"
+              >
+                <span x-show="!isProcessing" class="flex items-center justify-center">
+                  <i class="mr-2 fas fa-cut"></i>
+                  Remove Background
+                </span>
+                <span x-show="isProcessing" class="flex items-center justify-center">
+                  <i class="mr-2 fas fa-spinner fa-spin"></i>
+                  Processing...
+                </span>
+              </button>
+              
+              <p class="text-sm text-center text-gray-500">
+                AI will automatically detect and remove the background from your image
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="grid gap-6 mt-8 md:grid-cols-3">
+      <div class="p-6 text-center bg-white shadow-lg rounded-2xl">
+        <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-pink-100 rounded-full">
+          <i class="text-2xl text-pink-600 fas fa-magic"></i>
+        </div>
+        <h3 class="mb-2 text-lg font-semibold text-gray-800">AI-Powered</h3>
+        <p class="text-gray-600">Advanced AI technology automatically detects subjects and removes backgrounds</p>
+      </div>
+      
+      <div class="p-6 text-center bg-white shadow-lg rounded-2xl">
+        <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-pink-100 rounded-full">
+          <i class="text-2xl text-pink-600 fas fa-clock"></i>
+        </div>
+        <h3 class="mb-2 text-lg font-semibold text-gray-800">Instant Results</h3>
+        <p class="text-gray-600">Get professional results in seconds without manual editing</p>
+      </div>
+      
+      <div class="p-6 text-center bg-white shadow-lg rounded-2xl">
+        <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-pink-100 rounded-full">
+          <i class="text-2xl text-pink-600 fas fa-image"></i>
+        </div>
+        <h3 class="mb-2 text-lg font-semibold text-gray-800">High Quality</h3>
+        <p class="text-gray-600">Preserve image quality with precise edge detection and smooth cutouts</p>
+      </div>
+    </div>
   </div>
-  
-  {% endblock %}
+</div>
+
+<!-- Loading Overlay -->
+<div x-show="isProcessing" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" style="display: none;">
+  <div class="max-w-sm p-8 mx-4 text-center bg-white rounded-2xl">
+    <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-pink-100 rounded-full">
+      <i class="text-2xl text-pink-600 fas fa-spinner fa-spin"></i>
+    </div>
+    <h3 class="mb-2 text-lg font-semibold text-gray-800">Removing Background</h3>
+    <p class="text-gray-600">Please wait while AI processes your image...</p>
+  </div>
+</div>
+
+{% endblock %}
   

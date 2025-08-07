@@ -21,6 +21,14 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     pkg-config \
     curl \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libgstreamer1.0-0 \
+    libgstreamer-plugins-base1.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip to latest version
@@ -67,6 +75,10 @@ EXPOSE 5000
 ENV FLASK_APP=server.py
 ENV FLASK_ENV=production
 ENV PYTHONPATH=/app
+ENV OPENCV_LOG_LEVEL=ERROR
+
+# Create startup script for database migration and app start
+RUN echo '#!/bin/bash\necho "Starting application..."\necho "Skipping database migration for now..."\ngunicorn --bind 0.0.0.0:5000 --workers 4 --timeout 120 server:app' > /app/start.sh && chmod +x /app/start.sh
 
 # Run the application
-CMD ["python", "server.py"]
+CMD ["/app/start.sh"]
