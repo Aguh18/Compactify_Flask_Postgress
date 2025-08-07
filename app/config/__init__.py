@@ -3,10 +3,12 @@ from .database import db
 from app import app
 from flask_migrate import Migrate
 from dotenv import dotenv_values
+import os
 
 
 env_values = dotenv_values(".env")
-databaseUrl = env_values["DATABASE_URL"]
+# Try to get DATABASE_URL from environment variables first, then from .env file
+databaseUrl = os.getenv("DATABASE_URL") or env_values.get("DATABASE_URL")
 
 
 
