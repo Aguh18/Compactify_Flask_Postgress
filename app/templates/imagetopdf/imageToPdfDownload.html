@@ -1,143 +1,51 @@
-{% extends "./master/layout.html" %}
-{% block title %}Image to PDF - Download{% endblock %}
-{% block head %}
-{{ super() }}
-<script src="//unpkg.com/alpinejs" defer></script>
-{% endblock %}
-
-{% block content %}
-<div x-data="{ 
-  showSuccess: false,
-  fileInfo: {
-    name: '{{ file }}',
-    size: 'Unknown',
-    type: 'PDF Document'
-  }
-}" x-init="showSuccess = true" class="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-violet-100">
+{% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
+  block head %} {{ super() }} {% endblock %} {% block content %} 
+  <div class="w-screen">
+    <div
+      class="w-full text-center mt-14 mb-5 text-zinc-700 text-5xl font-semibold font-['Poppins'] underline leading-10"
+    >
+      File Anda Telah Selesai di Proses
+    </div>
+  </div>
+  <!-- download section -->
+  <section class="flex">
+    <div class="flex items-center justify-end w-1/2">
+      <img
+        src="{{url_for('static', filename='image/download.svg')}}"
+        alt="Gambar
+        1"
+        class="flex items-center w-auto max-w-screen-md h-72"
+      />
+    </div>
+    <a
+      download="custom-filename.jpg"
+      href="{{url_for('static', filename=file)}}"
+      class="flex items-center w-1/2 mt-10"
+    >
+      <div
+        class="w-[400px] h-[70px] rounded-full bg-gradient-to-b from-blue-600 to-sky-900"
+      >
+        <div
+          class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+        >
+          Download File
+        </div>
+      </div>
+    </a>
+  </section>
   
-  <!-- Header Section -->
-  <div class="pt-8 pb-6">
-    <div class="max-w-4xl mx-auto px-4">
-      <div class="text-center">
-        <div x-show="showSuccess" x-transition:enter="transition ease-out duration-500" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-full mb-6 shadow-lg">
-          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-        </div>
-        <h1 class="text-4xl font-bold text-gray-800 mb-3">Conversion Complete!</h1>
-        <p class="text-lg text-gray-600">Your images have been successfully converted to PDF</p>
+  <div class="flex items-center justify-center w-full mt-5">
+    <a
+      href="{{url_for('imageToPdf')}}"
+      class="flex items-center justify-center w-3/5 h-[75px] bg-gradient-to-b from-blue-600 to-sky-900 rounded-3xl"
+    >
+      <div
+        class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+      >
+        Unggah File Lainnya +
       </div>
-    </div>
+    </a>
   </div>
-
-  <!-- Download Section -->
-  <div class="max-w-5xl mx-auto px-4 pb-8">
-    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-      <div class="lg:flex">
-        <!-- Left Side - Image -->
-        <div class="lg:w-1/2 bg-gradient-to-br from-purple-500 to-indigo-600 p-8 flex items-center justify-center">
-          <div class="text-center">
-            <div class="bg-white bg-opacity-20 rounded-full p-8 mb-6 inline-block">
-              <svg class="w-24 h-24 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-              </svg>
-            </div>
-            <h3 class="text-2xl font-bold text-white mb-2">PDF Siap!</h3>
-            <p class="text-purple-100">Images have been converted to high-quality PDF</p>
-          </div>
-        </div>
-
-        <!-- Right Side - Download Info -->
-        <div class="lg:w-1/2 p-8">
-          <!-- File Information -->
-          <div class="mb-8">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-              <svg class="w-5 h-5 text-purple-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-              </svg>
-              Informasi File
-            </h3>
-            <div class="bg-gray-50 rounded-xl p-4 space-y-3">
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600">Nama File:</span>
-                <span class="font-medium text-gray-800" x-text="fileInfo.name"></span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600">Tipe File:</span>
-                <span class="font-medium text-gray-800" x-text="fileInfo.type"></span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600">Status:</span>
-                <span class="inline-flex px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
-                  Successfully Converted
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Download Button -->
-          <div class="space-y-4">
-            <a href="{{ url_for('static', filename=file) }}" download 
-               class="group w-full inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
-              <svg class="w-5 h-5 mr-2 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-              </svg>
-              Download PDF
-            </a>
-
-            <a href="{{ url_for('imageToPdf') }}" 
-               class="w-full inline-flex items-center justify-center px-6 py-3 border-2 border-purple-300 text-purple-600 font-medium rounded-xl hover:bg-purple-50 transition-colors duration-200">
-              <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-              </svg>
-              Convert More Images
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Related Tools Section -->
-  <div class="max-w-5xl mx-auto px-4 pb-12">
-    <div class="text-center mb-8">
-      <h2 class="text-2xl font-bold text-gray-800 mb-2">Other Tools</h2>
-      <p class="text-gray-600">Jelajahi fitur-fitur lain untuk kebutuhan file Anda</p>
-    </div>
-    
-    <div class="grid md:grid-cols-3 gap-6">
-      <a href="{{ url_for('compressImg') }}" class="group bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1">
-        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2v12a2 2 0 002 2z"></path>
-          </svg>
-        </div>
-        <h3 class="font-semibold text-gray-800 mb-2">Compress Image</h3>
-        <p class="text-sm text-gray-600">Reduce image file size without quality loss</p>
-      </a>
-
-      <a href="{{ url_for('compressPdf') }}" class="group bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1">
-        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-          </svg>
-        </div>
-        <h3 class="font-semibold text-gray-800 mb-2">Compress PDF</h3>
-        <p class="text-sm text-gray-600">Perkecil ukuran file PDF dengan mudah</p>
-      </a>
-
-      <a href="{{ url_for('wordToPDF') }}" class="group bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1">
-        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-          <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-          </svg>
-        </div>
-        <h3 class="font-semibold text-gray-800 mb-2">Word to PDF</h3>
-        <p class="text-sm text-gray-600">Convert Word documents to PDF</p>
-      </a>
-    </div>
-  </div>
-
-</div>
-{% endblock %}
+  
+  {% endblock %}
   

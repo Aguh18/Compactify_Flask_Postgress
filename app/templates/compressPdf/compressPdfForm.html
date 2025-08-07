@@ -1,239 +1,114 @@
-{% extends "./master/layout.html" %}
-{% block title %}Compress PDF - Compactify{% endblock %}
-{% block head %} {{ super() }} {% endblock %}
-{% block content %}
-
-<script>
-  function validateFile(file) {
-    const allowedExtensions = ['pdf'];
-    const filename = file.name.toLowerCase();
-    const fileExtension = filename.substring(filename.lastIndexOf('.') + 1);
-    console.log('Ekstensi file:', fileExtension);
-
-    if (!allowedExtensions.includes(fileExtension)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  function handleFileChange(event) {
-    const file = event.target.files[0];
-    if (!file) return null;
-    return validateFile(file);
-  }
-
-  function pdfCompressor() {
-    return {
-      selectedFile: null,
-      errorMessage: '',
-      isDragOver: false,
-      isProcessing: false,
-
-      handleFileSelect(event) {
-        const file = event.target.files[0];
-        this.validateAndSetFile(file);
-      },
-
-      handleDrop(event) {
-        this.isDragOver = false;
-        const file = event.dataTransfer.files[0];
-        this.validateAndSetFile(file);
-      },
-
-      validateAndSetFile(file) {
-        if (!file) return;
-        
-        const allowedTypes = ['application/pdf'];
-        const maxSize = 20 * 1024 * 1024; // 20MB
-        
-        if (!allowedTypes.includes(file.type)) {
-          this.errorMessage = 'Please select a valid PDF file';
-          return;
-        }
-        
-        if (file.size > maxSize) {
-          this.errorMessage = 'File size must be less than 20MB';
-          return;
-        }
-        
-        this.selectedFile = file;
-        this.errorMessage = '';
-      },
-
-      clearFile() {
-        this.selectedFile = null;
-        this.errorMessage = '';
-        document.querySelector('input[type="file"]').value = '';
-      },
-
-      formatFileSize(bytes) {
-        if (!bytes) return '';
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(1024));
-        return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
-      },
-
-      handleSubmit(event) {
-        if (!this.selectedFile) {
-          event.preventDefault();
-          this.errorMessage = 'Please select a PDF file first';
-          return;
-        }
-        this.isProcessing = true;
+{% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
+  block head %} {{ super() }} {% endblock %} {% block content %}
+  <!-- NAVBAR END -->
+  <script>
+    function validateFile() {
+  
+      const allowedExtensions = ['pdf'];
+      const filename = this.file.name.toLowerCase();
+      const fileExtension = filename.substring(filename.lastIndexOf('.') + 1);
+      console.log('Ekstensi file:', fileExtension);
+  
+      if (!allowedExtensions.includes(fileExtension)) {
+        this.errorMessage = 'Ekstensi file tidak valid.';
+        return false;
       }
+  
+      // Jika file valid, lakukan tindakan yang diinginkan
+     
+      this.errorMessage = ''; 
+      return true;
     }
-  }
-</script>  
-<!-- Background with gradient -->
-<div class="min-h-screen py-8 bg-gradient-to-br from-red-50 via-white to-orange-50">
-  <div class="container px-4 mx-auto">
-    <!-- Main Card -->
-    <div class="max-w-2xl mx-auto">
-      <div class="overflow-hidden bg-white border border-gray-100 shadow-2xl rounded-3xl">
-        <!-- Header Section -->
-        <div class="px-8 py-12 text-center bg-gradient-to-r from-red-600 to-orange-600">
-          <div class="flex justify-center mb-6">
-            <div class="p-4 rounded-full bg-white/20 backdrop-blur-sm">
-              <img src="{{ url_for('static', filename='image/logo.png') }}" class="w-auto h-16" alt="Compactify Logo" />
-            </div>
+  
+    function handleFileChange(event) {
+      // Memperbarui nilai file
+      file = event.target.files[0];
+  
+      // Melakukan validasi
+      const isFile = validateFile(file);
+  
+      return isFile;
+    }
+  
+    
+  </script>
+  
+  
+  <div
+    class="flex items-center justify-center w-screen"
+    style="height: calc(100vh - 80px);"
+  >
+  
+    <!-- Content Section Start -->
+    <main
+      class="box-border flex items-center justify-center w-full h-full"
+      style="height: calc(100% - 80px);"
+    >
+      <section
+        class="box-border flex flex-col items-center justify-center h-auto shadow-2xl w-96 min-h-96 rounded-2xl"
+      >
+        <form
+        x-data="{ isFile: null, onSubmit: false }"
+          action="{{url_for('compressPdf')}}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          
+          <div class="flex justify-center mb-10">
+            <p>Choose PDF to Compress</p>
           </div>
-          <h1 class="mb-2 text-3xl font-bold text-white">Compress PDF</h1>
-          <p class="text-red-100">Reduce PDF file size while maintaining quality</p>
-        </div>
-        
-        <!-- Form Section -->
-        <div class="p-8">
-          <form x-data="pdfCompressor()" @submit="handleSubmit($event)" action="{{ url_for('compressPdf') }}" method="POST" enctype="multipart/form-data">
+          <div class="flex justify-center mb-10">
+            <img
+              src="{{url_for('static', filename='image/logo.png')}}"
+              class="h-20 opacity-50"
+              alt="Compactify Logo"
+            />
+          </div>
+          <div class="items-center mb-10">
+            <label
+              class="block mb-2 text-sm font-medium text-gray-900"
+              for="file_input"
+              >Upload file</label
+            >
+            <div >
             
-            <!-- File Upload Area -->
-            <div class="mb-8">
-              <div 
-                class="relative p-8 text-center transition-all duration-200 border-2 border-gray-300 border-dashed rounded-2xl hover:border-red-400 hover:bg-red-50/50"
-                :class="{ 'border-red-500 bg-red-50': isDragOver, 'border-green-500 bg-green-50': selectedFile }"
-                @dragover.prevent="isDragOver = true"
-                @dragleave.prevent="isDragOver = false"
-                @drop.prevent="handleDrop($event)"
-              >
-                
-                <!-- Default State -->
-                <div x-show="!selectedFile" class="space-y-4">
-                  <div class="flex items-center justify-center w-20 h-20 mx-auto bg-red-100 rounded-full">
-                    <i class="text-3xl text-red-600 fas fa-file-pdf"></i>
-                  </div>
-                  <div>
-                    <h3 class="mb-2 text-xl font-semibold text-gray-800">Drop your PDF file here</h3>
-                    <p class="mb-4 text-gray-500">or click to browse files</p>
-                    <p class="text-sm text-gray-400">Supports: PDF (Max: 20MB)</p>
-                  </div>
-                </div>
-                
-                <!-- Selected File Preview -->
-                <div x-show="selectedFile" class="space-y-4">
-                  <div class="flex items-center justify-center w-16 h-16 mx-auto bg-green-100 rounded-full">
-                    <i class="text-2xl text-green-600 fas fa-check"></i>
-                  </div>
-                  <div>
-                    <p class="text-lg font-semibold text-gray-800" x-text="selectedFile?.name"></p>
-                    <p class="text-gray-500" x-text="formatFileSize(selectedFile?.size)"></p>
-                  </div>
-                  <button 
-                    type="button" 
-                    @click="clearFile()"
-                    class="font-medium text-red-600 transition-colors duration-200 hover:text-red-700"
-                  >
-                    <i class="mr-1 fas fa-times"></i>Remove file
-                  </button>
-                </div>
-                
-                <input 
-                  type="file" 
-                  name="file" 
-                  accept=".pdf"
-                  @change="handleFileSelect($event)"
-                  class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-              </div>
-              
-              <!-- Error Message -->
-              <div x-show="errorMessage" class="p-4 mt-4 border border-red-200 rounded-lg bg-red-50">
-                <div class="flex items-center">
-                  <i class="mr-2 text-red-600 fas fa-exclamation-triangle"></i>
-                  <p class="font-medium text-red-700" x-text="errorMessage"></p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Compression Options -->
-            <div class="mb-8" x-show="selectedFile">
-              <label class="block mb-4 text-lg font-semibold text-gray-800">
-                <i class="mr-2 text-red-600 fas fa-sliders-h"></i>
-                Compression Level
-              </label>
-              <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <label class="relative cursor-pointer">
-                  <input type="radio" name="quality" value="high" checked class="sr-only peer">
-                  <div class="p-4 transition-all duration-200 border-2 border-gray-200 rounded-xl peer-checked:border-red-500 peer-checked:bg-red-50">
-                    <div class="text-center">
-                      <div class="flex items-center justify-center w-12 h-12 mx-auto mb-2 bg-green-100 rounded-full">
-                        <i class="text-green-600 fas fa-gem"></i>
-                      </div>
-                      <h4 class="font-semibold text-gray-800">High Quality</h4>
-                      <p class="text-sm text-gray-600">Best quality, moderate compression</p>
-                    </div>
-                  </div>
-                </label>
-                
-                <label class="relative cursor-pointer">
-                  <input type="radio" name="quality" value="medium" class="sr-only peer">
-                  <div class="p-4 transition-all duration-200 border-2 border-gray-200 rounded-xl peer-checked:border-red-500 peer-checked:bg-red-50">
-                    <div class="text-center">
-                      <div class="flex items-center justify-center w-12 h-12 mx-auto mb-2 bg-yellow-100 rounded-full">
-                        <i class="text-yellow-600 fas fa-balance-scale"></i>
-                      </div>
-                      <h4 class="font-semibold text-gray-800">Balanced</h4>
-                      <p class="text-sm text-gray-600">Good quality, better compression</p>
-                    </div>
-                  </div>
-                </label>
-                
-                <label class="relative cursor-pointer">
-                  <input type="radio" name="quality" value="low" class="sr-only peer">
-                  <div class="p-4 transition-all duration-200 border-2 border-gray-200 rounded-xl peer-checked:border-red-500 peer-checked:bg-red-50">
-                    <div class="text-center">
-                      <div class="flex items-center justify-center w-12 h-12 mx-auto mb-2 bg-red-100 rounded-full">
-                        <i class="text-red-600 fas fa-compress"></i>
-                      </div>
-                      <h4 class="font-semibold text-gray-800">High Compression</h4>
-                      <p class="text-sm text-gray-600">Maximum compression, lower quality</p>
-                    </div>
-                  </div>
-                </label>
-              </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="flex justify-center">
-              <button 
-                type="submit" 
-                :disabled="!selectedFile || isProcessing"
-                class="px-8 py-4 font-semibold text-white transition-all duration-300 bg-gradient-to-r from-red-600 to-orange-600 rounded-xl hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                <span x-show="!isProcessing" class="flex items-center">
-                  <i class="mr-2 fas fa-file-pdf"></i>
-                  Compress PDF
-                </span>
-                <span x-show="isProcessing" class="flex items-center">
-                  <div class="w-5 h-5 mr-2 border-2 border-white rounded-full animate-spin border-t-transparent"></div>
-                  Processing...
-                </span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+            <input  x-on:change="isFile = handleFileChange($event)"    type="file" name="file" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer max-w-64 bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"  >
+          </div> 
+          <template x-if="isFile == false">
+            <p class="text-[12px] mt-1 text-center text-red-700 bg-red-100 rounded-lg" >Your  Extension File Not Correct</p>
+          </template>
+          
+            <p class="mt-1 text-sm text-gray-500" id="file_input_help">
+              PDF(max 20Mb).
+            </p>
+          </div>
+  
+          <button
+          x-bind:disabled="isFile ? false : true"
+            type="submit"
+            name="submit"
+            x-on:click="onSubmit = true"
+            class="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            :class="isFile ? '' : 'cursor-not-allowed bg-white'"
+          >
+            Compress
+          </button>
+          <!-- On Submit Animation -->
+           <template x-if="onSubmit">
+            
+           
+  
+          <div class="fixed top-0 left-0 z-50 flex flex-col items-center justify-center w-screen h-screen bg-gray-800 bg-opacity-75 overlay">
+       
+              <svg aria-hidden="true" class="w-[17%] h-[17%] text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
+              <span class="sr-only">Loading...</span>
+     
+          </div>
+        </template>
+        </form>
+      </section>
+    </main>
   </div>
-</div>
-
-{% endblock %}  
+  
+  {% endblock %}
+  

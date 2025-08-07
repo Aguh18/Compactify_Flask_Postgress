@@ -1,258 +1,112 @@
-{% extends "./master/layout.html" %}
-{% block title %}Image to PDF Converter{% endblock %}
-{% block head %}
-{{ super() }}
-<script src="//unpkg.com/alpinejs" defer></script>
-{% endblock %}
-
-{% block content %}
-<div x-data="imageToPdfConverter()" class="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-violet-100">
+{% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
+  block head %} {{ super() }} {% endblock %} {% block content %}
+  <!-- NAVBAR END -->
+  <script>
+    function validateFile() {
   
-  <!-- Header Section -->
-  <div class="pt-8 pb-6">
-    <div class="max-w-4xl px-4 mx-auto text-center">
-      <div class="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full shadow-lg bg-gradient-to-r from-purple-500 to-indigo-600">
-        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-        </svg>
-      </div>
-      <h1 class="mb-2 text-4xl font-bold text-gray-800">Image to PDF</h1>
-      <p class="text-lg text-gray-600">Convert your images to PDF documents easily</p>
-    </div>
-  </div>
-
-  <!-- Main Form Section -->
-  <div class="max-w-3xl px-4 pb-12 mx-auto">
-    <div class="overflow-hidden bg-white shadow-xl rounded-2xl">
-      <div class="p-8">
-        
-        <!-- Logo -->
-        <div class="mb-8 text-center">
-          <img src="{{ url_for('static', filename='image/logo.png') }}" 
-               alt="Compactify Logo" 
-               class="h-16 mx-auto opacity-80">
-        </div>
-
-        <form action="{{ url_for('imageToPdf') }}" method="POST" enctype="multipart/form-data" 
-              @submit="isLoading = true">
-          
-          <!-- Upload Area -->
-          <div class="mb-8">
-            <label class="block mb-3 text-sm font-semibold text-gray-700">
-              <svg class="inline w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-              </svg>
-              Upload Images
-            </label>
-            
-            <div @drop.prevent="handleDrop($event)" 
-                 @dragover.prevent="dragActive = true" 
-                 @dragleave.prevent="dragActive = false"
-                 :class="dragActive ? 'border-purple-400 bg-purple-50' : 'border-gray-300'"
-                 class="relative p-8 text-center transition-all duration-200 border-2 border-dashed rounded-xl hover:border-purple-400 hover:bg-purple-50">
-              
-              <input type="file" name="file" accept=".jpg,.jpeg,.png,.gif,.bmp,.webp" 
-                     @change="handleFileSelect($event)" 
-                     class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-              
-              <template x-if="!selectedFile">
-                <div>
-                  <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-purple-100 rounded-lg">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                  </div>
-                  <p class="mb-2 text-gray-600">
-                    <span class="font-medium text-purple-600">Klik untuk upload</span> atau drag & drop
-                  </p>
-                  <p class="text-sm text-gray-500">PNG, JPG, JPEG, GIF, BMP, WebP (max 10MB)</p>
-                </div>
-              </template>
-
-              <template x-if="selectedFile">
-                <div class="flex items-center justify-between p-4 rounded-lg bg-gray-50">
-                  <div class="flex items-center">
-                    <div class="flex items-center justify-center w-10 h-10 mr-3 bg-purple-100 rounded-lg">
-                      <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                      </svg>
-                    </div>
-                    <div>
-                      <p class="font-medium text-gray-800" x-text="selectedFile.name"></p>
-                      <p class="text-sm text-gray-500" x-text="formatFileSize(selectedFile.size)"></p>
-                    </div>
-                  </div>
-                  <button type="button" @click="removeFile()" class="p-1 text-red-500 hover:text-red-700">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                  </button>
-                </div>
-              </template>
-            </div>
-
-            <!-- Error Message -->
-            <template x-if="errorMessage">
-              <div class="p-3 mt-3 border border-red-200 rounded-lg bg-red-50">
-                <p class="text-sm text-red-600" x-text="errorMessage"></p>
-              </div>
-            </template>
-          </div>
-
-          <!-- Convert Button -->
-          <div class="flex flex-col gap-4 sm:flex-row">
-            <button type="submit" 
-                    :disabled="!selectedFile || isLoading"
-                    :class="selectedFile && !isLoading ? 'bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
-                    class="flex-1 px-6 py-3 font-semibold transition-all duration-200 transform rounded-xl hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300">
-              <template x-if="!isLoading">
-                <span class="flex items-center justify-center">
-                  <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                  </svg>
-                  Convert to PDF
-                </span>
-              </template>
-              <template x-if="isLoading">
-                <span class="flex items-center justify-center">
-                  <svg class="w-5 h-5 mr-3 -ml-1 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Converting...
-                </span>
-              </template>
-            </button>
-
-            <button type="button" @click="resetForm()" class="px-6 py-3 font-medium text-purple-600 transition-colors duration-200 border-2 border-purple-300 rounded-xl hover:bg-purple-50">
-              Reset
-            </button>
-          </div>
-
-        </form>
-      </div>
-    </div>
-
-    <!-- Info Cards -->
-    <div class="grid gap-6 mt-8 md:grid-cols-3">
-      <div class="p-6 bg-white shadow-md rounded-xl">
-        <div class="flex items-center justify-center w-12 h-12 mb-4 bg-purple-100 rounded-lg">
-          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-          </svg>
-        </div>
-        <h3 class="mb-2 font-semibold text-gray-800">Fast Conversion</h3>
-        <p class="text-sm text-gray-600">Convert images to PDF in just seconds</p>
-      </div>
-      
-      <div class="p-6 bg-white shadow-md rounded-xl">
-        <div class="flex items-center justify-center w-12 h-12 mb-4 bg-purple-100 rounded-lg">
-          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-          </svg>
-        </div>
-        <h3 class="mb-2 font-semibold text-gray-800">Aman & Privat</h3>
-        <p class="text-sm text-gray-600">Your files are processed locally and automatically deleted after conversion</p>
-      </div>
-      
-      <div class="p-6 bg-white shadow-md rounded-xl">
-        <div class="flex items-center justify-center w-12 h-12 mb-4 bg-purple-100 rounded-lg">
-          <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-          </svg>
-        </div>
-        <h3 class="mb-2 font-semibold text-gray-800">Format Universal</h3>
-        <p class="text-sm text-gray-600">Hasil PDF dapat dibuka di semua perangkat dan platform</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Loading Overlay -->
-  <template x-if="isLoading">
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div class="max-w-sm p-8 mx-4 text-center bg-white rounded-2xl">
-        <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full">
-          <svg class="w-8 h-8 text-purple-600 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-        </div>
-        <h3 class="mb-2 text-lg font-semibold text-gray-800">Converting Images</h3>
-        <p class="text-gray-600">Your images are being converted to PDF...</p>
-      </div>
-    </div>
-  </template>
-
-</div>
-
-<script>
-function imageToPdfConverter() {
-  return {
-    selectedFile: null,
-    dragActive: false,
-    isLoading: false,
-    errorMessage: '',
-
-    handleFileSelect(event) {
-      const file = event.target.files[0];
-      this.validateFile(file);
-    },
-
-    handleDrop(event) {
-      this.dragActive = false;
-      const file = event.dataTransfer.files[0];
-      this.validateFile(file);
-    },
-
-    validateFile(file) {
-      this.errorMessage = '';
-      
-      if (!file) return;
-
-      // Check file type
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'];
-      if (!allowedTypes.includes(file.type)) {
-        this.errorMessage = 'Format file tidak didukung. Gunakan JPG, PNG, GIF, BMP, atau WebP.';
-        return;
+      const allowedExtensions = ['jpg', 'jpeg', 'png'];
+      const filename = this.file.name.toLowerCase();
+      const fileExtension = filename.substring(filename.lastIndexOf('.') + 1);
+      console.log('Ekstensi file:', fileExtension);
+  
+      if (!allowedExtensions.includes(fileExtension)) {
+        this.errorMessage = 'Ekstensi file tidak valid.';
+        return false;
       }
-
-      // Check file size (10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        this.errorMessage = 'Ukuran file maksimal 10MB.';
-        return;
-      }
-
-      this.selectedFile = file;
-      this.errorMessage = '';
-    },
-
-    removeFile() {
-      this.selectedFile = null;
-      this.errorMessage = '';
-      // Reset file input
-      const fileInput = document.querySelector('input[type="file"]');
-      if (fileInput) fileInput.value = '';
-    },
-
-    formatFileSize(bytes) {
-      if (bytes === 0) return '0 Bytes';
-      const k = 1024;
-      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-      const i = Math.floor(Math.log(bytes) / Math.log(k));
-      return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    },
-
-    resetForm() {
-      this.selectedFile = null;
-      this.errorMessage = '';
-      this.isLoading = false;
-      // Reset file input
-      const fileInput = document.querySelector('input[type="file"]');
-      if (fileInput) fileInput.value = '';
+  
+      // Jika file valid, lakukan tindakan yang diinginkan
+     
+      this.errorMessage = ''; 
+      return true;
     }
-  }
-}
-</script>
-
-{% endblock %}
+  
+    function handleFileChange(event) {
+      // Memperbarui nilai file
+      file = event.target.files[0];
+  
+      // Melakukan validasi
+      const isFile = validateFile(file);
+  
+      return isFile;
+    }
+  
+    
+  </script>
+  
+  
+  <div
+    class="flex items-center justify-center w-screen"
+    style="height: calc(100vh - 80px);"
+  >
+  
+    <!-- Content Section Start -->
+    <main
+      class="box-border flex items-center justify-center w-full h-full"
+      style="height: calc(100% - 80px);"
+    >
+      <section
+        class="box-border flex flex-col items-center justify-center h-auto shadow-2xl w-96 min-h-96 rounded-2xl"
+      >
+        <form
+        x-data="{ isFile: null, onSubmit: false }"
+          action="{{url_for('imageToPdf')}}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          
+          <div class="flex justify-center mb-10">
+            <p>Choose PDF to Compress</p>
+          </div>
+          <div class="flex justify-center mb-10">
+            <img
+              src="{{url_for('static', filename='image/logo.png')}}"
+              class="h-20 opacity-50"
+              alt="Compactify Logo"
+            />
+          </div>
+          <div class="items-center mb-10">
+            <label
+              class="block mb-2 text-sm font-medium text-gray-900"
+              for="file_input"
+              >Upload file</label
+            >
+            <div >
+            
+            <input  x-on:change="isFile = handleFileChange($event)"    type="file" name="file" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer max-w-64 bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"  >
+          </div> 
+          <template x-if="isFile == false">
+            <p class="text-[12px] mt-1 text-center text-red-700 bg-red-100 rounded-lg" >Your  Extension File Not Correct</p>
+          </template>
+          
+            <p class="mt-1 text-sm text-gray-500" id="file_input_help">
+              SVG, PNG, JPG, JPEG(max 10Mb).
+            </p>
+          </div>
+  
+          <button
+          x-bind:disabled="isFile ? false : true"
+            type="submit"
+            name="submit"
+            x-on:click="onSubmit = true"
+            class="text-white bg-blue-800 hover:bg-blue-900 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            :class="isFile ? '' : 'cursor-not-allowed bg-white'"
+          >
+            Convert
+          </button>
+          <!-- On Submit Animation -->
+           <template x-if="onSubmit">
+            
+          <div class="fixed top-0 left-0 z-50 flex flex-col items-center justify-center w-screen h-screen bg-gray-800 bg-opacity-75 overlay">
+       
+              <svg aria-hidden="true" class="w-[17%] h-[17%] text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/><path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/></svg>
+              <span class="sr-only">Loading...</span>
+     
+          </div>
+        </template>
+        </form>
+      </section>
+    </main>
+  </div>
+  
+  {% endblock %}
   

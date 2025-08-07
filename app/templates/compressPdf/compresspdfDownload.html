@@ -1,180 +1,51 @@
-{% extends "./master/layout.html" %}
-{% block title %}Download Compressed PDF - Compactify{% endblock %}
-{% block head %} {{ super() }} {% endblock %}
-{% block content %}
-
-<script>
-  function downloadPage() {
-    return {
-      showSuccessAnimation: true,
-      
-      init() {
-        // Hide success animation after 3 seconds
-        setTimeout(() => {
-          this.showSuccessAnimation = false;
-        }, 3000);
-      },
-      
-      downloadFile() {
-        // Add download analytics or tracking here if needed
-        console.log('PDF file downloaded');
-      },
-      
-      uploadAnother() {
-        // Add navigation analytics if needed
-        window.location.href = "{{ url_for('compressPdf') }}";
-      }
-    }
-  }
-</script>
-
-<!-- Background with gradient -->
-<div class="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 py-8">
-  <div class="container mx-auto px-4">
-    <div class="max-w-4xl mx-auto">
-      
-      <!-- Success Animation -->
-      <div x-data="downloadPage()" x-show="showSuccessAnimation" x-transition class="text-center mb-8">
-        <div class="flex items-center justify-center w-24 h-24 mx-auto mb-6 bg-red-100 rounded-full animate-bounce">
-          <i class="text-4xl text-red-600 fas fa-check"></i>
-        </div>
-        <h1 class="text-4xl font-bold text-gray-800 mb-2">PDF Compression Complete!</h1>
-        <p class="text-gray-600">Your PDF has been successfully compressed</p>
-      </div>
-
-      <!-- Main Download Card -->
-      <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
-        
-        <!-- Header Section -->
-        <div class="bg-gradient-to-r from-red-600 to-orange-600 px-8 py-12 text-center">
-          <div class="flex justify-center mb-6">
-            <div class="bg-white/20 p-4 rounded-full backdrop-blur-sm">
-              <img src="{{ url_for('static', filename='image/logo.png') }}" class="h-16 w-auto" alt="Compactify Logo" />
-            </div>
-          </div>
-          <h2 class="text-3xl font-bold text-white mb-2">Your PDF is Ready!</h2>
-          <p class="text-red-100">Download your compressed PDF below</p>
-        </div>
-
-        <!-- Content Section -->
-        <div class="p-8">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            
-            <!-- Download Illustration -->
-            <div class="text-center lg:text-left">
-              <div class="flex justify-center lg:justify-start mb-6">
-                <div class="relative">
-                  <img src="{{ url_for('static', filename='image/download.svg') }}" alt="Download Illustration" class="w-64 h-64 object-contain" />
-                  <div class="absolute -top-2 -right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center animate-pulse">
-                    <i class="text-white fas fa-check text-sm"></i>
-                  </div>
-                </div>
-              </div>
-              <div class="space-y-4">
-                <div class="flex items-center justify-center lg:justify-start space-x-3">
-                  <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <span class="text-gray-700">PDF successfully compressed</span>
-                </div>
-                <div class="flex items-center justify-center lg:justify-start space-x-3">
-                  <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <span class="text-gray-700">Quality maintained</span>
-                </div>
-                <div class="flex items-center justify-center lg:justify-start space-x-3">
-                  <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <span class="text-gray-700">File size reduced</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Download Actions -->
-            <div class="space-y-6">
-              <!-- Download Button -->
-              <div class="text-center">
-                <a 
-                  download="compressed_document.pdf"
-                  href="{{ url_for('static', filename=file) }}"
-                  @click="downloadFile()"
-                  class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-red-600 to-orange-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-                >
-                  <i class="mr-3 text-xl fas fa-download"></i>
-                  <span class="text-lg">Download Compressed PDF</span>
-                </a>
-                <p class="text-sm text-gray-500 mt-2">Your file will download automatically</p>
-              </div>
-
-              <!-- File Info Card -->
-              <div class="bg-gray-50 rounded-2xl p-6 border border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                  <i class="mr-2 text-red-600 fas fa-info-circle"></i>
-                  File Information
-                </h3>
-                <div class="space-y-3 text-sm">
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">Format:</span>
-                    <span class="font-medium text-gray-800">PDF (Optimized)</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">Status:</span>
-                    <span class="font-medium text-red-600">
-                      <i class="mr-1 fas fa-check-circle"></i>
-                      Ready for Download
-                    </span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">Quality:</span>
-                    <span class="font-medium text-gray-800">Compressed</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Upload Another Button -->
-              <div class="text-center">
-                <a 
-                  href="{{ url_for('compressPdf') }}"
-                  class="inline-flex items-center px-6 py-3 bg-white border-2 border-red-600 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-all duration-300"
-                >
-                  <i class="mr-2 fas fa-plus"></i>
-                  Compress Another PDF
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Additional Tools Section -->
-      <div class="mt-12 text-center">
-        <h3 class="text-2xl font-bold text-gray-800 mb-8">Try Our Other Tools</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          <a href="{{ url_for('compressImg') }}" class="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
-            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full">
-              <i class="text-2xl text-blue-600 fas fa-image"></i>
-            </div>
-            <h4 class="text-lg font-semibold text-gray-800 mb-2">Compress Image</h4>
-            <p class="text-gray-600 text-sm">Reduce image file size while maintaining quality</p>
-          </a>
-
-          <a href="{{ url_for('compressAudio') }}" class="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
-            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full">
-              <i class="text-2xl text-purple-600 fas fa-music"></i>
-            </div>
-            <h4 class="text-lg font-semibold text-gray-800 mb-2">Compress Audio</h4>
-            <p class="text-gray-600 text-sm">Optimize audio files for smaller sizes</p>
-          </a>
-
-          <a href="{{ url_for('wordToPDF') }}" class="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
-            <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full">
-              <i class="text-2xl text-green-600 fas fa-file-word"></i>
-            </div>
-            <h4 class="text-lg font-semibold text-gray-800 mb-2">Word to PDF</h4>
-            <p class="text-gray-600 text-sm">Convert Word documents to PDF format</p>
-          </a>
-        </div>
-      </div>
+{% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
+  block head %} {{ super() }} {% endblock %} {% block content %} 
+  <div class="w-screen">
+    <div
+      class="w-full text-center mt-14 mb-5 text-zinc-700 text-5xl font-semibold font-['Poppins'] underline leading-10"
+    >
+      File Anda Telah Selesai di Proses
     </div>
   </div>
-</div>
-
-{% endblock %}
+  <!-- download section -->
+  <section class="flex">
+    <div class="flex items-center justify-end w-1/2">
+      <img
+        src="{{url_for('static', filename='image/download.svg')}}"
+        alt="Gambar
+        1"
+        class="flex items-center w-auto max-w-screen-md h-72"
+      />
+    </div>
+    <a
+      download="custom-filename.jpg"
+      href="{{url_for('static', filename=file)}}"
+      class="flex items-center w-1/2 mt-10"
+    >
+      <div
+        class="w-[400px] h-[70px] rounded-full bg-gradient-to-b from-blue-600 to-sky-900"
+      >
+        <div
+          class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+        >
+          Download File
+        </div>
+      </div>
+    </a>
+  </section>
+  
+  <div class="flex items-center justify-center w-full mt-5">
+    <a
+      href="{{url_for('compressPdf')}}"
+      class="flex items-center justify-center w-3/5 h-[75px] bg-gradient-to-b from-blue-600 to-sky-900 rounded-3xl"
+    >
+      <div
+        class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+      >
+        Unggah File Lainnya +
+      </div>
+    </a>
+  </div>
+  
+  {% endblock %}
   

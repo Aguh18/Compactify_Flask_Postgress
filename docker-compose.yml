@@ -1,9 +1,12 @@
 version: '3.8'
 
 services:
-  compactify-web:
-    build: .
-    container_name: compactify-app
+  web:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - BUILDKIT_INLINE_CACHE=1
     ports:
       - "5000:5000"
     volumes:
@@ -18,28 +21,10 @@ services:
       - ./app/static/CompressAudio:/app/app/static/CompressAudio
     environment:
       - FLASK_ENV=production
-      - FLASK_APP=server.py
+      - PYTHONUNBUFFERED=1
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
-
-  # Optional: Add PostgreSQL database if needed
-  # compactify-db:
-  #   image: postgres:13
-  #   container_name: compactify-postgres
-  #   environment:
-  #     POSTGRES_DB: compactify
-  #     POSTGRES_USER: compactify_user
-  #     POSTGRES_PASSWORD: secure_password
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   ports:
-  #     - "5432:5432"
-  #   restart: unless-stopped
-
-# volumes:
-#   postgres_data:
