@@ -27,22 +27,22 @@ def removebg_route():
     return removeBgController.removeBg()
 
 # Compress Image
-@app.route("/compressimg", methods=["GET", "POST"], endpoint="compressImg")
+@app.route("/compressimg", methods=["GET", "POST"], endpoint="compressimg")
 def compressImg_route():
     return compressImgController.imageCompress()
 
 # Word to PDF
-@app.route("/wordtopdf", methods=["GET", "POST"], endpoint="wordToPDF")
+@app.route("/wordtopdf", methods=["GET", "POST"], endpoint="wordtopdf")
 def wordToPDF_route():
     return wordToPDFController.wordToPDF()
 
 # Image to pdf
-@app.route("/imagetopdf", methods=["GET", "POST"], endpoint="imageToPdf")
+@app.route("/imagetopdf", methods=["GET", "POST"], endpoint="imagetopdf")
 def compressPdf_route():
     return imageToPdfController.imageTopdf()
 
 # Compress PDF
-@app.route("/compresspdf", methods=["GET", "POST"], endpoint="compressPdf")
+@app.route("/compresspdf", methods=["GET", "POST"], endpoint="compresspdf")
 def compressPdf_route():
     return compressPdfController.compressPdf()
 
@@ -56,6 +56,6 @@ def imgtogray_route():
     return  imageToGrayscaleController.imgtogray()
 
 # compress Audio
-@app.route("/audiocompress", methods=["GET", "POST"], endpoint="compressAudio")
+@app.route("/audiocompress", methods=["GET", "POST"], endpoint="audiocompress")
 def compressAudio_route():
     return  audiocompressController.CompressAudio()
