@@ -104,7 +104,7 @@
         
         <!-- Form Section -->
         <div class="p-8">
-          <form x-data="docToPdfConverter()" @submit="handleSubmit($event)" action="{{ url_for('wordToPDF') }}" method="POST" enctype="multipart/form-data">
+          <form x-data="docToPdfConverter()" @submit="handleSubmit($event)" action="{{ url_for('wordtopdf') }}" method="POST" enctype="multipart/form-data">
             
             <!-- File Upload Area -->
             <div class="mb-8">

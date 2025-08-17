@@ -104,7 +104,7 @@
         
         <!-- Form Section -->
         <div class="p-8">
-          <form x-data="pdfCompressor()" @submit="handleSubmit($event)" action="{{ url_for('compressPdf') }}" method="POST" enctype="multipart/form-data">
+          <form x-data="pdfCompressor()" @submit="handleSubmit($event)" action="{{ url_for('compresspdf') }}" method="POST" enctype="multipart/form-data">
             
             <!-- File Upload Area -->
             <div class="mb-8">

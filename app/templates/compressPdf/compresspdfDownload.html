@@ -22,7 +22,7 @@
       
       uploadAnother() {
         // Add navigation analytics if needed
-        window.location.href = "{{ url_for('compressPdf') }}";
+        window.location.href = "{{ url_for('compresspdf') }}";
       }
     }
   }
@@ -130,7 +130,7 @@
               <!-- Upload Another Button -->
               <div class="text-center">
                 <a 
-                  href="{{ url_for('compressPdf') }}"
+                  href="{{ url_for('compresspdf') }}"
                   class="inline-flex items-center px-6 py-3 bg-white border-2 border-red-600 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-all duration-300"
                 >
                   <i class="mr-2 fas fa-plus"></i>
@@ -147,7 +147,7 @@
         <h3 class="text-2xl font-bold text-gray-800 mb-8">Try Our Other Tools</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          <a href="{{ url_for('compressImg') }}" class="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <a href="{{ url_for('compressimg') }}" class="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full">
               <i class="text-2xl text-blue-600 fas fa-image"></i>
             </div>
@@ -155,7 +155,7 @@
             <p class="text-gray-600 text-sm">Reduce image file size while maintaining quality</p>
           </a>
 
-          <a href="{{ url_for('compressAudio') }}" class="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <a href="{{ url_for('audiocompress') }}" class="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full">
               <i class="text-2xl text-purple-600 fas fa-music"></i>
             </div>
@@ -163,7 +163,7 @@
             <p class="text-gray-600 text-sm">Optimize audio files for smaller sizes</p>
           </a>
 
-          <a href="{{ url_for('wordToPDF') }}" class="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <a href="{{ url_for('wordtopdf') }}" class="block bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:scale-105">
             <div class="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full">
               <i class="text-2xl text-green-600 fas fa-file-word"></i>
             </div>

@@ -29,7 +29,7 @@
         </button>
         <div class="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
           <div class="p-2">
-            <a href="{{url_for('compressImg')}}" class="flex items-center p-3 rounded-lg hover:bg-blue-50 transition-colors duration-200">
+            <a href="{{url_for('compressimg')}}" class="flex items-center p-3 rounded-lg hover:bg-blue-50 transition-colors duration-200">
               <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
                 <i class="fas fa-compress-alt text-blue-600"></i>
               </div>
@@ -38,7 +38,7 @@
                 <div class="text-sm text-gray-500">Reduce image file size</div>
               </div>
             </a>
-            <a href="{{url_for('compressPdf')}}" class="flex items-center p-3 rounded-lg hover:bg-red-50 transition-colors duration-200">
+            <a href="{{url_for('compresspdf')}}" class="flex items-center p-3 rounded-lg hover:bg-red-50 transition-colors duration-200">
               <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
                 <i class="fas fa-file-pdf text-red-600"></i>
               </div>
@@ -56,7 +56,7 @@
                 <div class="text-sm text-gray-500">Convert to black & white</div>
               </div>
             </a>
-            <a href="{{url_for('imageToPdf')}}" class="flex items-center p-3 rounded-lg hover:bg-purple-50 transition-colors duration-200">
+            <a href="{{url_for('imagetopdf')}}" class="flex items-center p-3 rounded-lg hover:bg-purple-50 transition-colors duration-200">
               <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
                 <i class="fas fa-file-image text-purple-600"></i>
               </div>
@@ -65,7 +65,7 @@
                 <div class="text-sm text-gray-500">Convert images to PDF</div>
               </div>
             </a>
-            <a href="{{url_for('wordToPDF')}}" class="flex items-center p-3 rounded-lg hover:bg-green-50 transition-colors duration-200">
+            <a href="{{url_for('wordtopdf')}}" class="flex items-center p-3 rounded-lg hover:bg-green-50 transition-colors duration-200">
               <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
                 <i class="fas fa-file-word text-green-600"></i>
               </div>
@@ -92,7 +92,7 @@
                 <div class="text-sm text-gray-500">Archive multiple files</div>
               </div>
             </a>
-            <a href="{{url_for('compressAudio')}}" class="flex items-center p-3 rounded-lg hover:bg-indigo-50 transition-colors duration-200">
+            <a href="{{url_for('audiocompress')}}" class="flex items-center p-3 rounded-lg hover:bg-indigo-50 transition-colors duration-200">
               <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-3">
                 <i class="fas fa-volume-up text-indigo-600"></i>
               </div>
@@ -124,19 +124,19 @@
       </a>
       <div class="space-y-1">
         <div class="px-4 py-2 text-gray-500 font-medium text-sm">Tools</div>
-        <a href="{{url_for('compressImg')}}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors duration-200 ml-4">
+        <a href="{{url_for('compressimg')}}" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors duration-200 ml-4">
           <i class="fas fa-compress-alt mr-2"></i>Compress Image
         </a>
-        <a href="{{url_for('compressPdf')}}" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors duration-200 ml-4">
+        <a href="{{url_for('compresspdf')}}" class="block px-4 py-2 text-gray-700 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors duration-200 ml-4">
           <i class="fas fa-file-pdf mr-2"></i>Compress PDF
         </a>
         <a href="{{url_for('imgtogray')}}" class="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-600 rounded-lg transition-colors duration-200 ml-4">
           <i class="fas fa-palette mr-2"></i>Image to Grayscale
         </a>
-        <a href="{{url_for('imageToPdf')}}" class="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors duration-200 ml-4">
+        <a href="{{url_for('imagetopdf')}}" class="block px-4 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors duration-200 ml-4">
           <i class="fas fa-file-image mr-2"></i>Image to PDF
         </a>
-        <a href="{{url_for('wordToPDF')}}" class="block px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-600 rounded-lg transition-colors duration-200 ml-4">
+        <a href="{{url_for('wordtopdf')}}" class="block px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-600 rounded-lg transition-colors duration-200 ml-4">
           <i class="fas fa-file-word mr-2"></i>Word to PDF
         </a>
         <a href="{{url_for('removebg')}}" class="block px-4 py-2 text-gray-700 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition-colors duration-200 ml-4">
@@ -145,7 +145,7 @@
         <a href="{{url_for('zip')}}" class="block px-4 py-2 text-gray-700 hover:bg-yellow-50 hover:text-yellow-600 rounded-lg transition-colors duration-200 ml-4">
           <i class="fas fa-file-archive mr-2"></i>Create ZIP
         </a>
-        <a href="{{url_for('compressAudio')}}" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors duration-200 ml-4">
+        <a href="{{url_for('audiocompress')}}" class="block px-4 py-2 text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition-colors duration-200 ml-4">
           <i class="fas fa-volume-up mr-2"></i>Compress Audio
         </a>
       </div>

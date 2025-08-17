@@ -94,7 +94,7 @@ function audioCompressor() {
         
         <!-- Form Section -->
         <div class="p-8">
-          <form x-data="audioCompressor()" @submit="handleSubmit($event)" action="{{ url_for('compressAudio') }}" method="POST" enctype="multipart/form-data">
+          <form x-data="audioCompressor()" @submit="handleSubmit($event)" action="{{ url_for('audiocompress') }}" method="POST" enctype="multipart/form-data">
             {{ form.csrf_token if form }}
             
             <!-- File Upload Area -->
