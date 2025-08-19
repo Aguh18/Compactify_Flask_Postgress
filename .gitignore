@@ -1,9 +1,105 @@
 
 
 
+# Python compiled files
 *.pyc
 *.pyo
+
+# Environment and dependencies
 .venv
 .env
 node_modules
 venv
+
+# Uploaded and generated files
+app/static/uploads/*
+!app/static/uploads/.gitkeep
+
+app/static/compressImg/uploads/*
+!app/static/compressImg/uploads/.gitkeep
+app/static/compressImg/downloads/*
+!app/static/compressImg/downloads/.gitkeep
+
+app/static/CompressImg/uploads/*
+!app/static/CompressImg/uploads/.gitkeep
+app/static/CompressImg/downloads/*
+!app/static/CompressImg/downloads/.gitkeep
+
+app/static/compressPdf/uploads/*
+!app/static/compressPdf/uploads/.gitkeep
+app/static/compressPdf/downloads/*
+!app/static/compressPdf/downloads/.gitkeep
+
+app/static/CompressPdf/uploads/*
+!app/static/CompressPdf/uploads/.gitkeep
+app/static/CompressPdf/downloads/*
+!app/static/CompressPdf/downloads/.gitkeep
+
+app/static/CompressAudio/*
+!app/static/CompressAudio/.gitkeep
+
+app/static/compressZip/uploads/*
+!app/static/compressZip/uploads/.gitkeep
+app/static/compressZip/downloads/*
+!app/static/compressZip/downloads/.gitkeep
+
+app/static/docToPdf/*
+!app/static/docToPdf/.gitkeep
+
+app/static/imageToPdf/*
+!app/static/imageToPdf/.gitkeep
+app/static/imagetopdf/*
+!app/static/imagetopdf/.gitkeep
+
+app/static/imgToGray/*
+!app/static/imgToGray/.gitkeep
+app/static/imgtogray/*
+!app/static/imgtogray/.gitkeep
+
+app/static/removeBackground/*
+!app/static/removeBackground/.gitkeep
+
+app/static/wortToPdf/*
+!app/static/wortToPdf/.gitkeep
+
+app/static/zip/*
+!app/static/zip/.gitkeep
+
+# Cache directories
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
