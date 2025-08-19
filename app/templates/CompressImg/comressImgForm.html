@@ -108,7 +108,7 @@
         
         <!-- Form Section -->
         <div class="p-8">
-          <form x-data="imageCompressor()" @submit="handleSubmit($event)" action="{{ url_for('compressImg') }}" method="POST" enctype="multipart/form-data">
+          <form x-data="imageCompressor()" @submit="handleSubmit($event)" action="{{ url_for('compressimg') }}" method="POST" enctype="multipart/form-data">
             
             <!-- File Upload Area -->
             <div class="mb-8">
