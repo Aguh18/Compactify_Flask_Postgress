@@ -1,0 +1,124 @@
+{% extends "./master/layout.html" %} {% block title %}Download PDF{% endblock %}
+{% block content %}
+<div class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen py-12">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <div
+        class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4"
+      >
+        <i class="fas fa-file-pdf text-blue-600 text-2xl"></i>
+      </div>
+      <h1 class="text-4xl font-bold text-gray-900 mb-4">
+        PDF Ready for Download
+      </h1>
+      <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+        Your images have been successfully converted to PDF. Download your file
+        below.
+      </p>
+    </div>
+
+    <!-- Download Card -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+      <div class="text-center">
+        <div
+          class="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6"
+        >
+          <i class="fas fa-check text-green-600 text-3xl"></i>
+        </div>
+
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">
+          Conversion Complete!
+        </h2>
+        <p class="text-gray-600 mb-8">Your PDF file is ready for download.</p>
+
+        <!-- File Info -->
+        <div class="bg-gray-50 rounded-lg p-6 mb-8">
+          <div class="flex items-center justify-center mb-4">
+            <i class="fas fa-file-pdf text-red-600 text-4xl mr-4"></i>
+            <div class="text-left">
+              <p class="text-lg font-semibold text-gray-900">{{ filename }}</p>
+              <p class="text-sm text-gray-500">PDF Document</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Download Button -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="{{ url_for('imagetopdf_download_file', file=file) }}"
+            class="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all duration-200 transform hover:scale-105 shadow-lg"
+          >
+            <i class="fas fa-download mr-3"></i>
+            Download PDF
+          </a>
+
+          <a
+            href="{{ url_for('imagetopdf') }}"
+            class="inline-flex items-center justify-center px-8 py-4 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-all duration-200"
+          >
+            <i class="fas fa-plus mr-3"></i>
+            Convert Another
+          </a>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="mt-8 p-4 bg-blue-50 rounded-lg">
+          <p class="text-sm text-blue-800">
+            <i class="fas fa-info-circle mr-2"></i>
+            Your file will be automatically deleted from our server after 1 hour
+            for security.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white rounded-xl shadow-md p-6 text-center">
+        <div
+          class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-shield-alt text-green-600"></i>
+        </div>
+        <h3 class="font-semibold text-gray-900 mb-2">Secure Processing</h3>
+        <p class="text-sm text-gray-600">
+          Your files are processed securely and deleted automatically
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 text-center">
+        <div
+          class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-lightning text-blue-600"></i>
+        </div>
+        <h3 class="font-semibold text-gray-900 mb-2">Fast Conversion</h3>
+        <p class="text-sm text-gray-600">
+          Quick and efficient image to PDF conversion
+        </p>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-md p-6 text-center">
+        <div
+          class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-cog text-purple-600"></i>
+        </div>
+        <h3 class="font-semibold text-gray-900 mb-2">Custom Options</h3>
+        <p class="text-sm text-gray-600">
+          Choose orientation and preview before conversion
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Auto download after 3 seconds (optional)
+  setTimeout(function () {
+    // Uncomment the line below if you want auto-download
+    // window.location.href = "/imagetopdf/download-file?file={{ filename }}";
+  }, 3000);
+</script>
+{% endblock %}

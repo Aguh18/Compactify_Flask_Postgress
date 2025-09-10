@@ -1,3 +1,4 @@
+
 from flask import Blueprint, request, render_template, url_for, redirect, flash
 from app.models.validate.pdfValidation import pdfForm
 from app.config.database import db
@@ -66,47 +67,67 @@ def get_ghostscript_path():
 
 
 def compressPdf():
+    from flask import send_file, jsonify
     if request.method == "GET":
         return render_template("compressPdf/compressPdfForm.html")
     elif request.method == "POST":
-        
-            try:
-                
-                env_values = dotenv_values(".env")
-                project_Path = env_values["PATH"]+"app/static/compressPdf/"
-                
-                uid = str(uuid.uuid4())
-                
-                if not os.path.exists(project_Path):
-                    os.makedirs(project_Path)
-                if not os.path.exists(project_Path+"uploads/"):
-                    os.makedirs(project_Path+"uploads/")
-                if not os.path.exists(project_Path+"downloads/"):
-                    os.makedirs(project_Path+"downloads/")
-                    
-                file = request.files["file"]
-                input_path = project_Path+"uploads/" +uid+ secure_filename(file.filename)
-                file.save(input_path )
-                output_path = project_Path+"downloads/"+uid + secure_filename(file.filename)
-                
-                compress(input_path, output_path, power=3)
-               
-                file = "compressPdf/downloads/"+uid+secure_filename(file.filename)
-                
-                db.session.add(filesModel(file))
-                db.session.commit()
-                print("file succes created")
-                
-                return render_template("compressPdf/compresspdfDownload.html", file = file)
-            except Exception as e:
-                print(e)
-                return str(e)
+        try:
+            env_values = dotenv_values(".env")
+            project_Path = env_values["PATH"]+"app/static/compressPdf/"
+            uid = str(uuid.uuid4())
+            if not os.path.exists(project_Path):
+                os.makedirs(project_Path)
+            if not os.path.exists(project_Path+"uploads/"):
+                os.makedirs(project_Path+"uploads/")
+            if not os.path.exists(project_Path+"downloads/"):
+                os.makedirs(project_Path+"downloads/")
+            file = request.files["file"]
+            input_path = project_Path+"uploads/" +uid+ secure_filename(file.filename)
+            file.save(input_path)
+            output_path = project_Path+"downloads/"+uid + secure_filename(file.filename)
 
-        
-        
-        
-        
+            # Ambil level kompresi dari form (default: 3/ebook)
+            quality_map = {"high": 1, "medium": 2, "low": 3}
+            power = quality_map.get(request.form.get("quality", "low"), 3)
+            compress(input_path, output_path, power=power)
+
+            file_db = "compressPdf/downloads/"+uid+secure_filename(file.filename)
+            db.session.add(filesModel(file_db))
+            db.session.commit()
+            print("file succes created")
+
+            # Kembalikan URL halaman download (bukan file langsung)
+            download_url = url_for('compresspdf_download', file=file_db)
+            return jsonify({"download_url": download_url})
+        except Exception as e:
+            print(e)
+            return jsonify({"error": str(e)}), 400
 
 
+def render_download_page(file):
+    return render_template("compressPdf/compresspdfDownload.html", file=file)
 
+
+def download_file(file):
+    from flask import send_file, jsonify
+    import os
+    from dotenv import dotenv_values
     
+    try:
+        env_values = dotenv_values(".env")
+        project_Path = env_values["PATH"]+"app/static/"
+        file_path = project_Path + file
+        
+        if not os.path.exists(file_path):
+            return jsonify({"error": "File not found"}), 404
+            
+        filename = os.path.basename(file)
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=f"compressed_{filename}",
+            mimetype="application/pdf"
+        )
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 400

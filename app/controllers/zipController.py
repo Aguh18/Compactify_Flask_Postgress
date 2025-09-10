@@ -1,4 +1,4 @@
-from flask import Blueprint, request, render_template, url_for, redirect, flash
+from flask import Blueprint, request, render_template, url_for, redirect, flash, jsonify, send_file
 from app.models.validate.imageValidation import imageForm
 from app.config.database import db
 from werkzeug.utils import secure_filename 
@@ -51,13 +51,44 @@ def zip():
                 file.save(input_path+"/" + secure_filename(file.filename))
                 
                 
-            file = "compressZip/downloads/"+uid+secure_filename(pathfile.filename)+".zip"
-            db.session.add(filesModel(file))
+            file_db = "compressZip/downloads/"+uid+secure_filename(pathfile.filename)+".zip"
+            db.session.add(filesModel(file_db))
             db.session.commit()
             create_zip(input_path, output_path)
-            return render_template("zip/zipDownload.html", file = file)
+            
+            # Return download URL instead of direct template
+            download_url = url_for('zip_download', file=file_db)
+            return jsonify({"download_url": download_url})
         except Exception as e:
-           
-            return str(e)
+            return jsonify({"error": str(e)}), 500
+
+
+def render_download_page(file):
+    filename = os.path.basename(file)
+    return render_template("zip/zipDownload.html", filename=filename, file=file)
+
+
+def download_file(file):
+    try:
+        env_values = dotenv_values(".env")
+        project_Path = env_values["PATH"]+"app/static/"
+        file_path = project_Path + file
+        
+        print(f"Looking for file at: {file_path}")
+        print(f"File exists: {os.path.exists(file_path)}")
+        
+        if not os.path.exists(file_path):
+            return jsonify({"error": f"File not found at {file_path}"}), 404
+            
+        filename = os.path.basename(file)
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=f"compressed_{filename}",
+            mimetype="application/zip"
+        )
+    except Exception as e:
+        print(f"Download error: {e}")
+        return jsonify({"error": str(e)}), 400
     
    

@@ -27,63 +27,89 @@ except AttributeError:
 
 
 def imageCompress():
-    
+    from flask import jsonify
     form = imageForm()
     if request.method == "GET":
         return render_template("CompressImg/comressImgForm.html" , form = form)
     elif request.method == "POST":
+        try:
+            env_values = dotenv_values(".env")
+            project_Path = env_values["PATH"]+"app/static/compressImg/"
+            
+            if not os.path.exists(project_Path):
+                os.makedirs(project_Path)
+            if not os.path.exists(project_Path+"uploads/"):
+                os.makedirs(project_Path+"uploads/")
+            if not os.path.exists(project_Path+"downloads/"):
+                os.makedirs(project_Path+"downloads/")
+            
+            uid = str(uuid.uuid4())
+            
+            file = request.files["file"]
+            input_path = project_Path+"uploads/" +uid+ secure_filename(file.filename)
+            file.save(input_path)
+            output_Path = project_Path +"downloads/"
+           
+            filename = secure_filename(file.filename)
+            
+            # Get quality parameter from form
+            quality_level = request.form.get('quality', 'medium')
+            
+            # Set compression parameters based on quality level
+            if quality_level == 'high':
+                quality = 85
+                new_size_ratio = 0.9
+            elif quality_level == 'low':
+                quality = 30
+                new_size_ratio = 0.7
+            else:  # medium/balanced
+                quality = 60
+                new_size_ratio = 0.8
+            
+            compressed_filename = compress_img(filename,input_path, output_Path,uid, new_size_ratio=new_size_ratio, quality=quality, width=None, height=None, to_jpg=True)
+            file_db = "compressImg/downloads/"+compressed_filename
+            print("nama file adalah", file_db)
+            
+            db.session.add(filesModel(file_db))
+            db.session.commit()
+            print("file succes created")
+            
+            # Kembalikan URL halaman download (bukan file langsung)
+            download_url = url_for('compressimg_download', file=file_db)
+            return jsonify({"download_url": download_url})
+        except Exception as e:
+            print("Ini ada eror")
+            print(e)
+            return jsonify({"error": str(e)}), 400
+
+
+def render_download_page(file):
+    return render_template("CompressImg/compressImgDownload.html", file=file)
+
+
+def download_file(file):
+    from flask import send_file, jsonify
+    import os
+    from dotenv import dotenv_values
+    
+    try:
+        env_values = dotenv_values(".env")
+        project_Path = env_values["PATH"]+"app/static/"
+        file_path = project_Path + file
         
-            try:
-                env_values = dotenv_values(".env")
-                project_Path = env_values["PATH"]+"app/static/compressImg/"
-                
-               
-                
-                if not os.path.exists(project_Path):
-                    os.makedirs(project_Path)
-                if not os.path.exists(project_Path+"uploads/"):
-                    os.makedirs(project_Path+"uploads/")
-                if not os.path.exists(project_Path+"downloads/"):
-                    os.makedirs(project_Path+"downloads/")
-                
-                uid = str(uuid.uuid4())
-                    
-                file = request.files["file"]
-                input_path = project_Path+"uploads/" +uid+ secure_filename(file.filename)
-                file.save(input_path )
-                output_Path = project_Path +"downloads/"
-               
-                filename = secure_filename(file.filename)
-                
-                # Get quality parameter from form
-                quality_level = request.form.get('quality', 'medium')
-                
-                # Set compression parameters based on quality level
-                if quality_level == 'high':
-                    quality = 85
-                    new_size_ratio = 0.9
-                elif quality_level == 'low':
-                    quality = 30
-                    new_size_ratio = 0.7
-                else:  # medium/balanced
-                    quality = 60
-                    new_size_ratio = 0.8
-                
-                file = compress_img(filename,input_path, output_Path,uid, new_size_ratio=new_size_ratio, quality=quality, width=None, height=None, to_jpg=True)
-                file = "compressImg/downloads/"+file
-                print("nama file adalah", file)
-                
-                db.session.add(filesModel(file))
-                db.session.commit()
-                print("file succes created")
-                
-                return render_template("CompressImg/compressImgDownload.html", file = file)
-            except Exception as e:
-                print("Ini ada eror")
-                print(e)
-                return str(e)
-       
-        
+        if not os.path.exists(file_path):
+            return jsonify({"error": "File not found"}), 404
+            
+        filename = os.path.basename(file)
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=f"compressed_{filename}",
+            mimetype="image/jpeg"
+        )
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 400
 
 
 def get_size_format(b, factor=1024, suffix="B"):
