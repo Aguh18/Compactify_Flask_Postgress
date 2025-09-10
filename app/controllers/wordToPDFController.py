@@ -51,12 +51,11 @@ def wordToPDF():
                 db.session.commit()
                 print("file success created")
                 
-                # Return download URL instead of direct template
-                download_url = url_for('wordtopdf_download', file=file_db)
-                return jsonify({"download_url": download_url})
+                # Redirect to download page directly
+                return render_template("docToPdf/docToPdfDownload.html", file=file_db)
             except Exception as e:
                 print(e)
-                return jsonify({"error": str(e)}), 500
+                return "Error"
 
 
 def render_download_page(file):

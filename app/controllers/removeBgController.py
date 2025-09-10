@@ -46,11 +46,10 @@ def removeBg():
                 db.session.commit()
                 print("file success created")
                 
-                # Return download URL instead of direct template
-                download_url = url_for('removebg_download', file=file_db)
-                return jsonify({"download_url": download_url})
+                # Redirect to download page directly
+                return render_template("removeBackground/removeBgDownload.html", file=file_db)
             except Exception as e:
-                return jsonify({"error": str(e)}), 500
+                return str(e)
 
 
 def render_download_page(file):
