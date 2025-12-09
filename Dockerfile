@@ -1,31 +1,37 @@
 # Build stage
-FROM python:3.10-bullseye as builder
+FROM ubuntu:24.04 as builder
 
 WORKDIR /app
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_DEFAULT_TIMEOUT=300
+    PIP_DEFAULT_TIMEOUT=300 \
+    DEBIAN_FRONTEND=noninteractive
 
-# Install build dependencies
+# Install Python 3.12 and build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.12 \
+    python3-pip \
+    python3-dev \
     gcc \
     g++ \
-    libc6-dev \
+    make \
     libpq-dev \
     libffi-dev \
     libssl-dev \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
+# Create symlink for python3
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
+
 COPY requirements.txt .
-RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+RUN python3 -m pip install --upgrade pip && \
+    python3 -m pip install --no-cache-dir -r requirements.txt
 
 # Runtime stage
-FROM python:3.10-bullseye
+FROM ubuntu:24.04
 
 WORKDIR /app
 
@@ -34,22 +40,30 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     FLASK_APP=server.py \
     FLASK_ENV=production \
     PYTHONPATH=/app \
-    OPENCV_LOG_LEVEL=ERROR
+    OPENCV_LOG_LEVEL=ERROR \
+    DEBIAN_FRONTEND=noninteractive
 
-# Install OpenCV and rembg runtime dependencies
+# Install Python 3.12 and runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.12 \
+    python3-pip \
     libpq5 \
     curl \
-    libgl1-mesa-glx \
+    libgl1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
     libxrender1 \
     libgomp1 \
+    libgstreamer1.0-0 \
+    libgstreamer-plugins-base1.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
+# Create symlink for python3
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.12 1
+
 # Copy installed packages dari builder
-COPY --from=builder /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
+COPY --from=builder /usr/local/lib/python3.12/dist-packages/ /usr/local/lib/python3.12/dist-packages/
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
 
 # Copy application code
