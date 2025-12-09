@@ -3,6 +3,7 @@ from app.models.validate.imageValidation import imageForm
 from app.config.database import db
 from werkzeug.utils import secure_filename 
 from app.models.fileModel import filesModel
+from app.controllers.base_controller import BaseController
 try:
     from PIL import Image
 except ImportError:
@@ -12,6 +13,10 @@ import uuid
 import os
 import traceback
 
+
+
+# Initialize base controller
+base_controller = BaseController('imageToGrayscaleController')
 
 def imgtogray():
     from flask import jsonify
@@ -34,37 +39,26 @@ def imgtogray():
                 print(f"File received: {file.filename}")
                 
                 env_values = dotenv_values(".env")
-                project_Path = "/app/app/static/imgtogray/"
-            # Use path that matches docker-compose volume mount"
-                print(f"Project path: {project_Path}")
+                directories = base_controller.setup_directories()
                 
-                uid = str(uuid.uuid4())
-                
-                if not os.path.exists(project_Path):
-                    os.makedirs(project_Path)
-                if not os.path.exists(project_Path+"uploads/"):
-                    os.makedirs(project_Path+"uploads/")
-                if not os.path.exists(project_Path+"downloads/"):
-                    os.makedirs(project_Path+"downloads/")
-                
-                input_path = project_Path+"uploads/" +uid+ secure_filename(file.filename)
+                input_path = base_controller.get_uploads_path(base_controller.module_name) + "/" + uid + secure_filename(file.filename)
                 file.save(input_path )
                 print(f"File saved to: {input_path}")
                 
-                output_path = project_Path+"downloads/"+uid + secure_filename(file.filename)
+                paths = base_controller.get_download_paths(uid, filename)
+                output_Path = paths['output_path']
                 
                 img = Image.open(input_path).convert('L')
                 img.save(output_path)
                 print(f"Grayscale image saved to: {output_path}")
                 
-                file_path = "imgtogray/downloads/"+uid + secure_filename(file.filename)
-                db.session.add(filesModel(file_path))
-                db.session.commit()
+                processed_filename = uid + secure_filename(file.filename)
+                file_db = base_controller.save_to_database(processed_filename, uid)
                 print("file success created")
-                print(f"Redirecting to download page with file: {file_path}")
+                print(f"Redirecting to download page with file: {file_db}")
                 
                 # Kembalikan URL halaman download (bukan file langsung)
-                download_url = url_for('imgtogray_download', file=file_path)
+                download_url = url_for('imgtogray_download', file=file_db)
                 return jsonify({"download_url": download_url})
             except Exception as e:
                 print(f"Error occurred: {str(e)}")
@@ -77,46 +71,15 @@ def render_download_page(file):
 
 
 def download_file(file):
-    from flask import send_file, jsonify
-    import os
-    from dotenv import dotenv_values
-    
-    try:
-        # Use correct path that matches docker-compose volume
-        file_path = "/app/" + file
-
-        if not os.path.exists(file_path):
-            return jsonify({"error": "File not found"}), 404
-
-        filename = os.path.basename(file)
-        return send_file(
-            file_path,
-            as_attachment=True,
-            download_name=f"grayscale_{filename}",
-            mimetype="image/jpeg"
-        )
-    except Exception as e:
-        print(e)
-        return jsonify({"error": str(e)}), 400
+    """
+    Download file using base controller
+    """
+    return base_controller.download_file(file)
 
 
 def preview_file(file):
-    from flask import send_file, jsonify
-    import os
-
-    try:
-        # Use correct path that matches docker-compose volume
-        file_path = "/app/" + file
-
-        if not os.path.exists(file_path):
-            return jsonify({"error": "File not found"}), 404
-
-        filename = os.path.basename(file)
-        return send_file(
-            file_path,
-            mimetype="image/jpeg"
-        )
-    except Exception as e:
-        print(e)
-        return jsonify({"error": str(e)}), 400
+    """
+    Preview file using base controller
+    """
+    return base_controller.preview_file(file)
 

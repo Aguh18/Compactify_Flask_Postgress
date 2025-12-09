@@ -4,6 +4,7 @@ from app.models.validate.pdfValidation import pdfForm
 from app.config.database import db
 from werkzeug.utils import secure_filename 
 from app.models.fileModel import filesModel
+from app.controllers.base_controller import BaseController
 import argparse
 import os.path
 import shutil
@@ -11,6 +12,10 @@ import subprocess
 import sys
 from dotenv import dotenv_values
 import uuid
+
+
+# Initialize base controller
+base_controller = BaseController('compressPdfController')
 
 def compress(input_file_path, output_file_path, power=0):
     """Function to compress PDF via Ghostscript command line interface"""
@@ -73,28 +78,20 @@ def compressPdf():
     elif request.method == "POST":
         try:
             env_values = dotenv_values(".env")
-            project_Path = "/app/app/static/CompressPdf/"
-            # Use path that matches docker-compose volume mount"
-            uid = str(uuid.uuid4())
-            if not os.path.exists(project_Path):
-                os.makedirs(project_Path)
-            if not os.path.exists(project_Path+"uploads/"):
-                os.makedirs(project_Path+"uploads/")
-            if not os.path.exists(project_Path+"downloads/"):
-                os.makedirs(project_Path+"downloads/")
+            directories = base_controller.setup_directories()
             file = request.files["file"]
-            input_path = project_Path+"uploads/" +uid+ secure_filename(file.filename)
-            file.save(input_path)
-            output_path = project_Path+"downloads/"+uid + secure_filename(file.filename)
+            uid = str(uuid.uuid4())
+            input_path, filename, uid = base_controller.save_uploaded_file(file, uid)
+            paths = base_controller.get_download_paths(uid, filename)
+            output_Path = paths['output_path']
 
             # Ambil level kompresi dari form (default: 3/ebook)
             quality_map = {"high": 1, "medium": 2, "low": 3}
             power = quality_map.get(request.form.get("quality", "low"), 3)
             compress(input_path, output_path, power=power)
 
-            file_db = "CompressPdf/downloads/"+uid+secure_filename(file.filename)
-            db.session.add(filesModel(file_db))
-            db.session.commit()
+            compressed_filename = uid + secure_filename(file.filename)
+            file_db = base_controller.save_to_database(compressed_filename, uid)
             print("file succes created")
 
             # Kembalikan URL halaman download (bukan file langsung)
@@ -110,13 +107,7 @@ def render_download_page(file):
 
 
 def download_file(file):
-    from flask import send_file, jsonify
-    import os
-    from dotenv import dotenv_values
-    
-    try:
-        # Use correct path that matches docker-compose volume
-        file_path = "/app/" + file
-    except Exception as e:
-        print(e)
-        return jsonify({"error": str(e)}), 400
+    """
+    Download file using base controller
+    """
+    return base_controller.download_file(file)

@@ -1,14 +1,18 @@
 
-from flask import  request, render_template, url_for, redirect, flash
+from flask import request, render_template, url_for, redirect, flash
 from app.models.validate.imageValidation import imageForm
-from werkzeug.utils import secure_filename 
-from rembg import remove 
+from werkzeug.utils import secure_filename
+from rembg import remove
 from app.config.database import db
 from app.models.fileModel import filesModel
-from PIL import Image 
+from app.controllers.base_controller import BaseController
+from PIL import Image
 import os
 import uuid
 from dotenv import dotenv_values
+
+# Initialize base controller
+base_controller = BaseController('compressImgController')
 
 # Handle PIL version compatibility
 try:
@@ -33,25 +37,14 @@ def imageCompress():
         return render_template("CompressImg/comressImgForm.html" , form = form)
     elif request.method == "POST":
         try:
-            env_values = dotenv_values(".env")
-            # Use path that matches docker-compose volume mount
-            project_Path = "/app/app/static/CompressImg/"
-            
-            if not os.path.exists(project_Path):
-                os.makedirs(project_Path)
-            if not os.path.exists(project_Path+"uploads/"):
-                os.makedirs(project_Path+"uploads/")
-            if not os.path.exists(project_Path+"downloads/"):
-                os.makedirs(project_Path+"downloads/")
-            
             uid = str(uuid.uuid4())
-            
+
             file = request.files["file"]
-            input_path = project_Path+"uploads/" +uid+ secure_filename(file.filename)
-            file.save(input_path)
-            output_Path = project_Path +"downloads/"
-           
-            filename = secure_filename(file.filename)
+            input_path, filename, uid = base_controller.save_uploaded_file(file, uid)
+
+            # Get paths for output
+            paths = base_controller.get_download_paths(uid, filename)
+            output_Path = paths['output_path']
             
             # Get quality parameter from form
             quality_level = request.form.get('quality', 'medium')
@@ -68,11 +61,8 @@ def imageCompress():
                 new_size_ratio = 0.8
             
             compressed_filename = compress_img(filename,input_path, output_Path,uid, new_size_ratio=new_size_ratio, quality=quality, width=None, height=None, to_jpg=True)
-            file_db = "CompressImg/downloads/"+compressed_filename
+            file_db = base_controller.save_to_database(compressed_filename, uid)
             print("nama file adalah", file_db)
-            
-            db.session.add(filesModel(file_db))
-            db.session.commit()
             print("file succes created")
             
             # Kembalikan URL halaman download (bukan file langsung)
@@ -89,27 +79,10 @@ def render_download_page(file):
 
 
 def download_file(file):
-    from flask import send_file, jsonify
-    import os
-    from dotenv import dotenv_values
-    
-    try:
-        # Use correct path that matches docker-compose volume
-        file_path = "/app/" + file
-        
-        if not os.path.exists(file_path):
-            return jsonify({"error": "File not found"}), 404
-            
-        filename = os.path.basename(file)
-        return send_file(
-            file_path,
-            as_attachment=True,
-            download_name=f"compressed_{filename}",
-            mimetype="image/jpeg"
-        )
-    except Exception as e:
-        print(e)
-        return jsonify({"error": str(e)}), 400
+    """
+    Download file using base controller
+    """
+    return base_controller.download_file(file)
 
 
 def get_size_format(b, factor=1024, suffix="B"):

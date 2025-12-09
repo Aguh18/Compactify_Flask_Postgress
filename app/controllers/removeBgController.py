@@ -17,8 +17,13 @@ from werkzeug.utils import secure_filename
 
 from app.config.database import db
 from app.models.fileModel import filesModel
+from app.controllers.base_controller import BaseController
 from app.models.validate.imageValidation import imageForm
 
+
+
+# Initialize base controller
+base_controller = BaseController('removeBgController')
 
 def removeBg():
     # Lazy import - hanya saat endpoint dipanggil
@@ -62,8 +67,7 @@ def removeBg():
                 + secure_filename(file.filename)
                 + ".png"
             )
-            db.session.add(filesModel(file_db))
-            db.session.commit()
+            base_controller.save_to_database(filename, uid)
             print("file success created")
 
             # Redirect to download page directly
@@ -82,23 +86,7 @@ def render_download_page(file):
 
 
 def download_file(file):
-    try:
-        # Use correct path that matches docker-compose volume
-        file_path = "/app/" + file
-
-        print(f"Looking for file at: {file_path}")
-        print(f"File exists: {os.path.exists(file_path)}")
-
-        if not os.path.exists(file_path):
-            return jsonify({"error": f"File not found at {file_path}"}), 404
-
-        filename = os.path.basename(file)
-        return send_file(
-            file_path,
-            as_attachment=True,
-            download_name=f"no_bg_{filename}",
-            mimetype="image/png",
-        )
-    except Exception as e:
-        print(f"Download error: {e}")
-        return jsonify({"error": str(e)}), 400
+    """
+    Download file using base controller
+    """
+    return base_controller.download_file(file)

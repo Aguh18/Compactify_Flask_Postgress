@@ -3,11 +3,16 @@ from app.models.validate.imageValidation import imageForm
 from app.config.database import db
 from werkzeug.utils import secure_filename 
 from app.models.fileModel import filesModel
+from app.controllers.base_controller import BaseController
 import os
 import zipfile
 from datetime import datetime, timedelta
 from dotenv import dotenv_values
 import uuid
+
+
+# Initialize base controller
+base_controller = BaseController('zipController')
 
 def create_zip(directory, zip_filename):
                 # Membuka file ZIP dalam mode write
@@ -30,32 +35,30 @@ def zip():
         return render_template("zip/zipForm.html" )
     elif request.method == "POST":
         try:
-            env_values = dotenv_values(".env")
-            project_Path = "/app/app/static/zip/"
-            # Use path that matches docker-compose volume mount"
             uid = str(uuid.uuid4())
-            
-            if not os.path.exists(project_Path):
-                os.makedirs(project_Path)
-            if not os.path.exists(project_Path+"uploads/"):
-                os.makedirs(project_Path+"uploads/")
-            if not os.path.exists(project_Path+"downloads/"):
-                os.makedirs(project_Path+"downloads/")
-  
+            directories = base_controller.setup_directories()
+
             pathfile = request.files["file[0]"]
-            input_path = project_Path+"uploads/"+uid+secure_filename(pathfile.filename)
-            os.mkdir(input_path)
-            output_path = project_Path+"downloads/"+uid+secure_filename(pathfile.filename)+".zip"
-            
+
+            # Create unique input directory
+            input_dir = f"{directories['uploads_path']}/{uid}"
+            os.makedirs(input_dir, exist_ok=True)
+
+            # Get output path for zip file
+            paths = base_controller.get_download_paths(uid, pathfile.filename + ".zip")
+            output_path = paths['output_path']
+
+            # Save all uploaded files
             for i in range(0, int(request.form["length"])):
                 file = request.files["file["+ str(i) +"]"]
-                file.save(input_path+"/" + secure_filename(file.filename))
-                
-                
-            file_db = "zip/downloads/"+uid+secure_filename(pathfile.filename)+".zip"
-            db.session.add(filesModel(file_db))
-            db.session.commit()
-            create_zip(input_path, output_path)
+                file.save(os.path.join(input_dir, secure_filename(file.filename)))
+
+            # Create zip file
+            create_zip(input_dir, output_path)
+
+            # Save to database
+            zip_filename = uid + secure_filename(pathfile.filename) + ".zip"
+            file_db = base_controller.save_to_database(zip_filename, uid)
             
             # Redirect to download page directly
             return render_template("zip/zipDownload.html", file=file_db)
@@ -69,22 +72,9 @@ def render_download_page(file):
 
 
 def download_file(file):
-    try:
-        # Use correct path that matches docker-compose volume
-        file_path = "/app/" + file
-
-        if not os.path.exists(file_path):
-            return jsonify({"error": "File not found"}), 404
-
-        filename = os.path.basename(file)
-        return send_file(
-            file_path,
-            as_attachment=True,
-            download_name=f"compressed_{filename}",
-            mimetype="application/zip"
-        )
-    except Exception as e:
-        print(f"Download error: {e}")
-        return jsonify({"error": str(e)}), 400
+    """
+    Download file using base controller
+    """
+    return base_controller.download_file(file)
     
    

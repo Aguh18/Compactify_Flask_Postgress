@@ -3,6 +3,7 @@ from app.models.validate.imageValidation import imageForm
 from app.config.database import db
 from werkzeug.utils import secure_filename 
 from app.models.fileModel import filesModel
+from app.controllers.base_controller import BaseController
 import img2pdf
 from PIL import Image
 import os
@@ -17,6 +18,10 @@ import uuid
 
 
 
+
+# Initialize base controller
+base_controller = BaseController('imageToPdfController')
+
 def imageTopdf():
     from flask import jsonify
     if request.method == "GET":
@@ -25,14 +30,7 @@ def imageTopdf():
         try:
             env_values = dotenv_values(".env")
             # Use path that matches docker-compose volume mount
-            project_Path = "/app/app/static/imagetopdf/"
-            
-            if not os.path.exists(project_Path):
-                os.makedirs(project_Path)
-            if not os.path.exists(project_Path+"uploads/"):
-                os.makedirs(project_Path+"uploads/")
-            if not os.path.exists(project_Path+"downloads/"):
-                os.makedirs(project_Path+"downloads/")
+            directories = base_controller.setup_directories()
             
             uid = str(uuid.uuid4())
             
@@ -52,7 +50,8 @@ def imageTopdf():
             
             # Create PDF with orientation
             output_filename = f"converted_images_{uid}.pdf"
-            output_path = project_Path+"downloads/" + output_filename
+            paths = base_controller.get_download_paths(uid, filename)
+            output_Path = paths['output_path']
             
             # Convert images to PDF
             pdf_bytes = img2pdf.convert(image_paths)
@@ -71,8 +70,7 @@ def imageTopdf():
                     
             file_db = "imagetopdf/downloads/" + output_filename
             
-            db.session.add(filesModel(file_db))
-            db.session.commit()
+            base_controller.save_to_database(filename, uid)
             print("file success created")
             
             # Return download URL
@@ -90,30 +88,10 @@ def render_download_page(file):
 
 
 def download_file(file):
-    from flask import send_file, jsonify
-    import os
-    from dotenv import dotenv_values
-    
-    try:
-        # Use correct path that matches docker-compose volume
-        file_path = "/app/" + file
-        
-        print(f"Looking for file at: {file_path}")
-        print(f"File exists: {os.path.exists(file_path)}")
-        
-        if not os.path.exists(file_path):
-            return jsonify({"error": f"File not found at {file_path}"}), 404
-            
-        filename = os.path.basename(file)
-        return send_file(
-            file_path,
-            as_attachment=True,
-            download_name=f"converted_{filename}",
-            mimetype="application/pdf"
-        )
-    except Exception as e:
-        print(f"Download error: {e}")
-        return jsonify({"error": str(e)}), 400
+    """
+    Download file using base controller
+    """
+    return base_controller.download_file(file)
         
         
         
