@@ -20,8 +20,8 @@ def wordToPDF():
                 
                 
                 env_values = dotenv_values(".env")
-                project_Path = "." 
-            # Use relative path instead of PATH from .env+"app/static/wortToPdf/"
+                project_Path = "/app/app/static/docToPdf/"
+            # Use path that matches docker-compose volume mount"
                 
                 uid = str(uuid.uuid4())
                 
@@ -46,7 +46,7 @@ def wordToPDF():
                 # Save the file to a PDF file
                 document.SaveToFile(output_path, FileFormat.PDF)
                 document.Close()
-                file_db = "wortToPdf/downloads/"+uid+secure_filename(file.filename)+".pdf"
+                file_db = "docToPdf/downloads/"+uid+secure_filename(file.filename)+".pdf"
                 
                 db.session.add(filesModel(file_db))
                 db.session.commit()
@@ -67,22 +67,8 @@ def render_download_page(file):
 def download_file(file):
     try:
         env_values = dotenv_values(".env")
-        project_Path = "." 
-            # Use relative path instead of PATH from .env+"app/static/"
-        file_path = project_Path + file
-        
-        print(f"Looking for file at: {file_path}")
-        print(f"File exists: {os.path.exists(file_path)}")
-        
-        if not os.path.exists(file_path):
-            return jsonify({"error": f"File not found at {file_path}"}), 404
-            
-        filename = os.path.basename(file)
-        return send_file(
-            file_path,
-            as_attachment=True,
-            download_name=f"converted_{filename}",
-            mimetype="application/pdf"
+        project_Path = "/app/app/static/docToPdf/"
+            # Use path that matches docker-compose volume mountpdf"
         )
     except Exception as e:
         print(f"Download error: {e}")

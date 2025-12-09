@@ -73,8 +73,8 @@ def compressPdf():
     elif request.method == "POST":
         try:
             env_values = dotenv_values(".env")
-            project_Path = "." 
-            # Use relative path instead of PATH from .env+"app/static/compressPdf/"
+            project_Path = "/app/app/static/CompressPdf/"
+            # Use path that matches docker-compose volume mount"
             uid = str(uuid.uuid4())
             if not os.path.exists(project_Path):
                 os.makedirs(project_Path)
@@ -92,7 +92,7 @@ def compressPdf():
             power = quality_map.get(request.form.get("quality", "low"), 3)
             compress(input_path, output_path, power=power)
 
-            file_db = "compressPdf/downloads/"+uid+secure_filename(file.filename)
+            file_db = "CompressPdf/downloads/"+uid+secure_filename(file.filename)
             db.session.add(filesModel(file_db))
             db.session.commit()
             print("file succes created")
@@ -116,19 +116,8 @@ def download_file(file):
     
     try:
         env_values = dotenv_values(".env")
-        project_Path = "." 
-            # Use relative path instead of PATH from .env+"app/static/"
-        file_path = project_Path + file
-        
-        if not os.path.exists(file_path):
-            return jsonify({"error": "File not found"}), 404
-            
-        filename = os.path.basename(file)
-        return send_file(
-            file_path,
-            as_attachment=True,
-            download_name=f"compressed_{filename}",
-            mimetype="application/pdf"
+        project_Path = "/app/app/static/CompressPdf/"
+            # Use path that matches docker-compose volume mountpdf"
         )
     except Exception as e:
         print(e)

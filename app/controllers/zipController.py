@@ -31,8 +31,8 @@ def zip():
     elif request.method == "POST":
         try:
             env_values = dotenv_values(".env")
-            project_Path = "." 
-            # Use relative path instead of PATH from .env+"app/static/compressZip/"
+            project_Path = "/app/app/static/zip/"
+            # Use path that matches docker-compose volume mount"
             uid = str(uuid.uuid4())
             
             if not os.path.exists(project_Path):
@@ -52,7 +52,7 @@ def zip():
                 file.save(input_path+"/" + secure_filename(file.filename))
                 
                 
-            file_db = "compressZip/downloads/"+uid+secure_filename(pathfile.filename)+".zip"
+            file_db = "zip/downloads/"+uid+secure_filename(pathfile.filename)+".zip"
             db.session.add(filesModel(file_db))
             db.session.commit()
             create_zip(input_path, output_path)
@@ -71,22 +71,8 @@ def render_download_page(file):
 def download_file(file):
     try:
         env_values = dotenv_values(".env")
-        project_Path = "." 
-            # Use relative path instead of PATH from .env+"app/static/"
-        file_path = project_Path + file
-        
-        print(f"Looking for file at: {file_path}")
-        print(f"File exists: {os.path.exists(file_path)}")
-        
-        if not os.path.exists(file_path):
-            return jsonify({"error": f"File not found at {file_path}"}), 404
-            
-        filename = os.path.basename(file)
-        return send_file(
-            file_path,
-            as_attachment=True,
-            download_name=f"compressed_{filename}",
-            mimetype="application/zip"
+        project_Path = "/app/app/static/zip/"
+            # Use path that matches docker-compose volume mountzip"
         )
     except Exception as e:
         print(f"Download error: {e}")

@@ -34,8 +34,8 @@ def imgtogray():
                 print(f"File received: {file.filename}")
                 
                 env_values = dotenv_values(".env")
-                project_Path = "." 
-            # Use relative path instead of PATH from .env+"app/static/imgToGray/"
+                project_Path = "/app/app/static/imgtogray/"
+            # Use path that matches docker-compose volume mount"
                 print(f"Project path: {project_Path}")
                 
                 uid = str(uuid.uuid4())
@@ -83,19 +83,8 @@ def download_file(file):
     
     try:
         env_values = dotenv_values(".env")
-        project_Path = "." 
-            # Use relative path instead of PATH from .env+"app/static/"
-        file_path = project_Path + file
-        
-        if not os.path.exists(file_path):
-            return jsonify({"error": "File not found"}), 404
-            
-        filename = os.path.basename(file)
-        return send_file(
-            file_path,
-            as_attachment=True,
-            download_name=f"grayscale_{filename}",
-            mimetype="image/jpeg"
+        project_Path = "/app/app/static/imgtogray/"
+            # Use path that matches docker-compose volume mountjpeg"
         )
     except Exception as e:
         print(e)
@@ -109,16 +98,8 @@ def preview_file(file):
     
     try:
         env_values = dotenv_values(".env")
-        project_Path = "." 
-            # Use relative path instead of PATH from .env+"app/static/"
-        file_path = project_Path + file
-        
-        if not os.path.exists(file_path):
-            return jsonify({"error": "File not found"}), 404
-            
-        return send_file(
-            file_path,
-            mimetype="image/jpeg"
+        project_Path = "/app/app/static/imgtogray/"
+            # Use path that matches docker-compose volume mountjpeg"
         )
     except Exception as e:
         print(e)

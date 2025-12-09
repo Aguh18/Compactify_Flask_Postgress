@@ -29,8 +29,8 @@ def removeBg():
     elif request.method == "POST":
         try:
             env_values = dotenv_values(".env")
-            project_Path = "." 
-            # Use relative path instead of PATH from .env + "app/static/removeBackground/"
+            # Use path that matches docker-compose volume mount
+            project_Path = "/app/app/static/removeBackground/"
             uid = str(uuid.uuid4())
 
             if not os.path.exists(project_Path):
@@ -83,10 +83,8 @@ def render_download_page(file):
 
 def download_file(file):
     try:
-        env_values = dotenv_values(".env")
-        project_Path = "." 
-            # Use relative path instead of PATH from .env + "app/static/"
-        file_path = project_Path + file
+        # Use correct path that matches docker-compose volume
+        file_path = "/app/" + file
 
         print(f"Looking for file at: {file_path}")
         print(f"File exists: {os.path.exists(file_path)}")

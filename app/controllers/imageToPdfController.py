@@ -24,8 +24,8 @@ def imageTopdf():
     elif request.method == "POST":
         try:
             env_values = dotenv_values(".env")
-            project_Path = "." 
-            # Use relative path instead of PATH from .env+"app/static/imageToPdf/"
+            # Use path that matches docker-compose volume mount
+            project_Path = "/app/app/static/imagetopdf/"
             
             if not os.path.exists(project_Path):
                 os.makedirs(project_Path)
@@ -69,7 +69,7 @@ def imageTopdf():
                 except:
                     pass
                     
-            file_db = "imageToPdf/downloads/" + output_filename
+            file_db = "imagetopdf/downloads/" + output_filename
             
             db.session.add(filesModel(file_db))
             db.session.commit()
@@ -95,10 +95,8 @@ def download_file(file):
     from dotenv import dotenv_values
     
     try:
-        env_values = dotenv_values(".env")
-        project_Path = "." 
-            # Use relative path instead of PATH from .env+"app/static/"
-        file_path = project_Path + file
+        # Use correct path that matches docker-compose volume
+        file_path = "/app/" + file
         
         print(f"Looking for file at: {file_path}")
         print(f"File exists: {os.path.exists(file_path)}")

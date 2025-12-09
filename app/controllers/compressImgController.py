@@ -34,8 +34,8 @@ def imageCompress():
     elif request.method == "POST":
         try:
             env_values = dotenv_values(".env")
-            # Use relative path instead of PATH from .env
-            project_Path = "app/static/compressImg/"
+            # Use path that matches docker-compose volume mount
+            project_Path = "/app/app/static/CompressImg/"
             
             if not os.path.exists(project_Path):
                 os.makedirs(project_Path)
@@ -68,7 +68,7 @@ def imageCompress():
                 new_size_ratio = 0.8
             
             compressed_filename = compress_img(filename,input_path, output_Path,uid, new_size_ratio=new_size_ratio, quality=quality, width=None, height=None, to_jpg=True)
-            file_db = "compressImg/downloads/"+compressed_filename
+            file_db = "CompressImg/downloads/"+compressed_filename
             print("nama file adalah", file_db)
             
             db.session.add(filesModel(file_db))
@@ -94,9 +94,8 @@ def download_file(file):
     from dotenv import dotenv_values
     
     try:
-        # Use relative path instead of PATH from .env
-        project_Path = "app/static/"
-        file_path = project_Path + file
+        # Use correct path that matches docker-compose volume
+        file_path = "/app/" + file
         
         if not os.path.exists(file_path):
             return jsonify({"error": "File not found"}), 404
