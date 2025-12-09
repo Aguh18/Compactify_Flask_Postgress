@@ -57,7 +57,7 @@ def imgtogray():
                 img.save(output_path)
                 print(f"Grayscale image saved to: {output_path}")
                 
-                file_path = "imgToGray/downloads/"+uid + secure_filename(file.filename)
+                file_path = "imgtogray/downloads/"+uid + secure_filename(file.filename)
                 db.session.add(filesModel(file_path))
                 db.session.commit()
                 print("file success created")
@@ -82,9 +82,18 @@ def download_file(file):
     from dotenv import dotenv_values
     
     try:
-        env_values = dotenv_values(".env")
-        project_Path = "/app/app/static/imgtogray/"
-            # Use path that matches docker-compose volume mountjpeg"
+        # Use correct path that matches docker-compose volume
+        file_path = "/app/" + file
+
+        if not os.path.exists(file_path):
+            return jsonify({"error": "File not found"}), 404
+
+        filename = os.path.basename(file)
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=f"grayscale_{filename}",
+            mimetype="image/jpeg"
         )
     except Exception as e:
         print(e)
@@ -94,12 +103,18 @@ def download_file(file):
 def preview_file(file):
     from flask import send_file, jsonify
     import os
-    from dotenv import dotenv_values
-    
+
     try:
-        env_values = dotenv_values(".env")
-        project_Path = "/app/app/static/imgtogray/"
-            # Use path that matches docker-compose volume mountjpeg"
+        # Use correct path that matches docker-compose volume
+        file_path = "/app/" + file
+
+        if not os.path.exists(file_path):
+            return jsonify({"error": "File not found"}), 404
+
+        filename = os.path.basename(file)
+        return send_file(
+            file_path,
+            mimetype="image/jpeg"
         )
     except Exception as e:
         print(e)

@@ -115,10 +115,8 @@ def download_file(file):
     from dotenv import dotenv_values
     
     try:
-        env_values = dotenv_values(".env")
-        project_Path = "/app/app/static/CompressPdf/"
-            # Use path that matches docker-compose volume mountpdf"
-        )
+        # Use correct path that matches docker-compose volume
+        file_path = "/app/" + file
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 400

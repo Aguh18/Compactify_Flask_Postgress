@@ -66,9 +66,18 @@ def render_download_page(file):
 
 def download_file(file):
     try:
-        env_values = dotenv_values(".env")
-        project_Path = "/app/app/static/docToPdf/"
-            # Use path that matches docker-compose volume mountpdf"
+        # Use correct path that matches docker-compose volume
+        file_path = "/app/" + file
+
+        if not os.path.exists(file_path):
+            return jsonify({"error": "File not found"}), 404
+
+        filename = os.path.basename(file)
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=f"converted_{filename}",
+            mimetype="application/pdf"
         )
     except Exception as e:
         print(f"Download error: {e}")

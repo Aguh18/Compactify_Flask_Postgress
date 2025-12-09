@@ -70,9 +70,18 @@ def render_download_page(file):
 
 def download_file(file):
     try:
-        env_values = dotenv_values(".env")
-        project_Path = "/app/app/static/zip/"
-            # Use path that matches docker-compose volume mountzip"
+        # Use correct path that matches docker-compose volume
+        file_path = "/app/" + file
+
+        if not os.path.exists(file_path):
+            return jsonify({"error": "File not found"}), 404
+
+        filename = os.path.basename(file)
+        return send_file(
+            file_path,
+            as_attachment=True,
+            download_name=f"compressed_{filename}",
+            mimetype="application/zip"
         )
     except Exception as e:
         print(f"Download error: {e}")
