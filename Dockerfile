@@ -8,10 +8,16 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     DEBIAN_FRONTEND=noninteractive
 
+# Add deadsnakes PPA for Python 3.10
+RUN apt-get update && apt-get install -y --no-install-recommends software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa -y && \
+    apt-get update
+
 # Install Python 3.10 and build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.10 \
     python3.10-venv \
+    python3.10-dev \
     python3-pip \
     gcc \
     g++ \
@@ -41,10 +47,16 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     OPENCV_LOG_LEVEL=ERROR \
     DEBIAN_FRONTEND=noninteractive
 
+# Add deadsnakes PPA for Python 3.10
+RUN apt-get update && apt-get install -y --no-install-recommends software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa -y && \
+    apt-get update
+
 # Install Python 3.10 and runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.10 \
     python3.10-venv \
+    python3.10-dev \
     libpq5 \
     curl \
     libgl1 \
