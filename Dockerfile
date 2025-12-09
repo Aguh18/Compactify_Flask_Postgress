@@ -36,10 +36,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app \
     OPENCV_LOG_LEVEL=ERROR
 
-# Install runtime dependencies
+# Install runtime dependencies including OpenCV requirements
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
     curl \
+    libgl1 \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy installed packages dari builder
