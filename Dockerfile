@@ -1,5 +1,5 @@
 # Build stage
-FROM python:3.10 as builder
+FROM python:3.10-bullseye as builder
 
 WORKDIR /app
 
@@ -25,7 +25,7 @@ RUN pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Runtime stage
-FROM python:3.10
+FROM python:3.10-bullseye
 
 WORKDIR /app
 
@@ -44,12 +44,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
-    libxrender-x11 \
+    libxrender1 \
     libgomp1 \
-    libgstreamer1.0-0 \
-    libgstreamer-plugins-base1.0-0 \
-    libxkbcommon0 \
-    libxkbcommon-x11-0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy installed packages dari builder
