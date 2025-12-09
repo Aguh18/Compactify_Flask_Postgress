@@ -36,20 +36,25 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app \
     OPENCV_LOG_LEVEL=ERROR
 
-# Install runtime dependencies including OpenCV requirements
+# Install runtime dependencies including OpenCV and execstack for onnxruntime
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 \
     curl \
-    libgl1 \
+    libgomp1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
-    libxrender-dev \
+    libxrender-x11 \
+    libgl1-mesa-glx \
+    execstack \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy installed packages dari builder
 COPY --from=builder /usr/local/lib/python3.10/site-packages/ /usr/local/lib/python3.10/site-packages/
 COPY --from=builder /usr/local/bin/ /usr/local/bin/
+
+# Fix onnxruntime executable stack issue
+RUN execstack -c /usr/local/lib/python3.10/site-packages/onnxruntime/capi/onnxruntime_pybind11_state.cpython-310-x86_64-linux-gnu.so || true
 
 # Copy application code
 COPY . .
