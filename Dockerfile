@@ -22,8 +22,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN python3.12 -m pip install --user --upgrade pip && \
-    python3.12 -m pip install --user --no-cache-dir -r requirements.txt
+RUN python3.12 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN . /opt/venv/bin/activate && pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Runtime stage
 FROM ubuntu:24.04
@@ -41,7 +43,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Install Python 3.12 and runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.12 \
-    python3-pip \
+    python3-venv \
     libpq5 \
     curl \
     libgl1 \
@@ -52,9 +54,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy installed packages dari builder
-COPY --from=builder /root/.local/lib/python3.12/site-packages/ /root/.local/lib/python3.12/site-packages/
-COPY --from=builder /root/.local/bin/ /usr/local/bin/
+# Copy virtual environment dari builder
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy application code
 COPY . .
@@ -80,4 +82,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:5000/ || exit 1
 
 # Run migration and start app
-CMD ["sh", "-c", "flask db upgrade && gunicorn --bind 0.0.0.0:5000 --workers 4 --worker-class sync --timeout 120 --max-requests 1000 --max-requests-jitter 100 --access-logfile - --error-logfile - server:app"]
+CMD ["/bin/bash", "-c", "source /opt/venv/bin/activate && flask db upgrade && gunicorn --bind 0.0.0.0:5000 --workers 4 --worker-class sync --timeout 120 --max-requests 1000 --max-requests-jitter 100 --access-logfile - --error-logfile - server:app"]

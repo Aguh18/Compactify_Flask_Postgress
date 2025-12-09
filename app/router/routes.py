@@ -205,6 +205,3 @@ def compressAudio_route():
 @app.route("/audiocompress", methods=["GET", "POST"], endpoint="audiocompress")
 def audioCompress_route():
     return audiocompressController.CompressAudio()
-```
-
-Juga revert `removeBgController.py` ke versi original:
