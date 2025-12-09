@@ -9,19 +9,7 @@ from PIL import Image
 import os
 from dotenv import dotenv_values
 import uuid
-
-
-
-
-
-
-
-
-
-
-# Initialize base controller
 base_controller = BaseController('imageToPdfController')
-
 def imageTopdf():
     from flask import jsonify
     if request.method == "GET":
@@ -29,17 +17,11 @@ def imageTopdf():
     elif request.method == "POST":
         try:
             env_values = dotenv_values(".env")
-            # Use path that matches docker-compose volume mount
             directories = base_controller.setup_directories()
-            
             uid = str(uuid.uuid4())
-            
-            # Handle multiple files
             files = request.files.getlist('files')
             if not files or files[0].filename == '':
                 return jsonify({"error": "No files selected"}), 400
-            
-            # Save all uploaded images
             image_paths = []
             for file in files:
                 if file and file.filename:
@@ -47,55 +29,28 @@ def imageTopdf():
                     input_path = project_Path+"uploads/" + uid + "_" + filename
                     file.save(input_path)
                     image_paths.append(input_path)
-            
-            # Create PDF with orientation
             output_filename = f"converted_images_{uid}.pdf"
             paths = base_controller.get_download_paths(uid, filename)
             output_Path = paths['output_path']
-            
-            # Convert images to PDF
             pdf_bytes = img2pdf.convert(image_paths)
-            
             with open(output_path, "wb") as pdf_file:
                 pdf_file.write(pdf_bytes)
-            
             print("Successfully created PDF file")
-            
-            # Clean up uploaded images
             for img_path in image_paths:
                 try:
                     os.remove(img_path)
                 except:
                     pass
-                    
             file_db = "imagetopdf/downloads/" + output_filename
-            
             base_controller.save_to_database(filename, uid)
             print("file success created")
-            
-            # Return download URL
             download_url = url_for('imagetopdf_download', file=file_db)
             return jsonify({"download_url": download_url})
-            
         except Exception as e:
             print(f"Error: {e}")
             return jsonify({"error": str(e)}), 500
-
-
 def render_download_page(file):
     filename = os.path.basename(file)
     return render_template("imagetopdf/download.html", filename=filename, file=file)
-
-
 def download_file(file):
-    """
-    Download file using base controller
-    """
     return base_controller.download_file(file)
-        
-        
-        
-        
-        
-
-    
