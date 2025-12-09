@@ -34,7 +34,8 @@ def imageCompress():
     elif request.method == "POST":
         try:
             env_values = dotenv_values(".env")
-            project_Path = env_values["PATH"]+"app/static/compressImg/"
+            # Use relative path instead of PATH from .env
+            project_Path = "app/static/compressImg/"
             
             if not os.path.exists(project_Path):
                 os.makedirs(project_Path)
@@ -93,8 +94,8 @@ def download_file(file):
     from dotenv import dotenv_values
     
     try:
-        env_values = dotenv_values(".env")
-        project_Path = env_values["PATH"]+"app/static/"
+        # Use relative path instead of PATH from .env
+        project_Path = "app/static/"
         file_path = project_Path + file
         
         if not os.path.exists(file_path):

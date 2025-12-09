@@ -31,7 +31,8 @@ def zip():
     elif request.method == "POST":
         try:
             env_values = dotenv_values(".env")
-            project_Path = env_values["PATH"]+"app/static/compressZip/"
+            project_Path = "." 
+            # Use relative path instead of PATH from .env+"app/static/compressZip/"
             uid = str(uuid.uuid4())
             
             if not os.path.exists(project_Path):
@@ -70,7 +71,8 @@ def render_download_page(file):
 def download_file(file):
     try:
         env_values = dotenv_values(".env")
-        project_Path = env_values["PATH"]+"app/static/"
+        project_Path = "." 
+            # Use relative path instead of PATH from .env+"app/static/"
         file_path = project_Path + file
         
         print(f"Looking for file at: {file_path}")

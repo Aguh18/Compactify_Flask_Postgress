@@ -73,7 +73,8 @@ def compressPdf():
     elif request.method == "POST":
         try:
             env_values = dotenv_values(".env")
-            project_Path = env_values["PATH"]+"app/static/compressPdf/"
+            project_Path = "." 
+            # Use relative path instead of PATH from .env+"app/static/compressPdf/"
             uid = str(uuid.uuid4())
             if not os.path.exists(project_Path):
                 os.makedirs(project_Path)
@@ -115,7 +116,8 @@ def download_file(file):
     
     try:
         env_values = dotenv_values(".env")
-        project_Path = env_values["PATH"]+"app/static/"
+        project_Path = "." 
+            # Use relative path instead of PATH from .env+"app/static/"
         file_path = project_Path + file
         
         if not os.path.exists(file_path):

@@ -20,7 +20,8 @@ def wordToPDF():
                 
                 
                 env_values = dotenv_values(".env")
-                project_Path = env_values["PATH"]+"app/static/wortToPdf/"
+                project_Path = "." 
+            # Use relative path instead of PATH from .env+"app/static/wortToPdf/"
                 
                 uid = str(uuid.uuid4())
                 
@@ -66,7 +67,8 @@ def render_download_page(file):
 def download_file(file):
     try:
         env_values = dotenv_values(".env")
-        project_Path = env_values["PATH"]+"app/static/"
+        project_Path = "." 
+            # Use relative path instead of PATH from .env+"app/static/"
         file_path = project_Path + file
         
         print(f"Looking for file at: {file_path}")
