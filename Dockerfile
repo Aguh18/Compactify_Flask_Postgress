@@ -8,10 +8,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     DEBIAN_FRONTEND=noninteractive
 
-# Install Python 3.11 and build dependencies
+# Install Python 3.10 and build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.11 \
-    python3.11-venv \
+    python3.10 \
+    python3.10-venv \
     python3-pip \
     gcc \
     g++ \
@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN python3.11 -m venv /opt/venv
+RUN python3.10 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN . /opt/venv/bin/activate && pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
@@ -41,10 +41,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     OPENCV_LOG_LEVEL=ERROR \
     DEBIAN_FRONTEND=noninteractive
 
-# Install Python 3.11 and runtime dependencies
+# Install Python 3.10 and runtime dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.11 \
-    python3.11-venv \
+    python3.10 \
+    python3.10-venv \
     libpq5 \
     curl \
     libgl1 \
