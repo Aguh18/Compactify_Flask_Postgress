@@ -22,8 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN python3.12 -m pip install --upgrade pip --break-system-packages && \
-    python3.12 -m pip install --no-cache-dir --break-system-packages -r requirements.txt
+RUN python3.12 -m pip install --user --upgrade pip && \
+    python3.12 -m pip install --user --no-cache-dir -r requirements.txt
 
 # Runtime stage
 FROM ubuntu:24.04
@@ -53,8 +53,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy installed packages dari builder
-COPY --from=builder /usr/local/lib/python3.12/dist-packages/ /usr/local/lib/python3.12/dist-packages/
-COPY --from=builder /usr/local/bin/ /usr/local/bin/
+COPY --from=builder /root/.local/lib/python3.12/site-packages/ /root/.local/lib/python3.12/site-packages/
+COPY --from=builder /root/.local/bin/ /usr/local/bin/
 
 # Copy application code
 COPY . .
