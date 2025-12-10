@@ -73,26 +73,7 @@ endblock %} {% block content %}
               </div>
 
               <!-- File Stats -->
-              {% if file_record %}
-              <div class="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                <div class="space-y-3">
-                  <div class="flex justify-between items-center text-sm">
-                    <span class="text-gray-500">Original Size</span>
-                    <span class="font-semibold text-gray-900">{{ format_size(file_record.original_size) }}</span>
-                  </div>
-                  <div class="flex justify-between items-center text-sm">
-                    <span class="text-gray-500">Processed Size</span>
-                    <span class="font-semibold text-pink-600">{{ format_size(file_record.compressed_size) }}</span>
-                  </div>
-                  {% if file_record.compression_ratio > 0 %}
-                  <div class="flex justify-between items-center text-sm pt-2 border-t border-gray-200">
-                    <span class="text-gray-500">Size Reduction</span>
-                    <span class="font-bold text-green-600">-{{ "%.1f"|format(file_record.compression_ratio) }}%</span>
-                  </div>
-                  {% endif %}
-                </div>
-              </div>
-              {% endif %}
+
             </div>
 
             <!-- Download Action -->

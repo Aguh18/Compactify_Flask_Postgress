@@ -78,7 +78,7 @@ content %}
         // Calculate estimated size
         this.calculateEstimatedSize();
         // Clear input file value so user can re-upload same file if needed
-        document.querySelector('input[type="file"]').value = "";
+
       },
 
       calculateEstimatedSize() {
@@ -140,26 +140,12 @@ content %}
         event.preventDefault();
         this.errorMessage = "";
         this.successMessage = "";
-        if (!this.selectedFile) {
-          this.errorMessage = "Please select an image file first";
-          return;
-        }
+
+        if (!this.selectedFile) return;
         this.isProcessing = true;
         try {
           const form = event.target;
-          const formData = new FormData();
-          formData.append("file", this.selectedFile);
-
-          // Get compression quality
-          let qualityValue;
-          if (this.selectedQuality === 'custom') {
-            qualityValue = this.customQuality;
-          } else {
-            const qualityMap = { 'high': 85, 'medium': 60, 'low': 30 };
-            qualityValue = qualityMap[this.selectedQuality];
-          }
-
-          formData.append("quality", qualityValue);
+          const formData = new FormData(form);
 
           const response = await fetch(form.action, {
             method: "POST",

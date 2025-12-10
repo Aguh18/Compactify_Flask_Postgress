@@ -54,8 +54,7 @@ content %}
 
         this.selectedFiles = validFiles;
         this.errorMessage = "";
-        // Clear input file value
-        document.querySelector('input[type="file"]').value = "";
+
       },
 
       removeFile(index) {
@@ -87,18 +86,13 @@ content %}
         this.errorMessage = "";
         this.successMessage = "";
 
-        if (this.selectedFiles.length === 0) {
-          this.errorMessage = "Please select at least one image file first";
-          return;
-        }
+        if (this.selectedFiles.length === 0) return;
 
         this.isProcessing = true;
 
         try {
           const form = this.$refs.form;
-          const formData = new FormData();
-
-          this.selectedFiles.forEach((file) => formData.append("files", file));
+          const formData = new FormData(form);
 
           const response = await fetch(form.action, {
             method: "POST",

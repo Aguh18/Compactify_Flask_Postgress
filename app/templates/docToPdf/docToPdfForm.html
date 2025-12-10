@@ -62,9 +62,7 @@
       },
 
       clearFile() {
-        this.selectedFile = null;
-        this.errorMessage = '';
-        document.querySelector('input[type="file"]').value = '';
+
       },
 
       formatFileSize(bytes) {
@@ -76,16 +74,13 @@
 
       async handleSubmit(event) {
         this.errorMessage = '';
-        if (!this.selectedFile) {
-          this.errorMessage = 'Please select a Word document first';
-          return;
-        }
+
+        if (!this.selectedFile) return;
         this.isProcessing = true;
 
         try {
           const form = event.target;
-          const formData = new FormData();
-          formData.append("file", this.selectedFile);
+          const formData = new FormData(form);
 
           const response = await fetch(form.action, {
             method: "POST",

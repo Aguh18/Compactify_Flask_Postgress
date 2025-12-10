@@ -53,7 +53,7 @@ function backgroundRemover() {
     clearFile() {
       this.selectedFile = null;
       this.errorMessage = '';
-      document.querySelector('input[type="file"]').value = '';
+
     },
 
     formatFileSize(bytes) {
@@ -65,16 +65,12 @@ function backgroundRemover() {
 
     async handleSubmit(event) {
       this.errorMessage = '';
-      if (!this.selectedFile) {
-        this.errorMessage = 'Please select an image file first';
-        return;
-      }
       this.isProcessing = true;
+      if (!this.selectedFile) return;
 
       try {
           const form = event.target;
-          const formData = new FormData();
-          formData.append("file", this.selectedFile);
+          const formData = new FormData(form);
 
           const response = await fetch(form.action, {
             method: "POST",

@@ -50,7 +50,7 @@ content %}
         this.selectedFile = file;
         this.errorMessage = "";
         // Clear input file value so user can re-upload same file if needed
-        document.querySelector('input[type="file"]').value = "";
+
       },
 
       clearFile() {
@@ -73,15 +73,11 @@ content %}
         if (event) event.preventDefault();
         this.errorMessage = "";
         this.successMessage = "";
-        if (!this.selectedFile) {
-          this.errorMessage = "Please select an image file first";
-          return;
-        }
+
         this.isProcessing = true;
         try {
           const form = this.$refs.form;
-          const formData = new FormData();
-          formData.append("file", this.selectedFile);
+          const formData = new FormData(form);
 
           const response = await fetch(form.action, {
             method: "POST",

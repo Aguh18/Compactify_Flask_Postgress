@@ -62,19 +62,22 @@ function zipFileManager() {
 
     async handleSubmit(event) {
       const validFiles = this.files.filter(item => item.file !== null);
-      if (validFiles.length === 0) {
-        this.errorMessage = 'Please select at least one file to create ZIP archive';
-        return;
-      }
+
+      if (validFiles.length === 0) return;
       this.isProcessing = true;
       this.errorMessage = '';
 
       try {
+
           const form = event.target;
           const formData = new FormData();
           
-          validFiles.forEach(item => {
-              formData.append('file[]', item.file);
+          // Append length
+          formData.append('length', validFiles.length);
+          
+          // Append files with keyed names matching controller expectation
+          validFiles.forEach((item, index) => {
+              formData.append(`file[${index}]`, item.file);
           });
 
           const response = await fetch(form.action, {
