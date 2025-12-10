@@ -95,6 +95,32 @@ content %}
               </div>
             </div>
 
+            {% if file_record %}
+            <!-- Statistics -->
+             <div class="mb-8 p-6 bg-gray-50 rounded-xl border border-gray-200">
+                <h3 class="mb-3 text-lg font-semibold text-gray-800 flex items-center">
+                    <i class="fas fa-chart-pie mr-2 text-gray-600"></i>
+                    File Statistics
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                     <div class="bg-white p-3 rounded-lg border border-gray-100">
+                        <div class="text-xs text-gray-500 uppercase">Original Size</div>
+                        <div class="font-bold text-gray-800">{{ format_size(file_record.original_size) }}</div>
+                     </div>
+                     <div class="bg-white p-3 rounded-lg border border-gray-100">
+                        <div class="text-xs text-gray-500 uppercase">Processed Size</div>
+                        <div class="font-bold text-gray-600">{{ format_size(file_record.compressed_size) }}</div>
+                     </div>
+                </div>
+                {% if file_record.original_size > 0 %}
+                 <div class="mt-3 pt-3 border-t border-gray-200 flex justify-between items-center text-sm">
+                    <span class="text-gray-600">Reduction:</span>
+                    <span class="font-bold text-green-600">{{ "%.1f"|format(file_record.compression_ratio) }}% (Usually 0% for conversion)</span>
+                </div>
+                {% endif %}
+             </div>
+             {% endif %}
+
             <!-- Download Button -->
             <div class="mb-8">
               <a

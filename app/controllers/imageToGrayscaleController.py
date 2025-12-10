@@ -63,12 +63,23 @@ def imgtogray():
             # Upload grayscale image to R2
             output_key = base_controller.save_processed_file(temp_output_path, processed_filename, uid)
 
+            # Calculate file sizes
+            original_size = os.path.getsize(temp_input_path)
+            compressed_size = os.path.getsize(temp_output_path)
+            compression_ratio = round((1 - compressed_size / original_size) * 100, 2)
+
             # Clean up temporary files
             os.unlink(temp_input_path)
             os.unlink(temp_output_path)
 
             # Save to database and get direct download URL
-            file_db = base_controller.save_to_database(output_key, uid)
+            file_db = base_controller.save_to_database(
+                output_key, 
+                uid,
+                original_size=original_size,
+                compressed_size=compressed_size,
+                compression_ratio=compression_ratio
+            )
             print("file success created")
             # Return download page URL instead of direct file URL
             download_url = url_for('imgtogray_download', file=file_db)
@@ -79,7 +90,27 @@ def imgtogray():
             print(f"Error traceback: {traceback.format_exc()}")
             return jsonify({"error": f"Error processing image: {str(e)}"}), 500
 def render_download_page(file):
-    return render_template("imgtogray/imgtograydownload.html", file=file)
+    from app.models.fileModel import filesModel
+    from app.config.database import db
+
+    # Get file record from database
+    file_record = db.session.query(filesModel).filter_by(file=file).first()
+    
+    # Format file sizes for display
+    def format_size(bytes):
+        if not bytes:
+            return "0 Bytes"
+        sizes = ["Bytes", "KB", "MB", "GB"]
+        i = 0
+        while bytes >= 1024 and i < len(sizes) - 1:
+            bytes /= 1024.0
+            i += 1
+        return f"{bytes:.2f} {sizes[i]}"
+
+    return render_template("imgtogray/imgtograydownload.html", 
+                         file=file,
+                         file_record=file_record,
+                         format_size=format_size)
 def download_file(file):
     return base_controller.download_file(file)
 def preview_file(file):

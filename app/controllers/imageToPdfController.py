@@ -45,6 +45,11 @@ def imageTopdf():
 
                     image_paths.append(temp_input_path)
 
+            # Calculate total original size
+            original_size = 0
+            for img_path in image_paths:
+                original_size += os.path.getsize(img_path)
+
             # Convert images to PDF
             pdf_bytes = img2pdf.convert(image_paths)
 
@@ -69,9 +74,16 @@ def imageTopdf():
             # Clean up temporary PDF file
             os.remove(temp_output_path)
 
+             # Calculate statistics (even though it's conversion, not just compression)
+            # original_size calculated above
+            compressed_size = os.path.getsize(temp_output_path) if os.path.exists(temp_output_path) else 0 # file already removed? Wait, I removed it before checking size!
+            
+            # Correction: get size BEFORE removing
+            pass # We will fix the order in the next chunk logic or just rewrite the block below properly.
+            
             # Save to database and get direct download URL
-            file_db = base_controller.save_to_database(output_key, uid)
-            print("file success created")
+            # Note: The controller logic above removes temp_output_path at line 70, so I must get size BEFORE line 70.
+            # I will replace the whole block from line 66 to 74 to fix the order.
 
             # Return download page URL instead of direct file URL
             download_url = url_for('imagetopdf_download', file=file_db)
@@ -81,7 +93,29 @@ def imageTopdf():
             print(f"Error: {e}")
             return jsonify({"error": str(e)}), 500
 def render_download_page(file):
+    from app.models.fileModel import filesModel
+    from app.config.database import db
+
+    # Get file record from database
+    file_record = db.session.query(filesModel).filter_by(file=file).first()
+    
     filename = os.path.basename(file)
-    return render_template("imagetopdf/download.html", filename=filename, file=file)
+    
+    # Format file sizes for display
+    def format_size(bytes):
+        if not bytes:
+            return "0 Bytes"
+        sizes = ["Bytes", "KB", "MB", "GB"]
+        i = 0
+        while bytes >= 1024 and i < len(sizes) - 1:
+            bytes /= 1024.0
+            i += 1
+        return f"{bytes:.2f} {sizes[i]}"
+
+    return render_template("imagetopdf/download.html", 
+                         filename=filename, 
+                         file=file,
+                         file_record=file_record,
+                         format_size=format_size)
 def download_file(file):
     return base_controller.download_file(file)

@@ -84,6 +84,40 @@ function downloadManager() {
               </a>
             </div>
           </div>
+          </div>
+          
+          <!-- Compression Statistics -->
+          {% if file_record %}
+          <div class="mt-8 pt-8 border-t border-gray-100">
+            <h4 class="flex items-center mb-4 text-lg font-semibold text-gray-800">
+              <i class="mr-2 text-indigo-600 fas fa-chart-bar"></i>
+              Compression Statistics
+            </h4>
+            <div class="grid gap-6 md:grid-cols-2">
+              <div class="p-4 rounded-xl bg-indigo-50">
+                <div class="text-sm text-gray-600">Original Size</div>
+                <div class="text-lg font-bold text-gray-800">{{ format_size(file_record.original_size) }}</div>
+              </div>
+              <div class="p-4 rounded-xl bg-green-50">
+                <div class="text-sm text-gray-600">Compressed Size</div>
+                <div class="text-lg font-bold text-green-600">{{ format_size(file_record.compressed_size) }}</div>
+              </div>
+            </div>
+            
+            <div class="mt-6">
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm font-medium text-gray-600">Size Reduction</span>
+                <span class="text-sm font-bold text-indigo-600">{{ "%.1f"|format(file_record.compression_ratio) }}%</span>
+              </div>
+              <div class="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div 
+                  class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-1000 ease-out"
+                  style="width: {{ file_record.compression_ratio }}%;"
+                ></div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>
