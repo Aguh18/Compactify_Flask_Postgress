@@ -1,16 +1,17 @@
 from flask import Blueprint, request, render_template, url_for, redirect, flash
 from app.models.validate.pdfValidation import pdfForm
 from app.config.database import db
-from werkzeug.utils import secure_filename 
+from werkzeug.utils import secure_filename
 from app.models.fileModel import filesModel
 from app.controllers.base_controller import BaseController
 import argparse
-import os.path
+import os
 import shutil
 import subprocess
 import sys
 from dotenv import dotenv_values
 import uuid
+import tempfile
 base_controller = BaseController('compressPdfController')
 def compress(input_file_path, output_file_path, power=0):
     quality = {
@@ -55,23 +56,49 @@ def get_ghostscript_path():
     )
 def compressPdf():
     from flask import send_file, jsonify
+
     if request.method == "GET":
         return render_template("compressPdf/compressPdfForm.html")
     elif request.method == "POST":
         try:
-            env_values = dotenv_values(".env")
-            directories = base_controller.setup_directories()
             file = request.files["file"]
             uid = str(uuid.uuid4())
-            input_path, filename, uid = base_controller.save_uploaded_file(file, uid)
-            paths = base_controller.get_download_paths(uid, filename)
-            output_Path = paths['output_path']
+
+            # Save to R2 storage
+            input_key, filename, uid = base_controller.save_uploaded_file(file, uid)
+
+            # Download file from R2 for processing
+            from app.service.r2_helper import r2_helper
+            input_result = r2_helper.download_file(input_key)
+
+            if not input_result['success']:
+                return jsonify({"error": "Failed to retrieve file from storage"}), 500
+
+            # Create temporary files for processing
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmp_input:
+                tmp_input.write(input_result['file_obj'].read())
+                temp_input_path = tmp_input.name
+
+            temp_output_path = tempfile.mktemp(suffix='_compressed.pdf')
+
+            # Process PDF
             quality_map = {"high": 1, "medium": 2, "low": 3}
             power = quality_map.get(request.form.get("quality", "low"), 3)
-            compress(input_path, output_path, power=power)
-            compressed_filename = secure_filename(file.filename)
-            file_db = base_controller.save_to_database(compressed_filename, uid)
-            print("file succes created")
+            compress(temp_input_path, temp_output_path, power=power)
+
+            # Upload compressed file to R2
+            name, ext = os.path.splitext(filename)
+            compressed_filename = f"{name}_compressed{ext}"
+            output_key = base_controller.save_processed_file(temp_output_path, compressed_filename, uid)
+
+            # Clean up temporary files
+            os.unlink(temp_input_path)
+            os.unlink(temp_output_path)
+
+            # Save to database and get direct download URL
+            file_db = base_controller.save_to_database(output_key, uid)
+            print("file success created")
+            # Return download page URL instead of direct file URL
             download_url = url_for('compresspdf_download', file=file_db)
             return jsonify({"download_url": download_url})
         except Exception as e:

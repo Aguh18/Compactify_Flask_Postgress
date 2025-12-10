@@ -26,14 +26,32 @@ content %}
       isDragOver: false,
       isProcessing: false,
       successMessage: "",
+      selectedQuality: 'high',
+      customQuality: 85,
+      estimatedSize: null,
+      originalSize: null,
 
       handleFileSelect(event) {
+        // Check if multiple files were selected
+        if (event.target.files.length > 1) {
+          this.errorMessage = "Only single file upload is supported";
+          event.target.value = "";
+          return;
+        }
+
         const file = event.target.files[0];
         this.validateAndSetFile(file);
       },
 
       handleDrop(event) {
         this.isDragOver = false;
+
+        // Check if multiple files were dropped
+        if (event.dataTransfer.files.length > 1) {
+          this.errorMessage = "Only single file upload is supported";
+          return;
+        }
+
         const file = event.dataTransfer.files[0];
         this.validateAndSetFile(file);
       },
@@ -55,9 +73,51 @@ content %}
         }
 
         this.selectedFile = file;
+        this.originalSize = file.size;
         this.errorMessage = "";
+        // Calculate estimated size
+        this.calculateEstimatedSize();
         // Clear input file value so user can re-upload same file if needed
         document.querySelector('input[type="file"]').value = "";
+      },
+
+      calculateEstimatedSize() {
+        if (!this.selectedFile) {
+          this.estimatedSize = null;
+          return;
+        }
+
+        const qualityMap = {
+          'high': 85,
+          'medium': 60,
+          'low': 30
+        };
+
+        const quality = this.selectedQuality === 'custom' ? this.customQuality : qualityMap[this.selectedQuality];
+
+        // Simple estimation formula
+        // Rough approximation: new_size ≈ original_size × (quality/100) × 0.8
+        const compressionFactor = (quality / 100) * 0.8;
+        this.estimatedSize = Math.round(this.originalSize * compressionFactor);
+      },
+
+      setQuality(quality) {
+        this.selectedQuality = quality;
+        this.calculateEstimatedSize();
+      },
+
+      setCustomQuality() {
+        this.selectedQuality = 'custom';
+        this.calculateEstimatedSize();
+      },
+
+      formatFileSize(bytes) {
+        if (!bytes) return "0 Bytes";
+        const sizes = ["Bytes", "KB", "MB", "GB"];
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+        return (
+          Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + " " + sizes[i]
+        );
       },
 
       clearFile() {
@@ -89,11 +149,17 @@ content %}
           const form = event.target;
           const formData = new FormData();
           formData.append("file", this.selectedFile);
+
           // Get compression quality
-          const quality =
-            form.querySelector('input[name="quality"]:checked')?.value ||
-            "high";
-          formData.append("quality", quality);
+          let qualityValue;
+          if (this.selectedQuality === 'custom') {
+            qualityValue = this.customQuality;
+          } else {
+            const qualityMap = { 'high': 85, 'medium': 60, 'low': 30 };
+            qualityValue = qualityMap[this.selectedQuality];
+          }
+
+          formData.append("quality", qualityValue);
 
           const response = await fetch(form.action, {
             method: "POST",
@@ -225,6 +291,7 @@ content %}
                   accept=".jpg,.jpeg,.png"
                   @change="handleFileSelect($event)"
                   class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  multiple="false"
                 />
               </div>
 
@@ -259,13 +326,16 @@ content %}
                 <i class="mr-2 text-blue-600 fas fa-sliders-h"></i>
                 Compression Quality
               </label>
-              <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+
+              <!-- Preset Options -->
+              <div class="grid grid-cols-1 gap-4 mb-6 md:grid-cols-3">
                 <label class="relative cursor-pointer">
                   <input
                     type="radio"
                     name="quality"
                     value="high"
-                    checked
+                    x-model="selectedQuality"
+                    @change="setQuality('high')"
                     class="sr-only peer"
                   />
                   <div
@@ -278,9 +348,7 @@ content %}
                         <i class="text-green-600 fas fa-gem"></i>
                       </div>
                       <h4 class="font-semibold text-gray-800">High Quality</h4>
-                      <p class="text-sm text-gray-600">
-                        Best quality, moderate compression
-                      </p>
+                      <p class="text-sm text-gray-600">85% Quality</p>
                     </div>
                   </div>
                 </label>
@@ -290,6 +358,8 @@ content %}
                     type="radio"
                     name="quality"
                     value="medium"
+                    x-model="selectedQuality"
+                    @change="setQuality('medium')"
                     class="sr-only peer"
                   />
                   <div
@@ -302,9 +372,7 @@ content %}
                         <i class="text-yellow-600 fas fa-balance-scale"></i>
                       </div>
                       <h4 class="font-semibold text-gray-800">Balanced</h4>
-                      <p class="text-sm text-gray-600">
-                        Good quality, better compression
-                      </p>
+                      <p class="text-sm text-gray-600">60% Quality</p>
                     </div>
                   </div>
                 </label>
@@ -314,6 +382,8 @@ content %}
                     type="radio"
                     name="quality"
                     value="low"
+                    x-model="selectedQuality"
+                    @change="setQuality('low')"
                     class="sr-only peer"
                   />
                   <div
@@ -325,12 +395,82 @@ content %}
                       >
                         <i class="text-red-600 fas fa-compress"></i>
                       </div>
-                      <h4 class="font-semibold text-gray-800">
-                        High Compression
+                      <h4 class="font-semibold text-gray-800">High Compression</h4>
+                      <p class="text-sm text-gray-600">30% Quality</p>
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              <!-- Custom Quality Slider -->
+              <div class="p-6 bg-gray-50 rounded-xl">
+                <label class="relative cursor-pointer">
+                  <input
+                    type="radio"
+                    name="quality"
+                    value="custom"
+                    x-model="selectedQuality"
+                    @change="setCustomQuality()"
+                    class="sr-only peer"
+                  />
+                  <div
+                    class="transition-all duration-200 peer-checked:border-blue-500 peer-checked:bg-blue-50 border-2 border-transparent rounded-xl p-4"
+                  >
+                    <div class="mb-4">
+                      <h4 class="font-semibold text-gray-800 mb-2">
+                        <i class="mr-2 fas fa-sliders-h"></i>Custom Quality
                       </h4>
-                      <p class="text-sm text-gray-600">
-                        Maximum compression, lower quality
-                      </p>
+                    </div>
+
+                    <!-- Quality Slider -->
+                    <div class="mb-4">
+                      <div class="flex items-center justify-between mb-2">
+                        <label class="text-sm font-medium text-gray-700">Quality</label>
+                        <span class="text-sm font-semibold text-blue-600" x-text="customQuality + '%'"></span>
+                      </div>
+                      <input
+                        type="range"
+                        min="1"
+                        max="100"
+                        x-model="customQuality"
+                        @input="setCustomQuality()"
+                        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                        :disabled="selectedQuality !== 'custom'"
+                      />
+                      <div class="flex justify-between mt-1 text-xs text-gray-500">
+                        <span>1%</span>
+                        <span>50%</span>
+                        <span>100%</span>
+                      </div>
+                    </div>
+
+                    <!-- Size Estimation -->
+                    <div x-show="originalSize && estimatedSize" class="mt-4 p-4 bg-white rounded-lg border border-gray-200">
+                      <h5 class="text-sm font-semibold text-gray-700 mb-2">
+                        <i class="mr-1 fas fa-chart-line"></i>Size Estimation
+                      </h5>
+                      <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p class="text-gray-500">Original Size</p>
+                          <p class="font-semibold text-gray-800" x-text="formatFileSize(originalSize)"></p>
+                        </div>
+                        <div>
+                          <p class="text-gray-500">Estimated Size</p>
+                          <p class="font-semibold text-green-600" x-text="formatFileSize(estimatedSize)"></p>
+                        </div>
+                      </div>
+                      <div class="mt-2">
+                        <div class="flex items-center justify-between text-xs text-gray-600">
+                          <span>Compression</span>
+                          <span x-text="Math.round((1 - estimatedSize / originalSize) * 100) + '%'"></span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                          <div
+                            class="bg-green-500 h-2 rounded-full transition-all duration-300"
+                            :style="'width: ' + Math.round((1 - estimatedSize / originalSize) * 100) + '%'"
+                          ></div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </label>

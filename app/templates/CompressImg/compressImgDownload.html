@@ -143,24 +143,95 @@ block content %}
                   <i class="mr-2 text-blue-600 fas fa-info-circle"></i>
                   File Information
                 </h3>
-                <div class="space-y-3 text-sm">
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">Format:</span>
-                    <span class="font-medium text-gray-800"
-                      >JPEG (Optimized)</span
-                    >
+                <div class="space-y-4 text-sm">
+                  <!-- Size Statistics -->
+                  {% if file_record %}
+                  <div class="p-4 bg-white rounded-lg border border-gray-200">
+                    <h4 class="flex items-center mb-3 text-sm font-semibold text-gray-700">
+                      <i class="mr-1 text-blue-600 fas fa-chart-bar"></i>
+                      Compression Statistics
+                    </h4>
+                    <div class="space-y-3">
+                      <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Original Size:</span>
+                        <span class="font-semibold text-gray-800">
+                          {{ format_size(file_record.original_size) }}
+                        </span>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Compressed Size:</span>
+                        <span class="font-semibold text-green-600">
+                          {{ format_size(file_record.compressed_size) }}
+                        </span>
+                      </div>
+                      <div class="pt-3 border-t border-gray-200">
+                        <div class="flex justify-between items-center mb-2">
+                          <span class="text-gray-600 font-medium">Size Reduction:</span>
+                          <span class="font-bold text-green-600">
+                            {{ "%.1f"|format(file_record.compression_ratio) }}%
+                          </span>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-gray-200 rounded-full h-3">
+                          <div
+                            class="bg-gradient-to-r from-green-500 to-emerald-500 h-3 rounded-full transition-all duration-500"
+                            style="width: {{ file_record.compression_ratio }}%"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">Status:</span>
-                    <span class="font-medium text-green-600">
-                      <i class="mr-1 fas fa-check-circle"></i>
-                      Ready for Download
-                    </span>
+
+                  <!-- Compression Details -->
+                  <div class="p-4 bg-white rounded-lg border border-gray-200">
+                    <h4 class="flex items-center mb-3 text-sm font-semibold text-gray-700">
+                      <i class="mr-1 text-purple-600 fas fa-cog"></i>
+                      Compression Details
+                    </h4>
+                    <div class="space-y-3">
+                      <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Format:</span>
+                        <span class="font-medium text-gray-800">JPEG (Optimized)</span>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Quality Level:</span>
+                        <span class="font-medium text-gray-800">
+                          {% if file_record.quality %}
+                            {{ file_record.quality }}%
+                          {% else %}
+                            Optimized
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="flex justify-between items-center">
+                        <span class="text-gray-600">Status:</span>
+                        <span class="font-medium text-green-600">
+                          <i class="mr-1 fas fa-check-circle"></i>
+                          Ready for Download
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-600">Quality:</span>
-                    <span class="font-medium text-gray-800">Optimized</span>
+                  {% else %}
+                  <!-- Fallback if no file record -->
+                  <div class="space-y-3">
+                    <div class="flex justify-between">
+                      <span class="text-gray-600">Format:</span>
+                      <span class="font-medium text-gray-800">JPEG (Optimized)</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-600">Status:</span>
+                      <span class="font-medium text-green-600">
+                        <i class="mr-1 fas fa-check-circle"></i>
+                        Ready for Download
+                      </span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-600">Quality:</span>
+                      <span class="font-medium text-gray-800">Optimized</span>
+                    </div>
                   </div>
+                  {% endif %}
                 </div>
               </div>
 

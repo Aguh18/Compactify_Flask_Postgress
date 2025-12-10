@@ -1,11 +1,10 @@
-
 from app.config.database import db
-from app.models.fileModel import filesmodel
+from app.models.fileModel import filesModel
 
 
 def create(file):
     try:
-        file = filesmodel(file)
+        file = filesModel(file)
         db.session.add(file)
         db.session.commit()
         print("file created")
