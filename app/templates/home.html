@@ -89,117 +89,151 @@
       <h2 class="mb-4 text-4xl font-bold text-gray-800 md:text-5xl">Available Tools</h2>
       <p class="max-w-2xl mx-auto text-xl text-gray-600">Choose the tool you need to process your files</p>
     </div>
-    
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-      <!-- Compress Image -->
-      <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
-        <div class="p-8">
-          <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl">
-            <i class="text-2xl text-white fas fa-compress-alt"></i>
+
+    <!-- Image Tools Group -->
+    <div class="mb-16">
+      <div class="flex items-center gap-3 mb-8 border-b pb-4 border-gray-100">
+        <div class="bg-blue-100 p-2 rounded-lg">
+          <i class="text-xl text-blue-600 fas fa-images"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">Image Tools</h3>
+      </div>
+      
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <!-- Compress Image -->
+        <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
+          <div class="p-8">
+            <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl">
+              <i class="text-2xl text-white fas fa-compress-alt"></i>
+            </div>
+            <h3 class="mb-4 text-2xl font-bold text-gray-800">Compress Images</h3>
+            <p class="mb-6 text-gray-600">Reduce image file sizes while maintaining quality. Support for JPG, PNG, and more.</p>
+            <a href="{{url_for('compressimg')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 hover:opacity-90 hover:shadow-lg">
+              <i class="mr-2 fas fa-arrow-right"></i>Start Compressing
+            </a>
           </div>
-          <h3 class="mb-4 text-2xl font-bold text-gray-800">Compress Images</h3>
-          <p class="mb-6 text-gray-600">Reduce image file sizes while maintaining quality. Support for JPG, PNG, and more.</p>
-          <a href="{{url_for('compressimg')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 hover:opacity-90 hover:shadow-lg">
-            <i class="mr-2 fas fa-arrow-right"></i>Start Compressing
-          </a>
+        </div>
+  
+        <!-- Image to Grayscale -->
+        <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
+          <div class="p-8">
+            <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-gray-500 to-gray-700 rounded-xl">
+              <i class="text-2xl text-white fas fa-palette"></i>
+            </div>
+            <h3 class="mb-4 text-2xl font-bold text-gray-800">Image to Grayscale</h3>
+            <p class="mb-6 text-gray-600">Convert colorful images to elegant black and white versions.</p>
+            <a href="{{url_for('imgtogray')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-gray-500 to-gray-700 hover:opacity-90 hover:shadow-lg">
+              <i class="mr-2 fas fa-arrow-right"></i>Convert Images
+            </a>
+          </div>
+        </div>
+  
+        <!-- Remove Background -->
+        <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
+          <div class="p-8">
+            <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-pink-500 to-pink-700 rounded-xl">
+              <i class="text-2xl text-white fas fa-cut"></i>
+            </div>
+            <h3 class="mb-4 text-2xl font-bold text-gray-800">Remove Background</h3>
+            <p class="mb-6 text-gray-600">Automatically remove backgrounds from images using AI technology.</p>
+            <a href="{{url_for('removebg')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-pink-500 to-pink-700 hover:opacity-90 hover:shadow-lg">
+              <i class="mr-2 fas fa-arrow-right"></i>Remove Background
+            </a>
+          </div>
+        </div>
+
+        <!-- Image to PDF -->
+        <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
+          <div class="p-8">
+            <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl">
+              <i class="text-2xl text-white fas fa-file-image"></i>
+            </div>
+            <h3 class="mb-4 text-2xl font-bold text-gray-800">Image to PDF</h3>
+            <p class="mb-6 text-gray-600">Convert multiple images into a single PDF document.</p>
+            <a href="{{url_for('imagetopdf')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-purple-500 to-purple-700 hover:opacity-90 hover:shadow-lg">
+              <i class="mr-2 fas fa-arrow-right"></i>Create PDF
+            </a>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- Compress PDF -->
-      <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
-        <div class="p-8">
-          <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-red-500 to-red-700 rounded-xl">
-            <i class="text-2xl text-white fas fa-file-pdf"></i>
+    <!-- Document & PDF Tools Group -->
+    <div class="mb-16">
+      <div class="flex items-center gap-3 mb-8 border-b pb-4 border-gray-100">
+        <div class="bg-red-100 p-2 rounded-lg">
+          <i class="text-xl text-red-600 fas fa-file-pdf"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800">Document & PDF Tools</h3>
+      </div>
+      
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <!-- Compress PDF -->
+        <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
+          <div class="p-8">
+            <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-red-500 to-red-700 rounded-xl">
+              <i class="text-2xl text-white fas fa-file-pdf"></i>
+            </div>
+            <h3 class="mb-4 text-2xl font-bold text-gray-800">Compress PDF</h3>
+            <p class="mb-6 text-gray-600">Optimize PDF files for faster loading and smaller storage requirements.</p>
+            <a href="{{url_for('compresspdf')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-red-500 to-red-700 hover:opacity-90 hover:shadow-lg">
+              <i class="mr-2 fas fa-arrow-right"></i>Compress PDF
+            </a>
           </div>
-          <h3 class="mb-4 text-2xl font-bold text-gray-800">Compress PDF</h3>
-          <p class="mb-6 text-gray-600">Optimize PDF files for faster loading and smaller storage requirements.</p>
-          <a href="{{url_for('compresspdf')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-red-500 to-red-700 hover:opacity-90 hover:shadow-lg">
-            <i class="mr-2 fas fa-arrow-right"></i>Compress PDF
-          </a>
+        </div>
+  
+        <!-- Word to PDF -->
+        <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
+          <div class="p-8">
+            <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-green-500 to-green-700 rounded-xl">
+              <i class="text-2xl text-white fas fa-file-word"></i>
+            </div>
+            <h3 class="mb-4 text-2xl font-bold text-gray-800">Word to PDF</h3>
+            <p class="mb-6 text-gray-600">Convert Word documents to PDF format with perfect formatting.</p>
+            <a href="{{url_for('wordtopdf')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-green-500 to-green-700 hover:opacity-90 hover:shadow-lg">
+              <i class="mr-2 fas fa-arrow-right"></i>Convert Document
+            </a>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!-- Image to Grayscale -->
-      <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
-        <div class="p-8">
-          <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-gray-500 to-gray-700 rounded-xl">
-            <i class="text-2xl text-white fas fa-palette"></i>
-          </div>
-          <h3 class="mb-4 text-2xl font-bold text-gray-800">Image to Grayscale</h3>
-          <p class="mb-6 text-gray-600">Convert colorful images to elegant black and white versions.</p>
-          <a href="{{url_for('imgtogray')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-gray-500 to-gray-700 hover:opacity-90 hover:shadow-lg">
-            <i class="mr-2 fas fa-arrow-right"></i>Convert Images
-          </a>
+    <!-- Audio & Archive Tools Group -->
+    <div>
+      <div class="flex items-center gap-3 mb-8 border-b pb-4 border-gray-100">
+        <div class="bg-yellow-100 p-2 rounded-lg">
+          <i class="text-xl text-yellow-600 fas fa-archive"></i>
         </div>
+        <h3 class="text-2xl font-bold text-gray-800">Audio & Archive Tools</h3>
       </div>
-
-      <!-- Image to PDF -->
-      <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
-        <div class="p-8">
-          <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl">
-            <i class="text-2xl text-white fas fa-file-image"></i>
+      
+      <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        <!-- Zip Files -->
+        <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
+          <div class="p-8">
+            <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl">
+              <i class="text-2xl text-white fas fa-file-archive"></i>
+            </div>
+            <h3 class="mb-4 text-2xl font-bold text-gray-800">Create ZIP Archive</h3>
+            <p class="mb-6 text-gray-600">Compress multiple files into a single ZIP archive for easy sharing.</p>
+            <a href="{{url_for('zip')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-600 hover:opacity-90 hover:shadow-lg">
+              <i class="mr-2 fas fa-arrow-right"></i>Create Archive
+            </a>
           </div>
-          <h3 class="mb-4 text-2xl font-bold text-gray-800">Image to PDF</h3>
-          <p class="mb-6 text-gray-600">Convert multiple images into a single PDF document.</p>
-          <a href="{{url_for('imagetopdf')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-purple-500 to-purple-700 hover:opacity-90 hover:shadow-lg">
-            <i class="mr-2 fas fa-arrow-right"></i>Create PDF
-          </a>
         </div>
-      </div>
-
-      <!-- Word to PDF -->
-      <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
-        <div class="p-8">
-          <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-green-500 to-green-700 rounded-xl">
-            <i class="text-2xl text-white fas fa-file-word"></i>
+  
+        <!-- Audio Compress -->
+        <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
+          <div class="p-8">
+            <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-xl">
+              <i class="text-2xl text-white fas fa-volume-up"></i>
+            </div>
+            <h3 class="mb-4 text-2xl font-bold text-gray-800">Compress Audio</h3>
+            <p class="mb-6 text-gray-600">Reduce audio file sizes while preserving sound quality.</p>
+            <a href="{{url_for('audiocompress')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-700 hover:opacity-90 hover:shadow-lg">
+              <i class="mr-2 fas fa-arrow-right"></i>Compress Audio
+            </a>
           </div>
-          <h3 class="mb-4 text-2xl font-bold text-gray-800">Word to PDF</h3>
-          <p class="mb-6 text-gray-600">Convert Word documents to PDF format with perfect formatting.</p>
-          <a href="{{url_for('wordtopdf')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-green-500 to-green-700 hover:opacity-90 hover:shadow-lg">
-            <i class="mr-2 fas fa-arrow-right"></i>Convert Document
-          </a>
-        </div>
-      </div>
-
-      <!-- Remove Background -->
-      <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
-        <div class="p-8">
-          <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-pink-500 to-pink-700 rounded-xl">
-            <i class="text-2xl text-white fas fa-cut"></i>
-          </div>
-          <h3 class="mb-4 text-2xl font-bold text-gray-800">Remove Background</h3>
-          <p class="mb-6 text-gray-600">Automatically remove backgrounds from images using AI technology.</p>
-          <a href="{{url_for('removebg')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-pink-500 to-pink-700 hover:opacity-90 hover:shadow-lg">
-            <i class="mr-2 fas fa-arrow-right"></i>Remove Background
-          </a>
-        </div>
-      </div>
-
-      <!-- Zip Files -->
-      <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
-        <div class="p-8">
-          <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl">
-            <i class="text-2xl text-white fas fa-file-archive"></i>
-          </div>
-          <h3 class="mb-4 text-2xl font-bold text-gray-800">Create ZIP Archive</h3>
-          <p class="mb-6 text-gray-600">Compress multiple files into a single ZIP archive for easy sharing.</p>
-          <a href="{{url_for('zip')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-600 hover:opacity-90 hover:shadow-lg">
-            <i class="mr-2 fas fa-arrow-right"></i>Create Archive
-          </a>
-        </div>
-      </div>
-
-      <!-- Audio Compress -->
-      <div class="overflow-hidden bg-white border border-gray-100 shadow-lg card-hover rounded-2xl">
-        <div class="p-8">
-          <div class="flex items-center justify-center w-16 h-16 mb-6 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-xl">
-            <i class="text-2xl text-white fas fa-volume-up"></i>
-          </div>
-          <h3 class="mb-4 text-2xl font-bold text-gray-800">Compress Audio</h3>
-          <p class="mb-6 text-gray-600">Reduce audio file sizes while preserving sound quality.</p>
-          <a href="{{url_for('audiocompress')}}" class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-700 hover:opacity-90 hover:shadow-lg">
-            <i class="mr-2 fas fa-arrow-right"></i>Compress Audio
-          </a>
         </div>
       </div>
     </div>
