@@ -9,7 +9,9 @@
       "Bash(PGPASSWORD=mysecretpassword psql:*)",
       "Bash(flask db:*)",
       "Bash(pip install:*)",
-      "Bash(pip3 install:*)"
+      "Bash(pip3 install:*)",
+      "Bash(chmod:*)",
+      "Bash(docker-compose down:*)"
     ],
     "deny": [],
     "ask": []

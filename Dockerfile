@@ -67,12 +67,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
+# Install psycopg2 for database operations
+RUN python3.10 -m pip install psycopg2-binary
+
 # Copy virtual environment dari builder
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Copy application code
 COPY . .
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Create only necessary directories for temporary files
 RUN mkdir -p /tmp/gunicorn_tmp && \
@@ -84,5 +91,5 @@ EXPOSE 5000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:5000/ || exit 1
 
-# Run migration and start app
-CMD ["/bin/bash", "-c", "source /opt/venv/bin/activate && flask db upgrade && gunicorn --bind 0.0.0.0:5000 --workers 4 --worker-class sync --timeout 120 --max-requests 1000 --max-requests-jitter 100 --access-logfile - --error-logfile - server:app"]
+# Use custom entrypoint that handles database creation and migrations
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
