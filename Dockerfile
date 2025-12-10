@@ -57,6 +57,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.10 \
     python3.10-venv \
     python3.10-dev \
+    python3-pip \
     libpq5 \
     curl \
     libgl1 \
@@ -68,7 +69,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Install psycopg2 for database operations
-RUN python3.10 -m pip install psycopg2-binary
+RUN python3.10 -m pip install --no-cache-dir psycopg2-binary
 
 # Copy virtual environment dari builder
 COPY --from=builder /opt/venv /opt/venv
