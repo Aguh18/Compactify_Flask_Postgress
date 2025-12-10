@@ -190,6 +190,7 @@ function zipFileManager() {
                       <div class="flex-1 mr-4">
                         <input 
                           type="file" 
+                          x-show="!fileItem.file"
                           :name="'file[' + index + ']'"
                           @change="handleFileSelect($event, index)"
                           class="w-full text-sm text-gray-900 bg-white border border-gray-300 rounded-lg cursor-pointer focus:outline-none"
