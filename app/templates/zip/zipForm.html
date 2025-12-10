@@ -60,14 +60,55 @@ function zipFileManager() {
       return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
     },
 
-    handleSubmit(event) {
+    async handleSubmit(event) {
       const validFiles = this.files.filter(item => item.file !== null);
       if (validFiles.length === 0) {
-        event.preventDefault();
         this.errorMessage = 'Please select at least one file to create ZIP archive';
         return;
       }
       this.isProcessing = true;
+      this.errorMessage = '';
+
+      try {
+          const form = event.target;
+          const formData = new FormData();
+          
+          validFiles.forEach(item => {
+              formData.append('file[]', item.file);
+          });
+
+          const response = await fetch(form.action, {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            const text = await response.text();
+            try {
+                const jsonErr = JSON.parse(text);
+                this.errorMessage = jsonErr.error || text;
+            } catch(e) {
+                this.errorMessage = text || "Failed to create archive.";
+            }
+            this.isProcessing = false;
+            return;
+          }
+
+          const data = await response.json().catch(() => null);
+          if (data && data.download_url) {
+            window.location.href = data.download_url;
+            return;
+          } else if (data && data.error) {
+            this.errorMessage = data.error;
+          } else {
+             // Fallback
+             this.errorMessage = "Failed to create archive.";
+          }
+      } catch (err) {
+          this.errorMessage = "An error occurred: " + (err.message || err);
+      } finally {
+          this.isProcessing = false;
+      }
     },
 
     getTotalSize() {
@@ -100,7 +141,7 @@ function zipFileManager() {
         
         <!-- Form Section -->
         <div class="p-8">
-          <form x-data="zipFileManager()" @submit="handleSubmit($event)" action="{{ url_for('zip') }}" method="POST" enctype="multipart/form-data">
+          <form x-data="zipFileManager()" @submit.prevent="handleSubmit($event)" action="{{ url_for('zip') }}" method="POST" enctype="multipart/form-data">
             
             <!-- Drop Zone -->
             <div class="mb-8">

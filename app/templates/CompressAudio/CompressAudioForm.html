@@ -63,13 +63,55 @@ function audioCompressor() {
       return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
     },
 
-    handleSubmit(event) {
+    async handleSubmit(event) {
       if (!this.selectedFile) {
-        event.preventDefault();
         this.errorMessage = 'Please select an audio file first';
         return;
       }
       this.isProcessing = true;
+      this.errorMessage = '';
+
+      try {
+          const form = event.target;
+          const formData = new FormData();
+          formData.append("file", this.selectedFile);
+
+          const response = await fetch(form.action, {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            const text = await response.text();
+            try {
+                const jsonErr = JSON.parse(text);
+                this.errorMessage = jsonErr.error || text;
+            } catch(e) {
+                this.errorMessage = text || "Failed to compress audio.";
+            }
+            this.isProcessing = false;
+            return;
+          }
+
+          const data = await response.json().catch(() => null);
+          if (data && data.download_url) {
+            window.location.href = data.download_url;
+            return;
+          } else if (data && data.error) {
+            this.errorMessage = data.error;
+          } else {
+             // Fallback for success without explicit JSON (though unlikely given controller)
+             if (response.redirected) {
+                 window.location.href = response.url;
+             } else {
+                 this.errorMessage = "Failed to compress audio.";
+             }
+          }
+      } catch (err) {
+          this.errorMessage = "An error occurred: " + (err.message || err);
+      } finally {
+          this.isProcessing = false;
+      }
     }
   }
 }
@@ -94,7 +136,7 @@ function audioCompressor() {
         
         <!-- Form Section -->
         <div class="p-8">
-          <form x-data="audioCompressor()" @submit="handleSubmit($event)" action="{{ url_for('audiocompress') }}" method="POST" enctype="multipart/form-data">
+          <form x-data="audioCompressor()" @submit.prevent="handleSubmit($event)" action="{{ url_for('audiocompress') }}" method="POST" enctype="multipart/form-data">
             {{ form.csrf_token if form }}
             
             <!-- File Upload Area -->

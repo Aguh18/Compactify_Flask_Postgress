@@ -74,13 +74,50 @@
         return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
       },
 
-      handleSubmit(event) {
+      async handleSubmit(event) {
+        this.errorMessage = '';
         if (!this.selectedFile) {
-          event.preventDefault();
           this.errorMessage = 'Please select a Word document first';
           return;
         }
         this.isProcessing = true;
+
+        try {
+          const form = event.target;
+          const formData = new FormData();
+          formData.append("file", this.selectedFile);
+
+          const response = await fetch(form.action, {
+            method: "POST",
+            body: formData,
+          });
+
+          if (!response.ok) {
+            const text = await response.text();
+            try {
+                const jsonErr = JSON.parse(text);
+                this.errorMessage = jsonErr.error || text;
+            } catch(e) {
+                this.errorMessage = text || "Failed to convert document.";
+            }
+            this.isProcessing = false;
+            return;
+          }
+
+          const data = await response.json().catch(() => null);
+          if (data && data.download_url) {
+            window.location.href = data.download_url;
+            return;
+          } else if (data && data.error) {
+            this.errorMessage = data.error;
+          } else {
+            this.errorMessage = "Failed to convert document.";
+          }
+        } catch (err) {
+          this.errorMessage = "An error occurred: " + (err.message || err);
+        } finally {
+          this.isProcessing = false;
+        }
       }
     }
   }
@@ -104,7 +141,7 @@
         
         <!-- Form Section -->
         <div class="p-8">
-          <form x-data="docToPdfConverter()" @submit="handleSubmit($event)" action="{{ url_for('wordtopdf') }}" method="POST" enctype="multipart/form-data">
+          <form x-data="docToPdfConverter()" @submit.prevent="handleSubmit($event)" action="{{ url_for('wordtopdf') }}" method="POST" enctype="multipart/form-data">
             
             <!-- File Upload Area -->
             <div class="mb-8">
