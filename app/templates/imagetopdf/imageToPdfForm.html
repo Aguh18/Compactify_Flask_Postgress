@@ -83,7 +83,7 @@ content %}
       },
 
       async handleSubmit(event) {
-        event.preventDefault();
+        if (event) event.preventDefault();
         this.errorMessage = "";
         this.successMessage = "";
 
@@ -95,7 +95,7 @@ content %}
         this.isProcessing = true;
 
         try {
-          const form = event.target;
+          const form = this.$refs.form;
           const formData = new FormData();
 
           this.selectedFiles.forEach((file) => formData.append("files", file));
@@ -162,6 +162,7 @@ content %}
         <!-- Form Section -->
         <div class="p-8">
           <form
+            x-ref="form"
             x-data="imageToPdfConverter()"
             @submit.prevent="handleSubmit($event)"
             action="{{ url_for('imagetopdf') }}"
@@ -296,7 +297,8 @@ content %}
             <!-- Convert Button -->
             <div class="flex justify-center">
               <button
-                type="submit"
+                type="button"
+                @click="handleSubmit()"
                 :disabled="isProcessing || selectedFiles.length === 0"
                 class="flex items-center px-8 py-4 text-lg font-semibold text-white transition-all duration-200 rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 :class="isProcessing ? 'bg-gray-400' : 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105'"

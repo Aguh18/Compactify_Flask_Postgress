@@ -60,6 +60,14 @@ def imageTopdf():
 
             print("Successfully created PDF file")
 
+            # Calculate compressed size and ratio
+            compressed_size = os.path.getsize(temp_output_path)
+            compression_ratio = round((1 - compressed_size / original_size) * 100, 2) if original_size > 0 else 0
+
+            # Upload PDF to R2
+            output_filename = f"converted_images_{uid}.pdf"
+            output_key = base_controller.save_processed_file(temp_output_path, output_filename, uid)
+
             # Clean up temporary image files
             for img_path in image_paths:
                 try:
@@ -67,23 +75,17 @@ def imageTopdf():
                 except:
                     pass
 
-            # Upload PDF to R2
-            output_filename = f"converted_images_{uid}.pdf"
-            output_key = base_controller.save_processed_file(temp_output_path, output_filename, uid)
-
             # Clean up temporary PDF file
             os.remove(temp_output_path)
 
-             # Calculate statistics (even though it's conversion, not just compression)
-            # original_size calculated above
-            compressed_size = os.path.getsize(temp_output_path) if os.path.exists(temp_output_path) else 0 # file already removed? Wait, I removed it before checking size!
-            
-            # Correction: get size BEFORE removing
-            pass # We will fix the order in the next chunk logic or just rewrite the block below properly.
-            
             # Save to database and get direct download URL
-            # Note: The controller logic above removes temp_output_path at line 70, so I must get size BEFORE line 70.
-            # I will replace the whole block from line 66 to 74 to fix the order.
+            file_db = base_controller.save_to_database(
+                output_key, 
+                uid,
+                original_size=original_size,
+                compressed_size=compressed_size,
+                compression_ratio=compression_ratio
+            )
 
             # Return download page URL instead of direct file URL
             download_url = url_for('imagetopdf_download', file=file_db)
