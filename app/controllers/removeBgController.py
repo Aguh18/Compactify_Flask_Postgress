@@ -18,12 +18,12 @@ from app.controllers.base_controller import BaseController
 from app.models.validate.imageValidation import imageForm
 base_controller = BaseController('removeBgController')
 def removeBg():
-    from rembg import remove
     import tempfile
 
     if request.method == "GET":
         return render_template("removeBackground/removeBgForm.html")
     elif request.method == "POST":
+        from rembg import remove
         try:
             file = request.files["file"]
             uid = str(uuid.uuid4())
