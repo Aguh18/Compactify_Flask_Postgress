@@ -70,7 +70,7 @@ content %}
       },
 
       async handleSubmit(event) {
-        event.preventDefault();
+        if (event) event.preventDefault();
         this.errorMessage = "";
         this.successMessage = "";
         if (!this.selectedFile) {
@@ -79,7 +79,7 @@ content %}
         }
         this.isProcessing = true;
         try {
-          const form = event.target;
+          const form = this.$refs.form;
           const formData = new FormData();
           formData.append("file", this.selectedFile);
 
@@ -147,6 +147,7 @@ content %}
         <!-- Form Section -->
         <div class="p-8">
           <form
+            x-ref="form"
             x-data="imageToGrayscaleConverter()"
             @submit.prevent="handleSubmit($event)"
             action="{{ url_for('imgtogray') }}"
@@ -241,7 +242,8 @@ content %}
             <!-- Convert Button -->
             <div class="flex flex-col items-center space-y-4">
               <button
-                type="submit"
+                type="button"
+                @click="handleSubmit()"
                 :disabled="!selectedFile || isProcessing"
                 :class="selectedFile && !isProcessing ? 'bg-gradient-to-r from-gray-600 to-slate-900 hover:from-gray-700 hover:to-slate-800 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'"
                 class="w-full px-8 py-4 text-lg font-semibold text-white transition-all duration-200 rounded-xl"
