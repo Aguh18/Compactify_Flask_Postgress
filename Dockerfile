@@ -74,18 +74,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Copy application code
 COPY . .
 
-# Create necessary directories
-RUN mkdir -p app/static/uploads \
-    app/static/CompressImg \
-    app/static/CompressPdf \
-    app/static/docToPdf \
-    app/static/imagetopdf \
-    app/static/imgtogray \
-    app/static/removeBackground \
-    app/static/zip \
-    app/static/CompressAudio \
-    /tmp/gunicorn_tmp && \
-    chmod -R 755 app/static/ && \
+# Create only necessary directories for temporary files
+RUN mkdir -p /tmp/gunicorn_tmp && \
     chmod 777 /tmp/gunicorn_tmp
 
 EXPOSE 5000

@@ -2,7 +2,7 @@ import os
 import tempfile
 import uuid
 from werkzeug.utils import secure_filename
-from app.service.r2_helper import r2_helper
+from app.service.get_r2_helper() import get_get_r2_helper()
 
 class R2Mixin:
     """
@@ -35,7 +35,7 @@ class R2Mixin:
             filename = secure_filename(file.filename)
 
             # Upload original file to R2
-            upload_result = r2_helper.upload_file(
+            upload_result = get_r2_helper().upload_file(
                 file,
                 filename=filename,
                 folder=self.controller_name
@@ -50,7 +50,7 @@ class R2Mixin:
             input_key = upload_result['file_key']
 
             # Download file for processing
-            download_result = r2_helper.download_file(input_key)
+            download_result = get_r2_helper().download_file(input_key)
 
             if not download_result['success']:
                 return {
@@ -76,7 +76,7 @@ class R2Mixin:
                 )
 
                 # Upload processed file to R2
-                output_upload_result = r2_helper.upload_file(
+                output_upload_result = get_r2_helper().upload_file(
                     temp_output_path,
                     filename=processed_filename,
                     folder=self.controller_name
@@ -170,7 +170,7 @@ class R2Mixin:
                 with zipfile.ZipFile(tmp_zip.name, 'w', zipfile.ZIP_DEFLATED) as zipf:
                     for file_key in file_keys:
                         # Download file from R2
-                        download_result = r2_helper.download_file(file_key)
+                        download_result = get_r2_helper().download_file(file_key)
 
                         if download_result['success']:
                             # Add to ZIP
@@ -180,7 +180,7 @@ class R2Mixin:
                 temp_zip_path = tmp_zip.name
 
             # Upload ZIP to R2
-            upload_result = r2_helper.upload_file(
+            upload_result = get_r2_helper().upload_file(
                 temp_zip_path,
                 filename=zip_filename,
                 folder='zip'
@@ -229,7 +229,7 @@ class R2Mixin:
             filename = os.path.basename(source_key)
             destination_key = f"{destination_folder}/{filename}"
 
-            result = r2_helper.move_file(source_key, destination_key)
+            result = get_r2_helper().move_file(source_key, destination_key)
 
             if result['success']:
                 return {
@@ -264,7 +264,7 @@ class R2Mixin:
         errors = []
 
         for file_key in file_keys:
-            result = r2_helper.delete_file(file_key)
+            result = get_r2_helper().delete_file(file_key)
             if result['success']:
                 deleted_count += 1
             else:

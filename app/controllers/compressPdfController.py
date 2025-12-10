@@ -68,8 +68,8 @@ def compressPdf():
             input_key, filename, uid = base_controller.save_uploaded_file(file, uid)
 
             # Download file from R2 for processing
-            from app.service.r2_helper import r2_helper
-            input_result = r2_helper.download_file(input_key)
+            from app.service.r2_helper import get_r2_helper
+            input_result = get_r2_helper().download_file(input_key)
 
             if not input_result['success']:
                 return jsonify({"error": "Failed to retrieve file from storage"}), 500

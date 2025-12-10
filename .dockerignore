@@ -119,8 +119,7 @@ celerybeat.pid
 # SageMath parsed files
 *.sage.py
 
-# Environments
-.env
+# Environments (but keep .env for production)
 .venv
 env/
 venv/
@@ -178,25 +177,17 @@ yarn-error.log*
 # Docker
 .dockerignore
 
-# Upload directories (keep structure but ignore files)
-app/static/uploads/*
-!app/static/uploads/.gitkeep
-app/static/CompressImg/*
-!app/static/CompressImg/.gitkeep
-app/static/CompressPdf/*
-!app/static/CompressPdf/.gitkeep
-app/static/docToPdf/*
-!app/static/docToPdf/.gitkeep
-app/static/imagetopdf/*
-!app/static/imagetopdf/.gitkeep
-app/static/imgtogray/*
-!app/static/imgtogray/.gitkeep
-app/static/removeBackground/*
-!app/static/removeBackground/.gitkeep
-app/static/zip/*
-!app/static/zip/.gitkeep
-app/static/CompressAudio/*
-!app/static/CompressAudio/.gitkeep
+# No local upload directories needed - all files stored in Cloudflare R2
+# Remove old upload directories from the container
+app/static/uploads/
+app/static/CompressImg/
+app/static/CompressPdf/
+app/static/docToPdf/
+app/static/imagetopdf/
+app/static/imgtogray/
+app/static/removeBackground/
+app/static/zip/
+app/static/CompressAudio/
 
 # Database
 *.db

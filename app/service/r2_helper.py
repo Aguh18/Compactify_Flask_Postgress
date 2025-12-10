@@ -425,5 +425,12 @@ class R2Helper:
         else:
             return copy_result
 
-# Global instance
-r2_helper = R2Helper()
+# Global instance (lazy initialization)
+r2_helper = None
+
+def get_r2_helper():
+    """Get or initialize R2Helper instance (lazy initialization)"""
+    global r2_helper
+    if r2_helper is None:
+        r2_helper = R2Helper()
+    return r2_helper

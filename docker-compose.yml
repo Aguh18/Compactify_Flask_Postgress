@@ -32,15 +32,17 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
       # Flask Configuration
       FLASK_APP: server.py
       FLASK_ENV: ${FLASK_ENV:-production}
       DEBUG: ${DEBUG:-False}
 
-      # Database Configuration
-      DB_HOST: ${DB_HOST:-db}
-      DB_PORT: ${DB_PORT:-5432}
+      # Database Configuration (override .env for container)
+      DB_HOST: db
+      DB_PORT: 5432
       DB_USER: ${DB_USER:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-postgres}
       DB_NAME: ${DB_NAME:-compactify_db}
@@ -52,23 +54,13 @@ services:
       PYTHONPATH: /app
       OPENCV_LOG_LEVEL: ERROR
 
-      # Application Configuration
-      SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-in-production}
+      # Application Configuration (can be overridden by .env)
+      SECRET_KEY: ${SECRET_KEY:-teguh}
 
     ports:
       - "${WEB_PORT:-5000}:5000"
 
-    volumes:
-      # Upload directories untuk persistent storage
-      - ./app/static/uploads:/app/app/static/uploads
-      - ./app/static/CompressImg:/app/app/static/CompressImg
-      - ./app/static/CompressPdf:/app/app/static/CompressPdf
-      - ./app/static/docToPdf:/app/app/static/docToPdf
-      - ./app/static/imagetopdf:/app/app/static/imagetopdf
-      - ./app/static/imgtogray:/app/app/static/imgtogray
-      - ./app/static/removeBackground:/app/app/static/removeBackground
-      - ./app/static/zip:/app/app/static/zip
-      - ./app/static/CompressAudio:/app/app/static/CompressAudio
+    # No local volume mounts needed - all files stored in Cloudflare R2
 
     networks:
       - compactify_network

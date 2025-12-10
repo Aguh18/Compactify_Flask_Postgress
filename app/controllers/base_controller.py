@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from flask import send_file, jsonify
 from app.config.database import db
 from app.models.fileModel import filesModel
-from app.service.r2_helper import r2_helper
+from app.service.r2_helper import get_r2_helper
 
 class BaseController:
     def __init__(self, controller_name):
@@ -29,7 +29,7 @@ class BaseController:
         filename = secure_filename(file.filename)
 
         # Upload to R2
-        result = r2_helper.upload_file(
+        result = get_r2_helper().upload_file(
             file,
             filename=filename,
             folder=self.module_name
@@ -55,13 +55,13 @@ class BaseController:
         Returns:
             str: Full download URL
         """
-        from app.service.r2_helper import r2_helper
+        from app.service.r2_helper import get_r2_helper
 
         # Generate full download URL
-        if r2_helper.public_url:
-            download_url = f"{r2_helper.public_url}/{file_key}"
+        if get_r2_helper().public_url:
+            download_url = f"{get_r2_helper().public_url}/{file_key}"
         else:
-            download_url = r2_helper.generate_presigned_url(file_key)
+            download_url = get_r2_helper().generate_presigned_url(file_key)
 
         db.session.add(filesModel(
             download_url,
@@ -96,7 +96,7 @@ class BaseController:
                 file_key = file_or_url
 
             # Download from R2
-            result = r2_helper.download_file(file_key)
+            result = get_r2_helper().download_file(file_key)
 
             if not result['success']:
                 return jsonify({"error": "File not found in storage"}), 404
@@ -145,7 +145,7 @@ class BaseController:
                 file_key = file_or_url
 
             # Get from R2
-            result = r2_helper.download_file(file_key)
+            result = get_r2_helper().download_file(file_key)
 
             if not result['success']:
                 return jsonify({"error": "File not found in storage"}), 404
@@ -185,7 +185,7 @@ class BaseController:
         # Upload to R2
         if isinstance(file_path_or_content, str):
             # It's a file path
-            result = r2_helper.upload_file(
+            result = get_r2_helper().upload_file(
                 file_path_or_content,
                 filename=secure_name,
                 folder=self.module_name
@@ -196,7 +196,7 @@ class BaseController:
                 tmp_file.write(file_path_or_content)
                 tmp_file_path = tmp_file.name
 
-            result = r2_helper.upload_file(
+            result = get_r2_helper().upload_file(
                 tmp_file_path,
                 filename=secure_name,
                 folder=self.module_name
@@ -238,7 +238,7 @@ class BaseController:
             file_key: R2 file key
         """
         try:
-            result = r2_helper.delete_file(file_key)
+            result = get_r2_helper().delete_file(file_key)
             if not result['success']:
                 print(f"Error cleaning up file {file_key}: {result['message']}")
         except Exception as e:
@@ -254,7 +254,7 @@ class BaseController:
         Returns:
             dict: File metadata
         """
-        return r2_helper.get_file_info(file_key)
+        return get_r2_helper().get_file_info(file_key)
 
     def move_file(self, source_key, destination_folder=None):
         """
@@ -273,4 +273,4 @@ class BaseController:
         filename = os.path.basename(source_key)
         destination_key = f"{destination_folder}/{filename}"
 
-        return r2_helper.move_file(source_key, destination_key)
+        return get_r2_helper().move_file(source_key, destination_key)

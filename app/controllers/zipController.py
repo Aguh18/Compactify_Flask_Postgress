@@ -36,7 +36,7 @@ def zip():
             temp_dir = tempfile.mkdtemp()
 
             # Get files and save to R2 first
-            from app.service.r2_helper import r2_helper
+            from app.service.r2_helper import get_r2_helper
             file_keys = []
 
             for i in range(length):
@@ -53,7 +53,7 @@ def zip():
 
             # Download all files from R2 for zipping
             for input_key, filename in file_keys:
-                input_result = r2_helper.download_file(input_key)
+                input_result = get_r2_helper().download_file(input_key)
                 if input_result['success']:
                     file_path = os.path.join(temp_dir, secure_filename(filename))
                     with open(file_path, 'wb') as f:

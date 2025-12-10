@@ -32,8 +32,8 @@ def imageTopdf():
                     input_key, filename, file_uid = base_controller.save_uploaded_file(file, uid)
 
                     # Download from R2 for processing
-                    from app.service.r2_helper import r2_helper
-                    input_result = r2_helper.download_file(input_key)
+                    from app.service.r2_helper import get_r2_helper
+                    input_result = get_r2_helper().download_file(input_key)
 
                     if not input_result['success']:
                         return jsonify({"error": f"Failed to retrieve {filename} from storage"}), 500
