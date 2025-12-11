@@ -29,6 +29,9 @@ migrate = Migrate(app, db)
 from app.router import *
 from app import health  # Import health endpoints
 
+# Track if app has been initialized
+_app_initialized = False
+
 def preload_models():
     """Preload heavy models at startup to prevent first-request delays"""
     try:
@@ -42,17 +45,24 @@ def preload_models():
     except Exception as e:
         print(f"Failed to start model preloading: {e}")
 
-@app.before_first_request
+@app.before_request
 def initialize_app():
-    """Initialize application components"""
-    try:
-        # Create database tables if they don't exist
-        db.create_all()
+    """Initialize application components on first request"""
+    global _app_initialized
+    if not _app_initialized:
+        try:
+            # Create database tables if they don't exist
+            with app.app_context():
+                db.create_all()
 
-        # Start model preloading after database is ready
-        preload_models()
+            # Start model preloading after database is ready
+            preload_models()
 
-        print("Application initialized successfully")
+            _app_initialized = True
+            print("Application initialized successfully")
 
-    except Exception as e:
-        print(f"Application initialization error: {e}")
+        except Exception as e:
+            print(f"Application initialization error: {e}")
+
+# Start model preloading immediately when app loads
+preload_models()
