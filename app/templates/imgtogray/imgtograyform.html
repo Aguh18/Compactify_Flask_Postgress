@@ -102,7 +102,10 @@ content %}
             this.errorMessage = "Failed to convert image to grayscale.";
           }
         } catch (err) {
-          this.errorMessage = "An error occurred: " + (err.message || err);
+          // Only show error if it's a real network error, not during redirect
+          if (!err.message || !err.message.includes('Failed to fetch')) {
+            this.errorMessage = "An error occurred: " + (err.message || err);
+          }
         } finally {
           this.isProcessing = false;
         }

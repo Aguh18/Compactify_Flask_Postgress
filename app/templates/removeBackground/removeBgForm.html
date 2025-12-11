@@ -182,7 +182,7 @@ function backgroundRemover() {
           console.error('Submit error:', err);
           if (err.message === 'Request timeout') {
               this.errorMessage = "Processing took too long. Please try again.";
-          } else {
+          } else if (!err.message || !err.message.includes('Failed to fetch')) {
               this.errorMessage = "An error occurred: " + (err.message || err);
           }
       } finally {
