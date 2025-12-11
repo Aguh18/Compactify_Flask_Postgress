@@ -64,5 +64,5 @@ def initialize_app():
         except Exception as e:
             print(f"Application initialization error: {e}")
 
-# Start model preloading immediately when app loads
-preload_models()
+# Disable auto preloading to save memory - use lazy loading instead
+# preload_models()  # Commented out to save RAM

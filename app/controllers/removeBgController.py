@@ -20,43 +20,79 @@ from app.controllers.base_controller import BaseController
 from app.models.validate.imageValidation import imageForm
 base_controller = BaseController('removeBgController')
 
-# Global variables for caching models
+# Global variables for caching models (with memory management)
 _rembg_model_lock = threading.Lock()
 _rembg_model_loaded = False
 _rembg_model = None
+_rembg_last_used = None
+_model_ttl = 180  # Keep model in memory for 3 minutes after last use (more aggressive cleanup)
 
-def preload_rembg_model():
-    """Preload rembg model to avoid download delays"""
-    global _rembg_model_loaded, _rembg_model
+def cleanup_rembg_model():
+    """Cleanup rembg model from memory to save RAM"""
+    global _rembg_model, _rembg_model_loaded, _rembg_last_used
 
     with _rembg_model_lock:
+        if _rembg_model is not None:
+            try:
+                import gc
+                # Clear model from memory
+                _rembg_model = None
+                _rembg_model_loaded = False
+                _rembg_last_used = None
+                gc.collect()
+                print("Rembg model cleaned up from memory")
+            except Exception as e:
+                print(f"Error cleaning up rembg model: {e}")
+
+def update_model_usage():
+    """Update the last used timestamp for the model"""
+    global _rembg_last_used
+    with _rembg_model_lock:
+        _rembg_last_used = time.time()
+
+def preload_rembg_model():
+    """Lazy load rembg model only when needed"""
+    global _rembg_model_loaded, _rembg_model, _rembg_last_used
+
+    with _rembg_model_lock:
+        current_time = time.time()
+
+        # Check if model needs to be cleaned up (TTL expired)
+        if (_rembg_last_used is not None and
+            current_time - _rembg_last_used > _model_ttl and
+            _rembg_model is not None):
+            print("Model TTL expired, cleaning up...")
+            cleanup_rembg_model()
+
         if not _rembg_model_loaded:
             try:
-                print("Preloading rembg model...")
+                print("Loading rembg model (lazy loading)...")
                 from rembg import remove, new_session
+                import gc
                 # Create session which will download and cache the model
                 session = new_session('u2net')
                 _rembg_model = session
                 _rembg_model_loaded = True
+                _rembg_last_used = current_time
+                # Force garbage collection after loading
+                gc.collect()
                 print("Rembg model loaded successfully!")
             except Exception as e:
-                print(f"Failed to preload rembg model: {e}")
+                print(f"Failed to load rembg model: {e}")
                 # Fallback to default behavior
                 _rembg_model_loaded = True  # Mark as loaded to avoid repeated attempts
 def removeBg():
     import tempfile
 
     if request.method == "GET":
-        # Start model preloading in background when user visits the page
-        if not _rembg_model_loaded:
-            threading.Thread(target=preload_rembg_model, daemon=True).start()
+        # Don't preload immediately - use lazy loading to save memory
         return render_template("removeBackground/removeBgForm.html")
     elif request.method == "POST":
         from rembg import remove
         try:
-            # Check if model is loaded, if not, load it now
-            if not _rembg_model_loaded:
-                preload_rembg_model()
+            # Load model only when actually needed (lazy loading)
+            preload_rembg_model()
+            update_model_usage()  # Update last used time
 
             file = request.files["file"]
             uid = str(uuid.uuid4())
@@ -124,6 +160,10 @@ def removeBg():
 
             processing_time = time.time() - start_time
             print(f"[*] Background removal completed in {processing_time:.2f} seconds")
+
+            # Force garbage collection to free memory immediately after processing
+            import gc
+            gc.collect()
 
             # Create proper filename for processed file
             name, ext = os.path.splitext(filename)
