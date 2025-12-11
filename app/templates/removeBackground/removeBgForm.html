@@ -22,15 +22,32 @@ function backgroundRemover() {
     init() {
       // Check model status when page loads
       this.checkModelStatus();
-      // Start polling model status
-      this.modelStatusInterval = setInterval(() => {
-        this.checkModelStatus();
-      }, 2000);
+      // Start polling model status only while loading
+      this.startStatusPolling();
+    },
+
+    startStatusPolling() {
+      if (this.modelReady) {
+        // Stop polling if model is ready
+        if (this.modelStatusInterval) {
+          clearInterval(this.modelStatusInterval);
+          this.modelStatusInterval = null;
+        }
+        return;
+      }
+
+      // Start polling if not already running
+      if (!this.modelStatusInterval) {
+        this.modelStatusInterval = setInterval(() => {
+          this.checkModelStatus();
+        }, 3000); // Reduced frequency to 3 seconds
+      }
     },
 
     destroy() {
       if (this.modelStatusInterval) {
         clearInterval(this.modelStatusInterval);
+        this.modelStatusInterval = null;
       }
     },
 
@@ -38,8 +55,14 @@ function backgroundRemover() {
       try {
         const response = await fetch('/removebg/status');
         const data = await response.json();
+        const wasReady = this.modelReady;
         this.modelReady = data.ready;
         this.modelLoading = !data.ready;
+
+        // Stop polling if model just became ready
+        if (!wasReady && this.modelReady) {
+          this.startStatusPolling();
+        }
       } catch (err) {
         console.log('Failed to check model status:', err);
       }

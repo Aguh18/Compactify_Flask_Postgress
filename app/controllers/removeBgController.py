@@ -25,7 +25,7 @@ _rembg_model_lock = threading.Lock()
 _rembg_model_loaded = False
 _rembg_model = None
 _rembg_last_used = None
-_model_ttl = 600  # Keep model in memory for 10 minutes after last use (reduce reloading)
+_model_ttl = 120  # Keep model in memory for 2 minutes after last use (memory efficient)
 
 def cleanup_rembg_model():
     """Cleanup rembg model from memory to save RAM"""
@@ -49,6 +49,15 @@ def update_model_usage():
     global _rembg_last_used
     with _rembg_model_lock:
         _rembg_last_used = time.time()
+
+def periodic_memory_cleanup():
+    """Periodic cleanup to prevent memory leaks"""
+    current_time = time.time()
+    if (_rembg_last_used is not None and
+        current_time - _rembg_last_used > _model_ttl and
+        _rembg_model is not None):
+        print("[*] Periodic cleanup: Model TTL expired")
+        cleanup_rembg_model()
 
 def preload_rembg_model():
     """Lazy load rembg model only when needed"""
@@ -249,6 +258,9 @@ def download_file(file):
 def removebg_status():
     """API endpoint to check model loading status"""
     global _rembg_model_loaded, _rembg_last_used, _rembg_model
+
+    # Perform periodic cleanup on status check
+    periodic_memory_cleanup()
 
     status = {
         'model_loaded': _rembg_model_loaded,
