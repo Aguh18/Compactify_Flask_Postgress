@@ -55,14 +55,36 @@ def initialize_app():
             with app.app_context():
                 db.create_all()
 
-            # Start model preloading after database is ready
-            preload_models()
-
             _app_initialized = True
             print("Application initialized successfully")
 
         except Exception as e:
             print(f"Application initialization error: {e}")
 
-# Disable auto preloading to save memory - use lazy loading instead
-# preload_models()  # Commented out to save RAM
+    # Universal model preload - trigger on any user request
+    universal_model_preload()
+
+# Universal model preload function
+def universal_model_preload():
+    """Preload rembg model when any user accesses the application"""
+    try:
+        from app.controllers.removeBgController import _rembg_model_loaded, preload_rembg_model
+        import threading
+
+        # Skip preload for static files and API calls
+        if any(path in request.path for path in ['/static/', '/health', '/favicon', '.css', '.js', '.png', '.jpg']):
+            return
+
+        # Check if model is not loaded
+        if not _rembg_model_loaded:
+            # Start preloading in background thread (non-blocking)
+            print(f"[*] User hit {request.path} - starting universal rembg model preload...")
+            threading.Thread(target=preload_rembg_model, daemon=True).start()
+        else:
+            print(f"[*] User hit {request.path} - rembg model already loaded")
+
+    except Exception as e:
+        print(f"[*] Universal preload error (non-critical): {e}")
+
+# Disable auto preloading to save memory - use universal preload instead
+# preload_models()  # Replaced with universal preload

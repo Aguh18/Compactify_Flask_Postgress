@@ -25,7 +25,7 @@ _rembg_model_lock = threading.Lock()
 _rembg_model_loaded = False
 _rembg_model = None
 _rembg_last_used = None
-_model_ttl = 60  # Keep model in memory for 1 minute after last use (more aggressive)
+_model_ttl = 180  # Keep model in memory for 3 minutes (extended due to universal preload)
 
 def cleanup_rembg_model():
     """Cleanup rembg model from memory to save RAM"""
@@ -94,12 +94,9 @@ def removeBg():
     import tempfile
 
     if request.method == "GET":
-        # Preload model aggressively when user visits the form
-        if not _rembg_model_loaded:
-            print("[*] User visited remove bg form - starting aggressive model preload...")
-            # Start preloading in background thread
-            threading.Thread(target=preload_rembg_model, daemon=True).start()
-
+        # Model should already be preloaded by universal trigger
+        # Just show the form
+        print("[*] Remove BG form accessed - model status:", "loaded" if _rembg_model_loaded else "loading")
         return render_template("removeBackground/removeBgForm.html")
     elif request.method == "POST":
         from rembg import remove
