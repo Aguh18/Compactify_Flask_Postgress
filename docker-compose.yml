@@ -14,8 +14,9 @@ services:
       - postgres_data:/var/lib/postgresql/data
       # Add custom PostgreSQL configuration for better connection handling
       - ./postgres.conf:/etc/postgresql/postgresql.conf
-    ports:
-      - "${DB_PORT:-5432}:5432"
+    # Hapus port forward - database hanya accessible dari internal network
+    # ports:
+    #   - "${DB_PORT:-5432}:5432"  # COMMENT OUT
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-compactify_db}"]
