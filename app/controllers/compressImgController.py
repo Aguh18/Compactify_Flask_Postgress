@@ -101,6 +101,10 @@ def imageCompress():
             # Upload compressed file to R2
             output_key = base_controller.save_processed_file(temp_output_path, compressed_filename, uid)
 
+            # Force garbage collection before saving to database
+            import gc
+            gc.collect()
+
             # Save to database with size information
             file_db = base_controller.save_to_database(
                 output_key,
@@ -112,6 +116,10 @@ def imageCompress():
             )
             print("nama file adalah", file_db)
             print("file success created")
+
+            # Final garbage collection to free all memory
+            gc.collect()
+
             # Return download page URL instead of direct file URL
             download_url = url_for('compressimg_download', file=file_db)
             return jsonify({"download_url": download_url})

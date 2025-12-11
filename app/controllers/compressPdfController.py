@@ -103,15 +103,23 @@ def compressPdf():
             os.unlink(temp_input_path)
             os.unlink(temp_output_path)
 
+            # Force garbage collection before saving to database
+            import gc
+            gc.collect()
+
             # Save to database and get direct download URL
             file_db = base_controller.save_to_database(
-                output_key, 
+                output_key,
                 uid,
                 original_size=original_size,
                 compressed_size=compressed_size,
                 compression_ratio=compression_ratio
             )
             print("file success created")
+
+            # Final garbage collection to free all memory
+            gc.collect()
+
             # Return download page URL instead of direct file URL
             download_url = url_for('compresspdf_download', file=file_db)
             return jsonify({"download_url": download_url})

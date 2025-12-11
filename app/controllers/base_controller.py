@@ -7,6 +7,7 @@ from flask import send_file, jsonify
 from app.config.database import db
 from app.models.fileModel import filesModel
 from app.service.r2_helper import get_r2_helper
+from app.utils.memory_optimizer import force_garbage_collect
 from sqlalchemy.exc import OperationalError, DisconnectionError
 
 class BaseController:
@@ -44,7 +45,7 @@ class BaseController:
 
     def save_to_database(self, file_key, uid, original_size=None, compressed_size=None, compression_ratio=None, quality=None):
         """
-        Save file record to database with retry mechanism
+        Save file record to database with retry mechanism and memory optimization
 
         Args:
             file_key: R2 file key
@@ -78,6 +79,10 @@ class BaseController:
                     quality=quality
                 ))
                 db.session.commit()
+
+                # Force garbage collection to free memory
+                force_garbage_collect()
+
                 return download_url
 
             except (OperationalError, DisconnectionError) as e:
