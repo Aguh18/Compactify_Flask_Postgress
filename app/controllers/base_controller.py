@@ -1,11 +1,13 @@
 import os
 import uuid
 import tempfile
+import time
 from werkzeug.utils import secure_filename
 from flask import send_file, jsonify
 from app.config.database import db
 from app.models.fileModel import filesModel
 from app.service.r2_helper import get_r2_helper
+from sqlalchemy.exc import OperationalError, DisconnectionError
 
 class BaseController:
     def __init__(self, controller_name):
@@ -42,7 +44,7 @@ class BaseController:
 
     def save_to_database(self, file_key, uid, original_size=None, compressed_size=None, compression_ratio=None, quality=None):
         """
-        Save file record to database
+        Save file record to database with retry mechanism
 
         Args:
             file_key: R2 file key
@@ -63,15 +65,37 @@ class BaseController:
         else:
             download_url = get_r2_helper().generate_presigned_url(file_key)
 
-        db.session.add(filesModel(
-            download_url,
-            original_size=original_size,
-            compressed_size=compressed_size,
-            compression_ratio=compression_ratio,
-            quality=quality
-        ))
-        db.session.commit()
-        return download_url
+        max_retries = 3
+        retry_delay = 1  # seconds
+
+        for attempt in range(max_retries):
+            try:
+                db.session.add(filesModel(
+                    download_url,
+                    original_size=original_size,
+                    compressed_size=compressed_size,
+                    compression_ratio=compression_ratio,
+                    quality=quality
+                ))
+                db.session.commit()
+                return download_url
+
+            except (OperationalError, DisconnectionError) as e:
+                db.session.rollback()
+
+                if attempt < max_retries - 1:
+                    print(f"Database connection failed (attempt {attempt + 1}/{max_retries}), retrying in {retry_delay} seconds...")
+                    time.sleep(retry_delay)
+                    retry_delay *= 2  # Exponential backoff
+                    continue
+                else:
+                    print(f"Database connection failed after {max_retries} attempts: {e}")
+                    raise RuntimeError(f"Failed to save to database after {max_retries} attempts: {str(e)}")
+
+            except Exception as e:
+                db.session.rollback()
+                print(f"Unexpected database error: {e}")
+                raise
 
     def download_file(self, file_or_url):
         """

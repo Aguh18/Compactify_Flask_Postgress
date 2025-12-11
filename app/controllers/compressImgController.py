@@ -133,9 +133,34 @@ def imageCompress():
 def render_download_page(file):
     from app.models.fileModel import filesModel
     from app.config.database import db
+    from sqlalchemy.exc import OperationalError, DisconnectionError
+    import time
 
-    # Get file record from database
-    file_record = db.session.query(filesModel).filter_by(file=file).first()
+    # Get file record from database with retry mechanism
+    max_retries = 3
+    retry_delay = 1
+
+    for attempt in range(max_retries):
+        try:
+            file_record = db.session.query(filesModel).filter_by(file=file).first()
+            break
+
+        except (OperationalError, DisconnectionError) as e:
+            if attempt < max_retries - 1:
+                print(f"Database connection failed when fetching file record (attempt {attempt + 1}/{max_retries}), retrying...")
+                time.sleep(retry_delay)
+                retry_delay *= 2
+                file_record = None
+                continue
+            else:
+                print(f"Database connection failed after {max_retries} attempts when fetching file record")
+                file_record = None
+                break
+
+        except Exception as e:
+            print(f"Unexpected database error when fetching file record: {e}")
+            file_record = None
+            break
 
     # Format file sizes for display
     def format_size(bytes):
