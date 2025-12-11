@@ -123,14 +123,24 @@ function backgroundRemover() {
           const form = event.target;
           const formData = new FormData(form);
 
-          const response = await fetch(form.action, {
-            method: "POST",
-            body: formData,
+          // Add timeout to prevent infinite loading
+          const timeoutPromise = new Promise((_, reject) => {
+              setTimeout(() => reject(new Error('Request timeout')), 60000); // 60 second timeout
           });
+
+          const response = await Promise.race([
+              fetch(form.action, {
+                method: "POST",
+                body: formData,
+              }),
+              timeoutPromise
+          ]);
+
+          console.log('Response status:', response.status);
 
           if (!response.ok) {
             const text = await response.text();
-             // Try to parse JSON error if possible
+            console.log('Error response:', text);
             try {
                 const jsonErr = JSON.parse(text);
                 this.errorMessage = jsonErr.error || text;
@@ -141,18 +151,47 @@ function backgroundRemover() {
             return;
           }
 
-          const data = await response.json().catch(() => null);
+          // Parse response with better error handling
+          let data;
+          try {
+              const text = await response.text();
+              console.log('Response text:', text);
+              data = text ? JSON.parse(text) : null;
+          } catch (parseError) {
+              console.error('JSON parse error:', parseError);
+              this.errorMessage = "Invalid server response";
+              this.isProcessing = false;
+              return;
+          }
+
+          console.log('Parsed data:', data);
+
           if (data && data.download_url) {
-            window.location.href = data.download_url;
+            console.log('Redirecting to:', data.download_url);
+            // Small delay to ensure user sees processing completed
+            setTimeout(() => {
+              window.location.href = data.download_url;
+            }, 500);
             return;
           } else if (data && data.error) {
             this.errorMessage = data.error;
           } else {
-            this.errorMessage = "Failed to process image.";
+            this.errorMessage = "Invalid server response. Please try again.";
           }
       } catch (err) {
-          this.errorMessage = "An error occurred: " + (err.message || err);
+          console.error('Submit error:', err);
+          if (err.message === 'Request timeout') {
+              this.errorMessage = "Processing took too long. Please try again.";
+          } else {
+              this.errorMessage = "An error occurred: " + (err.message || err);
+          }
       } finally {
+          // Don't reset isProcessing immediately if we're redirecting
+          if (!this.errorMessage) {
+              console.log('Processing completed successfully');
+              // Keep loading state during redirect
+              return;
+          }
           this.isProcessing = false;
       }
     }
@@ -312,7 +351,25 @@ function backgroundRemover() {
       <i class="text-2xl text-pink-600 fas fa-spinner fa-spin"></i>
     </div>
     <h3 class="mb-2 text-lg font-semibold text-gray-800">Removing Background</h3>
-    <p class="text-gray-600">Please wait while AI processes your image...</p>
+    <p class="mb-4 text-gray-600">AI is processing your image...</p>
+
+    <!-- Progress Steps -->
+    <div class="space-y-2 text-left text-sm">
+      <div class="flex items-center text-gray-600">
+        <i class="w-4 h-4 mr-2 text-blue-500 fas fa-check-circle"></i>
+        <span>Image uploaded</span>
+      </div>
+      <div class="flex items-center text-gray-600">
+        <i class="w-4 h-4 mr-2 text-blue-500 fas fa-check-circle"></i>
+        <span>Background removal in progress</span>
+      </div>
+      <div class="flex items-center text-gray-400">
+        <i class="w-4 h-4 mr-2 fas fa-spinner fa-spin text-pink-500"></i>
+        <span>Finishing up...</span>
+      </div>
+    </div>
+
+    <p class="mt-4 text-xs text-gray-500">This usually takes 5-15 seconds</p>
   </div>
 </div>
 

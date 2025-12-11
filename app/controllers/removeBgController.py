@@ -220,9 +220,15 @@ def removeBg():
                 compression_ratio=compression_ratio
             )
             print("[*] File success created")
+            print(f"[*] Database entry created: {file_db}")
             # Return download page URL instead of direct file URL
             download_url = url_for('removebg_download', file=file_db)
-            return jsonify({"download_url": download_url})
+            print(f"[*] Returning download URL: {download_url}")
+
+            response_data = {"download_url": download_url}
+            print(f"[*] Response data: {response_data}")
+
+            return jsonify(response_data)
 
         except Exception as e:
             print(f"Error in removeBg: {e}")
