@@ -25,7 +25,7 @@ _rembg_model_lock = threading.Lock()
 _rembg_model_loaded = False
 _rembg_model = None
 _rembg_last_used = None
-_model_ttl = 120  # Keep model in memory for 2 minutes after last use (memory efficient)
+_model_ttl = 60  # Keep model in memory for 1 minute after last use (more aggressive)
 
 def cleanup_rembg_model():
     """Cleanup rembg model from memory to save RAM"""
@@ -228,6 +228,15 @@ def removeBg():
             response_data = {"download_url": download_url}
             print(f"[*] Response data: {response_data}")
 
+            # Schedule aggressive cleanup after response
+            def delayed_cleanup():
+                import time
+                time.sleep(30)  # Wait 30 seconds after processing
+                cleanup_rembg_model()
+
+            import threading
+            threading.Thread(target=delayed_cleanup, daemon=True).start()
+
             return jsonify(response_data)
 
         except Exception as e:
@@ -268,11 +277,27 @@ def removebg_status():
     # Perform periodic cleanup on status check
     periodic_memory_cleanup()
 
+    # Calculate memory usage info
+    import psutil
+    import os
+    process = psutil.Process(os.getpid())
+    memory_info = process.memory_info()
+
+    # Check if model should be cleaned up
+    current_time = time.time()
+    cleanup_needed = (_rembg_last_used is not None and
+                     current_time - _rembg_last_used > _model_ttl and
+                     _rembg_model is not None)
+
     status = {
         'model_loaded': _rembg_model_loaded,
         'last_used': _rembg_last_used,
         'ready': _rembg_model_loaded and _rembg_model is not None,
-        'timestamp': time.time()
+        'memory_mb': round(memory_info.rss / 1024 / 1024, 1),
+        'memory_vms_mb': round(memory_info.vms / 1024 / 1024, 1),
+        'model_ttl_seconds': _model_ttl,
+        'cleanup_needed': cleanup_needed,
+        'timestamp': current_time
     }
 
     return jsonify(status)
