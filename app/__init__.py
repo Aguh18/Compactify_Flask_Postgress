@@ -68,6 +68,7 @@ def initialize_app():
 def universal_model_preload():
     """Preload rembg model when any user accesses the application"""
     try:
+        from flask import request  # Import request here
         from app.controllers.removeBgController import _rembg_model_loaded, preload_rembg_model
         import threading
 
