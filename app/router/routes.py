@@ -41,6 +41,11 @@ def removebg_download_file():
         return "File not found", 404
     return removeBgController.download_file(file)
 
+# Model status endpoint for remove background
+@app.route("/removebg/status", methods=["GET"], endpoint="removebg_status")
+def removebg_status():
+    return removeBgController.removebg_status()
+
 # Compress Image
 @app.route("/compressimg", methods=["GET", "POST"], endpoint="compressimg")
 def compressImg_route():

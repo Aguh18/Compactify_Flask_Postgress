@@ -57,12 +57,12 @@ services:
       PYTHONPATH: /app
       OPENCV_LOG_LEVEL: ERROR
 
-      # Gunicorn Configuration for maximum memory efficiency
+      # Gunicorn Configuration for stability with rembg model
       GUNICORN_TIMEOUT: 120  # 2 minutes timeout
       GUNICORN_WORKERS: 1    # Single worker to save memory (rembg model is 176MB per worker)
       GUNICORN_WORKER_CLASS: sync
-      GUNICORN_MAX_REQUESTS: 50   # Restart worker every 50 requests for aggressive memory cleanup
-      GUNICORN_MAX_REQUESTS_JITTER: 10
+      GUNICORN_MAX_REQUESTS: 200  # Increased to reduce model reloading
+      GUNICORN_MAX_REQUESTS_JITTER: 20
       GUNICORN_PRELOAD_APP: false
       # Additional memory optimization
       GUNICORN_WORKER_CONNECTIONS: 1000
@@ -74,14 +74,14 @@ services:
     ports:
       - "${WEB_PORT:-5000}:5000"
 
-    # Resource limits optimized for maximum memory efficiency
+    # Resource limits optimized for stability with rembg model
     deploy:
       resources:
         limits:
-          memory: 768M  # Further reduced to force aggressive memory optimization
+          memory: 1.5G  # Increased to prevent OOM with rembg model
           cpus: '1.0'   # Single CPU limit to prevent resource waste
         reservations:
-          memory: 128M  # Minimal reservation
+          memory: 256M  # Moderate reservation
     # Add memory-based temporary filesystem
     tmpfs:
       - /tmp/gunicorn_tmp:rw,size=100M,mode=1777  # Memory-based temp for performance

@@ -15,7 +15,35 @@ function backgroundRemover() {
     selectedFile: null,
     isDragOver: false,
     isProcessing: false,
+    modelLoading: false,
+    modelReady: false,
     errorMessage: '',
+
+    init() {
+      // Check model status when page loads
+      this.checkModelStatus();
+      // Start polling model status
+      this.modelStatusInterval = setInterval(() => {
+        this.checkModelStatus();
+      }, 2000);
+    },
+
+    destroy() {
+      if (this.modelStatusInterval) {
+        clearInterval(this.modelStatusInterval);
+      }
+    },
+
+    async checkModelStatus() {
+      try {
+        const response = await fetch('/removebg/status');
+        const data = await response.json();
+        this.modelReady = data.ready;
+        this.modelLoading = !data.ready;
+      } catch (err) {
+        console.log('Failed to check model status:', err);
+      }
+    },
 
     handleFileSelect(event) {
       const file = event.target.files[0];
@@ -185,15 +213,23 @@ function backgroundRemover() {
               </div>
             </div>
 
+            <!-- Model Loading Status -->
+            <div x-show="modelLoading" class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <div class="flex items-center justify-center space-x-2 text-blue-700">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span class="text-sm font-medium">Loading AI model... This will take a moment.</span>
+              </div>
+            </div>
+
             <!-- Remove Background Button -->
             <div class="flex flex-col items-center space-y-4">
-              <button 
-                type="submit" 
-                :disabled="!selectedFile || isProcessing"
-                :class="selectedFile && !isProcessing ? 'bg-gradient-to-r from-pink-500 to-pink-700 hover:from-pink-600 hover:to-pink-800 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'"
+              <button
+                type="submit"
+                :disabled="!selectedFile || isProcessing || modelLoading"
+                :class="selectedFile && !isProcessing && !modelLoading ? 'bg-gradient-to-r from-pink-500 to-pink-700 hover:from-pink-600 hover:to-pink-800 cursor-pointer' : 'bg-gray-400 cursor-not-allowed'"
                 class="w-full px-8 py-4 text-lg font-semibold text-white transition-all duration-200 rounded-xl"
               >
-                <span x-show="!isProcessing" class="flex items-center justify-center">
+                <span x-show="!isProcessing && !modelLoading" class="flex items-center justify-center">
                   <i class="mr-2 fas fa-cut"></i>
                   Remove Background
                 </span>
@@ -201,10 +237,15 @@ function backgroundRemover() {
                   <i class="mr-2 fas fa-spinner fa-spin"></i>
                   Processing...
                 </span>
+                <span x-show="modelLoading && !isProcessing" class="flex items-center justify-center">
+                  <i class="mr-2 fas fa-brain"></i>
+                  Loading AI Model...
+                </span>
               </button>
-              
+
               <p class="text-sm text-center text-gray-500">
-                AI will automatically detect and remove the background from your image
+                <span x-show="modelReady">✅ AI model is ready! Processing will be instant.</span>
+                <span x-show="!modelReady">Loading AI model for instant processing...</span>
               </p>
             </div>
           </form>

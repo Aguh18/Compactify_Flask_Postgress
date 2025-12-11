@@ -25,7 +25,7 @@ _rembg_model_lock = threading.Lock()
 _rembg_model_loaded = False
 _rembg_model = None
 _rembg_last_used = None
-_model_ttl = 180  # Keep model in memory for 3 minutes after last use (more aggressive cleanup)
+_model_ttl = 600  # Keep model in memory for 10 minutes after last use (reduce reloading)
 
 def cleanup_rembg_model():
     """Cleanup rembg model from memory to save RAM"""
@@ -85,13 +85,29 @@ def removeBg():
     import tempfile
 
     if request.method == "GET":
-        # Don't preload immediately - use lazy loading to save memory
+        # Preload model aggressively when user visits the form
+        if not _rembg_model_loaded:
+            print("[*] User visited remove bg form - starting aggressive model preload...")
+            # Start preloading in background thread
+            threading.Thread(target=preload_rembg_model, daemon=True).start()
+
         return render_template("removeBackground/removeBgForm.html")
     elif request.method == "POST":
         from rembg import remove
         try:
-            # Load model only when actually needed (lazy loading)
-            preload_rembg_model()
+            # Ensure model is loaded with timeout
+            model_load_start = time.time()
+
+            # Wait up to 10 seconds for model to load
+            max_wait = 10
+            while not _rembg_model_loaded and (time.time() - model_load_start) < max_wait:
+                print(f"[*] Waiting for model to load... ({int(time.time() - model_load_start)}s)")
+                time.sleep(0.5)
+                preload_rembg_model()
+
+            if not _rembg_model_loaded:
+                print("[*] Model loading timeout, proceeding with default loading...")
+
             update_model_usage()  # Update last used time
 
             file = request.files["file"]
@@ -149,9 +165,11 @@ def removeBg():
             # Process image background removal
             if _rembg_model:
                 # Use preloaded model for faster processing
+                print("[*] Using cached rembg model")
                 output = remove(input_img, session=_rembg_model)
             else:
                 # Fallback to default behavior
+                print("[*] Using new rembg model session")
                 output = remove(input_img)
 
             # Create temporary output file
@@ -227,3 +245,16 @@ def render_download_page(file):
     )
 def download_file(file):
     return base_controller.download_file(file)
+
+def removebg_status():
+    """API endpoint to check model loading status"""
+    global _rembg_model_loaded, _rembg_last_used, _rembg_model
+
+    status = {
+        'model_loaded': _rembg_model_loaded,
+        'last_used': _rembg_last_used,
+        'ready': _rembg_model_loaded and _rembg_model is not None,
+        'timestamp': time.time()
+    }
+
+    return jsonify(status)

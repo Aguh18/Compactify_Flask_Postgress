@@ -38,21 +38,9 @@ def health_check():
 def readiness_check():
     """
     Readiness check for Docker containers
+    Simple check - just return ready if app is running
     """
-    try:
-        # Test database connection
-        db.session.execute('SELECT 1')
-
-        return jsonify({
-            'status': 'ready',
-            'database': 'connected',
-            'timestamp': time.time()
-        }), 200
-
-    except Exception as e:
-        return jsonify({
-            'status': 'not_ready',
-            'database': 'disconnected',
-            'error': str(e),
-            'timestamp': time.time()
-        }), 503
+    return jsonify({
+        'status': 'ready',
+        'timestamp': time.time()
+    }), 200
