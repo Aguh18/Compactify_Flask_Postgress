@@ -28,3 +28,31 @@ db.init_app(app)
 migrate = Migrate(app, db)
 from app.router import *
 from app import health  # Import health endpoints
+
+def preload_models():
+    """Preload heavy models at startup to prevent first-request delays"""
+    try:
+        from app.controllers.removeBgController import preload_rembg_model
+        import threading
+
+        # Start model preloading in background thread
+        threading.Thread(target=preload_rembg_model, daemon=True).start()
+        print("Background model preloading started...")
+
+    except Exception as e:
+        print(f"Failed to start model preloading: {e}")
+
+@app.before_first_request
+def initialize_app():
+    """Initialize application components"""
+    try:
+        # Create database tables if they don't exist
+        db.create_all()
+
+        # Start model preloading after database is ready
+        preload_models()
+
+        print("Application initialized successfully")
+
+    except Exception as e:
+        print(f"Application initialization error: {e}")

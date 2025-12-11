@@ -80,6 +80,32 @@ except Exception as e:
 echo "📋 Running database migrations..."
 flask db upgrade
 
-# Start the application
-echo "🚀 Starting Flask application..."
-exec gunicorn --bind 0.0.0.0:5000 --workers 4 --worker-class sync --timeout 120 --max-requests 1000 --max-requests-jitter 100 --access-logfile - --error-logfile - server:app
+# Start the application with optimized configuration
+echo "🚀 Starting Flask application with optimized configuration..."
+
+# Get Gunicorn configuration from environment variables
+GUNICORN_WORKERS=${GUNICORN_WORKERS:-2}
+GUNICORN_TIMEOUT=${GUNICORN_TIMEOUT:-120}
+GUNICORN_MAX_REQUESTS=${GUNICORN_MAX_REQUESTS:-1000}
+GUNICORN_MAX_REQUESTS_JITTER=${GUNICORN_MAX_REQUESTS_JITTER:-50}
+GUNICORN_PRELOAD_APP=${GUNICORN_PRELOAD_APP:-true}
+GUNICORN_WORKER_CLASS=${GUNICORN_WORKER_CLASS:-sync}
+
+echo "📊 Gunicorn Configuration:"
+echo "  Workers: $GUNICORN_WORKERS"
+echo "  Timeout: $GUNICORN_TIMEOUT seconds"
+echo "  Max Requests: $GUNICORN_MAX_REQUESTS"
+echo "  Preload App: $GUNICORN_PRELOAD_APP"
+echo "  Worker Class: $GUNICORN_WORKER_CLASS"
+
+exec gunicorn \
+    --bind 0.0.0.0:5000 \
+    --workers $GUNICORN_WORKERS \
+    --worker-class $GUNICORN_WORKER_CLASS \
+    --timeout $GUNICORN_TIMEOUT \
+    --max-requests $GUNICORN_MAX_REQUESTS \
+    --max-requests-jitter $GUNICORN_MAX_REQUESTS_JITTER \
+    --preload-app $GUNICORN_PRELOAD_APP \
+    --access-logfile - \
+    --error-logfile - \
+    server:app

@@ -78,6 +78,11 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Copy application code
 COPY . .
 
+# Pre-download rembg models to cache them in the image
+RUN . /opt/venv/bin/activate && \
+    python3.10 -c "from rembg import new_session; new_session('u2net')" && \
+    echo "Rembg model downloaded and cached successfully"
+
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
