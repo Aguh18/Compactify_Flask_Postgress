@@ -63,7 +63,7 @@ services:
       GUNICORN_WORKER_CLASS: sync
       GUNICORN_MAX_REQUESTS: 1000
       GUNICORN_MAX_REQUESTS_JITTER: 50
-      GUNICORN_PRELOAD_APP: true
+      GUNICORN_PRELOAD_APP: false  # Disabled to avoid conflicts with manual model preloading
 
       # Application Configuration (can be overridden by .env)
       SECRET_KEY: ${SECRET_KEY:-teguh}

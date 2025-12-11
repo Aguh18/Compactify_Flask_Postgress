@@ -98,14 +98,31 @@ echo "  Max Requests: $GUNICORN_MAX_REQUESTS"
 echo "  Preload App: $GUNICORN_PRELOAD_APP"
 echo "  Worker Class: $GUNICORN_WORKER_CLASS"
 
-exec gunicorn \
+# Build gunicorn command
+GUNICORN_CMD="gunicorn \
     --bind 0.0.0.0:5000 \
     --workers $GUNICORN_WORKERS \
     --worker-class $GUNICORN_WORKER_CLASS \
     --timeout $GUNICORN_TIMEOUT \
     --max-requests $GUNICORN_MAX_REQUESTS \
     --max-requests-jitter $GUNICORN_MAX_REQUESTS_JITTER \
-    --preload-app $GUNICORN_PRELOAD_APP \
     --access-logfile - \
     --error-logfile - \
-    server:app
+    server:app"
+
+# Add --preload-app if enabled
+if [ "$GUNICORN_PRELOAD_APP" = "true" ]; then
+    GUNICORN_CMD="gunicorn \
+        --bind 0.0.0.0:5000 \
+        --workers $GUNICORN_WORKERS \
+        --worker-class $GUNICORN_WORKER_CLASS \
+        --timeout $GUNICORN_TIMEOUT \
+        --max-requests $GUNICORN_MAX_REQUESTS \
+        --max-requests-jitter $GUNICORN_MAX_REQUESTS_JITTER \
+        --preload-app \
+        --access-logfile - \
+        --error-logfile - \
+        server:app"
+fi
+
+exec $GUNICORN_CMD
