@@ -1,32 +1,30 @@
 {% extends "./master/layout.html" %} {% block title %}Index{% endblock %} {%
-block head %} {{ super() }} {% endblock %} {% block content %} {% include
-"./master/partials/nav.html" %}
-<div class="w-screen">
+{% block content %}
+<div class="w-full px-4">
   <div
-    class="w-full text-center mt-14 mb-5 text-zinc-700 text-5xl font-semibold font-['Poppins'] underline leading-10"
+    class="w-full text-center mt-8 mb-5 text-zinc-700 text-3xl md:text-5xl font-semibold font-['Poppins'] underline leading-relaxed"
   >
     Your File has been Successfully Processed
   </div>
 </div>
 <!-- download section -->
-<section class="flex">
-  <div class="flex items-center justify-end w-1/2">
+<section class="flex flex-col md:flex-row items-center justify-center px-4">
+  <div class="flex items-center justify-center w-full md:w-1/2 mb-8 md:mb-0">
     <img
       src="{{url_for('static', filename='image/download.svg')}}"
-      alt="Download
-    Image"
-      class="flex h-72 w-auto items-center max-w-screen-md"
+      alt="Download Image"
+      class="flex h-48 md:h-72 w-auto items-center max-w-full"
     />
   </div>
   <a
     href="{{url_for('static', filename='CompressImg/'+file)}}"
-    class="flex items-center w-1/2 mt-10"
+    class="flex items-center justify-center w-full md:w-1/2"
   >
     <div
-      class="w-[400px] h-[70px] rounded-full bg-gradient-to-b from-blue-600 to-sky-900"
+      class="w-full max-w-[400px] py-4 rounded-full bg-gradient-to-b from-blue-600 to-sky-900 shadow-lg transform transition hover:scale-105"
     >
       <div
-        class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+        class="text-center text-white text-2xl md:text-4xl font-semibold font-['Open Sans'] leading-loose"
       >
         Download File
       </div>
@@ -34,13 +32,13 @@ block head %} {{ super() }} {% endblock %} {% block content %} {% include
   </a>
 </section>
 
-<div class="flex items-center justify-center w-full mt-5">
+<div class="flex items-center justify-center w-full mt-8 px-4 mb-12">
   <a
     href="{{url_for('compressimg')}}"
-    class="flex items-center justify-center w-3/5 h-[75px] bg-gradient-to-b from-blue-600 to-sky-900 rounded-3xl"
+    class="flex items-center justify-center w-full max-w-2xl py-4 bg-gradient-to-b from-blue-600 to-sky-900 rounded-3xl shadow-lg transform transition hover:scale-105"
   >
     <div
-      class="text-center text-white text-4xl mx-5font-semibold font-['Open Sans'] leading-loose"
+      class="text-center text-white text-xl md:text-3xl font-semibold font-['Open Sans'] leading-loose"
     >
       Upload Another File +
     </div>

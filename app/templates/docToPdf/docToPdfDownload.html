@@ -52,10 +52,10 @@ Download{% endblock %} {% block head %} {{ super() }}
   <!-- Download Section -->
   <div class="max-w-5xl mx-auto px-4 pb-8">
     <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-      <div class="lg:flex">
+      <div class="flex flex-col lg:flex-row">
         <!-- Left Side - Image -->
         <div
-          class="lg:w-1/2 bg-gradient-to-br from-emerald-500 to-teal-600 p-8 flex items-center justify-center"
+          class="flex items-center justify-center w-full p-6 bg-gradient-to-br from-emerald-500 to-teal-600 lg:w-1/2 lg:p-8"
         >
           <div class="text-center">
             <div
@@ -83,7 +83,7 @@ Download{% endblock %} {% block head %} {{ super() }}
         </div>
 
         <!-- Right Side - Download Info -->
-        <div class="lg:w-1/2 p-8">
+        <div class="w-full p-6 lg:w-1/2 lg:p-8">
           <!-- File Information -->
           <div class="mb-8">
             <h3
@@ -137,7 +137,7 @@ Download{% endblock %} {% block head %} {{ super() }}
             <a
               href="{{ url_for('wordtopdf_download_file', file=file) }}"
               download
-              class="group w-full inline-flex items-center justify-center px-6 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              class="inline-flex items-center justify-center w-full px-6 py-3 font-semibold text-white transition-all duration-200 shadow-lg group bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl hover:shadow-xl transform hover:-translate-y-0.5 md:px-8 md:py-4"
             >
               <svg
                 class="w-5 h-5 mr-2 group-hover:animate-bounce"
@@ -189,7 +189,7 @@ Download{% endblock %} {% block head %} {{ super() }}
       </p>
     </div>
 
-    <div class="grid md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
       <a
         href="{{ url_for('compressimg') }}"
         class="group bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-all duration-200 transform hover:-translate-y-1"

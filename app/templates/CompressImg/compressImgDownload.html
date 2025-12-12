@@ -57,7 +57,7 @@ block content %}
       >
         <!-- Header Section -->
         <div
-          class="px-8 py-12 text-center bg-gradient-to-r from-green-600 to-emerald-600"
+          class="px-6 py-8 text-center bg-gradient-to-r from-green-600 to-emerald-600 md:px-8 md:py-12"
         >
           <div class="flex justify-center mb-6">
             <div class="p-4 rounded-full bg-white/20 backdrop-blur-sm">
@@ -75,7 +75,7 @@ block content %}
         </div>
 
         <!-- Content Section -->
-        <div class="p-8">
+        <div class="p-6 md:p-8">
           <div class="grid items-center grid-cols-1 gap-8 lg:grid-cols-2">
             <!-- Download Illustration -->
             <div class="text-center lg:text-left">
@@ -125,7 +125,7 @@ block content %}
                   download="compressed_image.jpg"
                   href="{{ url_for('compressimg_download_file', file=file) }}"
                   @click="downloadFile()"
-                  class="inline-flex items-center px-8 py-4 font-semibold text-white transition-all duration-300 transform shadow-lg bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl hover:shadow-xl hover:scale-105"
+                  class="inline-flex items-center px-6 py-3 font-semibold text-white transition-all duration-300 transform shadow-lg bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl hover:shadow-xl hover:scale-105 md:px-8 md:py-4"
                 >
                   <i class="mr-3 text-xl fas fa-download"></i>
                   <span class="text-lg">Download Compressed Image</span>

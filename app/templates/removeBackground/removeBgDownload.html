@@ -45,7 +45,7 @@ endblock %} {% block content %}
       >
         <!-- Header -->
         <div
-          class="px-8 py-6 text-center bg-gradient-to-r from-pink-500 to-pink-700"
+          class="px-6 py-4 text-center bg-gradient-to-r from-pink-500 to-pink-700 md:px-8 md:py-6"
         >
           <div class="flex justify-center mb-4">
             <img
@@ -58,7 +58,7 @@ endblock %} {% block content %}
         </div>
 
         <!-- Download Section -->
-        <div x-data="downloadManager()" class="p-8">
+        <div x-data="downloadManager()" class="p-6 md:p-8">
           <div class="grid items-center grid-cols-1 gap-8 lg:grid-cols-2">
             <!-- Download Illustration & Stats -->
             <div class="space-y-6">
@@ -82,7 +82,7 @@ endblock %} {% block content %}
                 download="background-removed.png"
                 href="{{ url_for('removebg_download_file', file=file) }}"
                 @click="handleDownload()"
-                class="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white transition-all duration-200 rounded-xl bg-gradient-to-r from-pink-500 to-pink-700 hover:from-pink-600 hover:to-pink-800 hover:shadow-lg hover:scale-105"
+                class="inline-flex items-center justify-center px-6 py-3 text-lg font-semibold text-white transition-all duration-200 rounded-xl bg-gradient-to-r from-pink-500 to-pink-700 hover:from-pink-600 hover:to-pink-800 hover:shadow-lg hover:scale-105 md:px-8 md:py-4"
               >
                 <span x-show="!isDownloading" class="flex items-center">
                   <i class="mr-2 fas fa-download"></i>
