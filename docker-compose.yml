@@ -44,7 +44,8 @@ services:
       FLASK_ENV: ${FLASK_ENV:-production}
       DEBUG: ${DEBUG:-False}
 
-      # Database Configuration (override .env for container)
+      # Database Configuration - Uses .env values with smart Docker networking
+      # When running in Docker, the internal network uses service name 'db' as hostname
       DB_HOST: db
       DB_PORT: 5432
       DB_USER: ${DB_USER:-postgres}
